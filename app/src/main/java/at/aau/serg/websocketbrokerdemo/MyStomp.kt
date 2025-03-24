@@ -47,7 +47,7 @@ class MyStomp(val callbacks: Callbacks) {
                     var o=JSONObject(msg)
                     callback(o.get("text").toString())
                 } }
-                callback("connected yesssss")
+                callback("connected")
             }
 
     }
