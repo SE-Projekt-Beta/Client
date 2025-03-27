@@ -28,6 +28,10 @@ class MainActivity : ComponentActivity(), Callbacks {
             val msg = GameMessage("test", "Hallo vom Client")
             mystomp.sendGameMessage(msg)
         }
+        findViewById<Button>(R.id.rollDiceBtn).setOnClickListener {
+            val msg = GameMessage("roll_dice", "")
+            mystomp.sendGameMessage(msg)
+        }
 
         response=findViewById(R.id.response_view)
 

@@ -6,7 +6,7 @@ class DktClientHandler {
     fun handle(message: GameMessage) {
         when (message.type) {
             "test" -> handleTest(message.payload)
-            "roll_dice" -> handleRollDice(message.payload)
+            "dice_result" -> handleDiceResult(message.payload)
             "buy_property" -> handleBuyProperty(message.payload)
             else -> Log.w("DktClientHandler", "Unbekannter Nachrichtentyp: ${message.type}")
         }
@@ -16,10 +16,11 @@ class DktClientHandler {
         Log.i("DktClientHandler", "Test empfangen: $payload")
     }
 
-    private fun handleRollDice(payload: String) {
-        Log.i("DktClientHandler", "Würfeln erhalten: $payload")
-        // TODO: Spielfigur bewegen, UI aktualisieren
+    private fun handleDiceResult(payload: String) {
+        Log.i("DktClientHandler", "Würfelergebnis empfangen: $payload")
+        // TODO: später Spielfigur bewegen oder UI aktualisieren
     }
+
 
     private fun handleBuyProperty(payload: String) {
         Log.i("DktClientHandler", "Straße kaufen: $payload")
