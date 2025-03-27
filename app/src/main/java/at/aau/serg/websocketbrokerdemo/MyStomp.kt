@@ -2,6 +2,7 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import at.aau.serg.websocketbrokerdemo.Callbacks
+import at.aau.serg.websocketbrokerdemo.dkt.DktClientHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -29,6 +30,9 @@ class MyStomp(val callbacks: Callbacks) {
     private lateinit var client:StompClient
     private lateinit var session: StompSession
 
+    private val dktHandler = DktClientHandler()
+
+
     private val scope:CoroutineScope=CoroutineScope(Dispatchers.IO)
     fun connect() {
 
@@ -47,10 +51,10 @@ class MyStomp(val callbacks: Callbacks) {
                 scope.launch {
                     dktFlow.collect { msg ->
                         val gameMessage = Gson().fromJson(msg, GameMessage::class.java)
-                        Log.d("MyStomp", "Empfangen: type=${gameMessage.type}, payload=${gameMessage.payload}")
-
+                        dktHandler.handle(gameMessage)
                     }
                 }
+
 
 
                 //connect to topic
