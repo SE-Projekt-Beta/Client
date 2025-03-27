@@ -75,5 +75,12 @@ class MyStomp(val callbacks: Callbacks) {
         }
 
     }
+    fun sendGameMessage(message: GameMessage) {
+        val json = Gson().toJson(message)
+        scope.launch {
+            session.sendText("/app/dkt", json)
+        }
+    }
+
 
 }
