@@ -8,6 +8,7 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.enableEdgeToEdge
+import at.aau.serg.websocketbrokerdemo.dkt.GameMessage
 import com.example.myapplication.R
 
 class MainActivity : ComponentActivity(), Callbacks {
@@ -23,6 +24,11 @@ class MainActivity : ComponentActivity(), Callbacks {
         findViewById<Button>(R.id.connectbtn).setOnClickListener { mystomp.connect() }
         findViewById<Button>(R.id.hellobtn).setOnClickListener{mystomp.sendHello()}
         findViewById<Button>(R.id.jsonbtn).setOnClickListener{mystomp.sendJson()}
+        findViewById<Button>(R.id.dktbtn).setOnClickListener {
+            val msg = GameMessage("test", "Hallo vom Client")
+            mystomp.sendGameMessage(msg)
+        }
+
         response=findViewById(R.id.response_view)
 
     }

@@ -13,6 +13,9 @@ import org.hildan.krossbow.stomp.sendText
 import org.hildan.krossbow.stomp.subscribeText
 import org.hildan.krossbow.websocket.okhttp.OkHttpWebSocketClient
 import org.json.JSONObject
+import at.aau.serg.websocketbrokerdemo.dkt.GameMessage
+import com.google.gson.Gson
+
 
 private  val WEBSOCKET_URI = "ws://10.0.2.2:8080/websocket-example-broker";
 class MyStomp(val callbacks: Callbacks) {
@@ -39,6 +42,16 @@ class MyStomp(val callbacks: Callbacks) {
                     //todo logic
                     callback(msg)
                 } }
+
+                val dktFlow = session.subscribeText("/topic/dkt")
+                scope.launch {
+                    dktFlow.collect { msg ->
+                        val gameMessage = Gson().fromJson(msg, GameMessage::class.java)
+                        Log.d("MyStomp", "Empfangen: type=${gameMessage.type}, payload=${gameMessage.payload}")
+
+                    }
+                }
+
 
                 //connect to topic
                 jsonFlow= session.subscribeText("/topic/rcv-object")
@@ -81,6 +94,7 @@ class MyStomp(val callbacks: Callbacks) {
             session.sendText("/app/dkt", json)
         }
     }
+
 
 
 }
