@@ -24,11 +24,9 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.fragment_fullscreen)
 
-        // Initialisierung
         clientHandler = DktClientHandler(this)
         mystomp = MyStomp(clientHandler)
 
-        // Buttons
         findViewById<Button>(R.id.connectbtn).setOnClickListener {
             mystomp.connect()
         }
@@ -47,26 +45,32 @@ class MainActivity : ComponentActivity() {
         }
 
         findViewById<Button>(R.id.rollDiceBtn).setOnClickListener {
-            val payload = """{"playerId": "player1"}"""
-            val msg = GameMessage("roll_dice", payload)
-            mystomp.sendGameMessage(msg)
+            val payload = JSONObject()
+            payload.put("playerId", "player1")
+            mystomp.sendGameMessage(GameMessage("roll_dice", payload.toString()))
         }
 
         response = findViewById(R.id.response_view)
     }
 
-    // Wird von DktClientHandler aufgerufen, wenn man ein Feld kaufen darf
     fun showBuyButton(tileName: String, tilePos: Int, playerId: String) {
-        val button = findViewById<Button>(R.id.buybtn)
-        button.text = "Kaufen: $tileName"
-        button.visibility = View.VISIBLE
+        runOnUiThread {
+            val button = findViewById<Button>(R.id.buybtn)
+            button.text = "Kaufen: $tileName"
+            button.visibility = View.VISIBLE
 
-        button.setOnClickListener {
-            val payload = JSONObject()
-            payload.put("playerId", playerId)
-            payload.put("tilePos", tilePos)
-            mystomp.sendGameMessage(GameMessage("buy_property", payload.toString()))
-            button.visibility = View.GONE
+            button.setOnClickListener {
+                val payload = JSONObject()
+                payload.put("playerId", playerId)
+                payload.put("tilePos", tilePos)
+                mystomp.sendGameMessage(GameMessage("buy_property", payload.toString()))
+                button.visibility = View.GONE
+            }
+        }
+    }
+    fun showResponse(msg: String) {
+        runOnUiThread {
+            response.text = msg
         }
     }
 }
