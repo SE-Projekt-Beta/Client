@@ -1,5 +1,6 @@
 package at.aau.serg.websocketbrokerdemo.dkt
 
+import org.json.JSONObject
 import android.util.Log
 
 class DktClientHandler {
@@ -8,6 +9,7 @@ class DktClientHandler {
             "test" -> handleTest(message.payload)
             "dice_result" -> handleDiceResult(message.payload)
             "buy_property" -> handleBuyProperty(message.payload)
+            "player_moved" -> handlePlayerMoved(message.payload)
             else -> Log.w("DktClientHandler", "Unbekannter Nachrichtentyp: ${message.type}")
         }
     }
@@ -26,4 +28,15 @@ class DktClientHandler {
         Log.i("DktClientHandler", "Straße kaufen: $payload")
         // TODO: Kaufdialog anzeigen
     }
+
+    private fun handlePlayerMoved(payload: String) {
+        val json = JSONObject(payload)
+        val playerId = json.getString("playerId")
+        val pos = json.getInt("pos")
+        val dice = json.getInt("dice")
+
+        GameStateClient.updatePosition(playerId, pos)
+        Log.i("DktClientHandler", "$playerId hat eine $dice gewürfelt und ist jetzt auf Feld $pos")
+    }
+
 }

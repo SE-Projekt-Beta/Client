@@ -29,7 +29,8 @@ class MainActivity : ComponentActivity(), Callbacks {
             mystomp.sendGameMessage(msg)
         }
         findViewById<Button>(R.id.rollDiceBtn).setOnClickListener {
-            val msg = GameMessage("roll_dice", "")
+            val payload = """{"playerId": "player1"}"""
+            val msg = GameMessage("roll_dice", payload)
             mystomp.sendGameMessage(msg)
         }
 
