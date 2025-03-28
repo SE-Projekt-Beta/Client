@@ -34,9 +34,11 @@ class DktClientHandler {
         val playerId = json.getString("playerId")
         val pos = json.getInt("pos")
         val dice = json.getInt("dice")
+        val tileName = json.getString("tileName")
+        val tileType = json.getString("tileType")
 
+        Log.i("DktClientHandler", "$playerId hat $dice gewürfelt und ist auf Feld $pos gelandet: $tileName ($tileType)")
         GameStateClient.updatePosition(playerId, pos)
-        Log.i("DktClientHandler", "$playerId hat eine $dice gewürfelt und ist jetzt auf Feld $pos")
     }
 
 }
