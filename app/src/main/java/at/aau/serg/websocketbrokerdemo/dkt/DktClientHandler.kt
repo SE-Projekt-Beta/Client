@@ -16,6 +16,7 @@ class DktClientHandler(private val activity: MainActivity) {
             "can_buy_property" -> handleCanBuyProperty(message.payload)
             "property_bought" -> handlePropertyBought(message.payload)
             "draw_event_card" -> handleDrawEventCard(message.payload)
+            "must_pay_rent" -> handleMustPayRent(message.payload)
             else -> Log.w("DktClientHandler", "Unbekannter Nachrichtentyp: ${message.type}")
         }
     }
@@ -56,7 +57,7 @@ class DktClientHandler(private val activity: MainActivity) {
 
         Log.i("DktClientHandler", "$playerId darf $tileName kaufen!")
         activity.showBuyButton(tileName, tilePos, playerId)
-        activity.showResponse("🛒 $playerId darf $tileName kaufen")
+        activity.showResponse("$playerId darf $tileName kaufen")
     }
 
     private fun handlePropertyBought(payload: String) {
@@ -68,4 +69,15 @@ class DktClientHandler(private val activity: MainActivity) {
         Log.i("DktClientHandler", "Ereigniskarte ziehen: $payload")
         activity.showResponse("Ereigniskarte: $payload")
     }
+
+    private fun handleMustPayRent(payload: String) {
+        val json = JSONObject(payload)
+        val playerId = json.getString("playerId")
+        val ownerId = json.getString("ownerId")
+        val tileName = json.getString("tileName")
+
+        Log.i("DktClientHandler", "$playerId muss Miete an $ownerId zahlen für $tileName")
+        activity.showResponse("$playerId muss Miete an $ownerId zahlen für $tileName")
+    }
+
 }
