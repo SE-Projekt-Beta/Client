@@ -1,5 +1,6 @@
 package at.aau.serg.websocketbrokerdemo.dkt
 
+import org.json.JSONObject
 import android.util.Log
 
 class DktClientHandler {
