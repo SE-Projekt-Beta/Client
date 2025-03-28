@@ -2,8 +2,10 @@ package at.aau.serg.websocketbrokerdemo.dkt
 
 import org.json.JSONObject
 import android.util.Log
+import at.aau.serg.websocketbrokerdemo.MainActivity
 
-class DktClientHandler {
+
+class DktClientHandler(private val activity: MainActivity) {
     fun handle(message: GameMessage) {
         when (message.type) {
             "test" -> handleTest(message.payload)
@@ -49,9 +51,9 @@ class DktClientHandler {
 
         Log.i("DktClientHandler", "$playerId darf $tileName kaufen!")
 
-        // Button anzeigen:
-        (context as MainActivity).showBuyButton(tileName, tilePos, playerId)
+        activity.showBuyButton(tileName, tilePos, playerId)
     }
+
 
 
 }
