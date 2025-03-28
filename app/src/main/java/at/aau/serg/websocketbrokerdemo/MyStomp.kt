@@ -19,86 +19,67 @@ import com.google.gson.Gson
 
 
 private  val WEBSOCKET_URI = "ws://10.0.2.2:8080/websocket-example-broker";
-class MyStomp(val callbacks: Callbacks) {
+class MyStomp(private val dktHandler: DktClientHandler) {
 
-    private lateinit var topicFlow: Flow<String>
-    private lateinit var collector:Job
-
-    private lateinit var jsonFlow: Flow<String>
-    private lateinit var jsonCollector:Job
-
-    private lateinit var client:StompClient
     private lateinit var session: StompSession
+    private val scope: CoroutineScope = CoroutineScope(Dispatchers.IO)
 
-    private val dktHandler = DktClientHandler()
-
-
-    private val scope:CoroutineScope=CoroutineScope(Dispatchers.IO)
     fun connect() {
+        val client = StompClient(OkHttpWebSocketClient())
 
-            client = StompClient(OkHttpWebSocketClient()) // other config can be passed in here
-            scope.launch {
-                session=client.connect(WEBSOCKET_URI)
-                topicFlow= session.subscribeText("/topic/hello-response")
-                //connect to topic
-                collector=scope.launch { topicFlow.collect{
-                        msg->
-                    //todo logic
-                    callback(msg)
-                } }
+        scope.launch {
+            session = client.connect(WEBSOCKET_URI)
 
-                val dktFlow = session.subscribeText("/topic/dkt")
-                scope.launch {
-                    dktFlow.collect { msg ->
-                        val gameMessage = Gson().fromJson(msg, GameMessage::class.java)
-                        dktHandler.handle(gameMessage)
-                    }
+            // DKT Topic abonnieren
+            val dktFlow: Flow<String> = session.subscribeText("/topic/dkt")
+            launch {
+                dktFlow.collect { msg ->
+                    val gameMessage = Gson().fromJson(msg, GameMessage::class.java)
+                    dktHandler.handle(gameMessage)
                 }
-
-
-
-                //connect to topic
-                jsonFlow= session.subscribeText("/topic/rcv-object")
-                jsonCollector=scope.launch { jsonFlow.collect{
-                        msg->
-                    var o=JSONObject(msg)
-                    callback(o.get("text").toString())
-                } }
-                callback("connected")
             }
 
-    }
-    private fun callback(msg:String){
-        Handler(Looper.getMainLooper()).post{
-            callbacks.onResponse(msg)
+            // Optional: Hello-Response abonnieren
+            val topicFlow: Flow<String> = session.subscribeText("/topic/hello-response")
+            launch {
+                topicFlow.collect { msg ->
+                    Log.i("MyStomp", "Hello-Response: $msg")
+                }
+            }
+
+            // Optional: JSON-Nachrichten empfangen
+            val jsonFlow: Flow<String> = session.subscribeText("/topic/rcv-object")
+            launch {
+                jsonFlow.collect { msg ->
+                    val o = JSONObject(msg)
+                    Log.i("MyStomp", "JSON erhalten: ${o.get("text")}")
+                }
+            }
+
+            Log.i("MyStomp", "Verbindung aufgebaut!")
         }
     }
-    fun sendHello(){
 
+    fun sendHello() {
         scope.launch {
-            Log.e("tag","connecting to topic")
-
-            session.sendText("/app/hello","message from client")
-           }
-    }
-    fun sendJson(){
-        var json=JSONObject();
-        json.put("from","client")
-        json.put("text","from client")
-        var o=json.toString()
-
-        scope.launch {
-            session.sendText("/app/object",o);
+            session.sendText("/app/hello", "message from client")
         }
-
     }
+
+    fun sendJson() {
+        val json = JSONObject()
+        json.put("from", "client")
+        json.put("text", "from client")
+
+        scope.launch {
+            session.sendText("/app/object", json.toString())
+        }
+    }
+
     fun sendGameMessage(message: GameMessage) {
         val json = Gson().toJson(message)
         scope.launch {
             session.sendText("/app/dkt", json)
         }
     }
-
-
-
 }
