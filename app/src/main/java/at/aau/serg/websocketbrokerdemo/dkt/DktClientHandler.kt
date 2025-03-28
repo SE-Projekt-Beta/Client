@@ -8,6 +8,7 @@ class DktClientHandler {
             "test" -> handleTest(message.payload)
             "dice_result" -> handleDiceResult(message.payload)
             "buy_property" -> handleBuyProperty(message.payload)
+            "player_moved" -> handlePlayerMoved(message.payload)
             else -> Log.w("DktClientHandler", "Unbekannter Nachrichtentyp: ${message.type}")
         }
     }
