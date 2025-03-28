@@ -10,6 +10,7 @@ class DktClientHandler {
             "dice_result" -> handleDiceResult(message.payload)
             "buy_property" -> handleBuyProperty(message.payload)
             "player_moved" -> handlePlayerMoved(message.payload)
+            "can_buy_property" -> handleCanBuyProperty(message.payload)
             else -> Log.w("DktClientHandler", "Unbekannter Nachrichtentyp: ${message.type}")
         }
     }
@@ -40,5 +41,17 @@ class DktClientHandler {
         Log.i("DktClientHandler", "$playerId hat $dice gewürfelt und ist auf Feld $pos gelandet: $tileName ($tileType)")
         GameStateClient.updatePosition(playerId, pos)
     }
+    private fun handleCanBuyProperty(payload: String) {
+        val json = JSONObject(payload)
+        val tileName = json.getString("tileName")
+        val tilePos = json.getInt("tilePos")
+        val playerId = json.getString("playerId")
+
+        Log.i("DktClientHandler", "$playerId darf $tileName kaufen!")
+
+        // Button anzeigen:
+        (context as MainActivity).showBuyButton(tileName, tilePos, playerId)
+    }
+
 
 }
