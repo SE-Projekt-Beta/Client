@@ -26,4 +26,15 @@ class DktClientHandler {
         Log.i("DktClientHandler", "Straße kaufen: $payload")
         // TODO: Kaufdialog anzeigen
     }
+
+    private fun handlePlayerMoved(payload: String) {
+        val json = JSONObject(payload)
+        val playerId = json.getString("playerId")
+        val pos = json.getInt("pos")
+        val dice = json.getInt("dice")
+
+        GameStateClient.updatePosition(playerId, pos)
+        Log.i("DktClientHandler", "$playerId hat eine $dice gewürfelt und ist jetzt auf Feld $pos")
+    }
+
 }
