@@ -50,6 +50,11 @@ class MainActivity : ComponentActivity() {
             mystomp.sendGameMessage(GameMessage("roll_dice", payload.toString()))
         }
 
+        findViewById<Button>(R.id.openDiceScreenBtn).setOnClickListener {
+            val intent = Intent(this, DiceActivity::class.java)
+            startActivity(intent)
+        }
+
         response = findViewById(R.id.response_view)
     }
 
