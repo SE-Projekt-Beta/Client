@@ -1,6 +1,8 @@
+import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import android.widget.Toast
 import at.aau.serg.websocketbrokerdemo.Callbacks
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -47,6 +49,11 @@ class MyStomp(val callbacks: Callbacks) {
                     var o=JSONObject(msg)
                     callback(o.get("text").toString())
                 } }
+
+                //subscription for eventcards
+                val eventFlow = session.subscribeText("/topic/dkt")
+                val eventCollector = scope.launch { eventFlow.collect { msg -> handleEventCard(msg)}}
+
                 callback("connected")
             }
 
@@ -76,4 +83,25 @@ class MyStomp(val callbacks: Callbacks) {
 
     }
 
+    private fun handleEventCard(msg: String){
+        try {
+            val gameMessage = JSONObject(msg)
+            val type = gameMessage.getString("type")
+            val playload = gameMessage.getString("playload")
+
+            when(type){
+                "risiko_card" -> showEventCard(playload, "Risiko")
+                "bank_card" -> showEventCard(playload, "Bank")
+                else -> Log.e("STOMP", "Unbekannter Kartentyp: $type")
+            }
+        } catch (e: Exception){
+            Log.e("STOMP", "Fehler beim Verarbeiten der Ereigniskarte", e)
+        }
+    }
+
+    private fun showEventCard(message: String, category: String) {
+        Handler(Looper.getMainLooper()).post {
+            Toast.makeText(callbacks as Context, "$category Ereigniskarte: $message", Toast.LENGTH_LONG).show()
+        }
+    }
 }
