@@ -2,9 +2,14 @@ package at.aau.serg.websocketbrokerdemo
 
 import at.aau.serg.websocketbrokerdemo.model.BoardMap
 import at.aau.serg.websocketbrokerdemo.model.TileType
-import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
+//import kotlin.test.assertEquals
+//import kotlin.test.assertNotNull
 import org.junit.jupiter.api.Test
+//import org.junit.jupiter.api.*
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
+
+
 
 class BoardMapTest {
 

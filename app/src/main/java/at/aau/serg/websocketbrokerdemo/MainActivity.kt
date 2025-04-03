@@ -13,6 +13,7 @@ import at.aau.serg.websocketbrokerdemo.dkt.GameMessage
 import com.example.myapplication.R
 import org.json.JSONObject
 
+
 class MainActivity : ComponentActivity() {
 
     private lateinit var mystomp: MyStomp
@@ -73,5 +74,17 @@ class MainActivity : ComponentActivity() {
             response.text = msg
         }
     }
+
+    fun showEventCard(text: String) {
+        runOnUiThread {
+            android.app.AlertDialog.Builder(this)
+                .setTitle("📦 Ereigniskarte")
+                .setMessage(text)
+                .setPositiveButton("OK", null)
+                .show()
+
+        }
+    }
+
 }
 
