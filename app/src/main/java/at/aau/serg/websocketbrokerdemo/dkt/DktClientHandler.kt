@@ -47,6 +47,13 @@ class DktClientHandler(private val activity: MainActivity) {
         Log.i("DktClientHandler", "$playerId hat $dice gewürfelt und ist auf Feld $pos gelandet: $tileName ($tileType)")
         activity.showResponse("$playerId → $tileName ($tileType), gewürfelt: $dice")
         GameStateClient.updatePosition(playerId, pos)
+
+        /*  --> Neues: hole Tile aus dem Modell
+        val tile = at.aau.serg.websocketbrokerdemo.model.BoardMap.tiles[pos]
+
+        Log.i("DktClientHandler", "$playerId hat $dice gewürfelt und ist auf Feld $pos gelandet: ${tile.name} (${tile.type})")
+        activity.showResponse("$playerId → ${tile.name} (${tile.type}), gewürfelt: $dice")
+        */
     }
 
     private fun handleCanBuyProperty(payload: String) {
@@ -81,3 +88,4 @@ class DktClientHandler(private val activity: MainActivity) {
     }
 
 }
+
