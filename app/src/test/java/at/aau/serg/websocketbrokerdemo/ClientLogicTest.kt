@@ -100,8 +100,14 @@ class ClientLogicTest {
         assertEquals("p1", parsed.getString("ownerId"))
         assertEquals("Bahnhof West", parsed.getString("tileName"))
     }
+    @Test
+    fun testEventCardMessageContainsText() {
+        val messageText = "Zahle 200€ Strafe"
+        val msg = GameMessage("event_card", messageText)
 
-
-
+        assertEquals("event_card", msg.type)
+        assertEquals(messageText, msg.payload)
+        assertTrue(msg.payload.contains("€"))
+    }
 
 }
