@@ -10,6 +10,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.enableEdgeToEdge
 import at.aau.serg.websocketbrokerdemo.dkt.DktClientHandler
 import at.aau.serg.websocketbrokerdemo.dkt.GameMessage
+import at.aau.serg.websocketbrokerdemo.dkt.OwnershipClient
 import com.example.myapplication.R
 import org.json.JSONObject
 
@@ -25,19 +26,25 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.fragment_fullscreen)
 
+        // Initialisiere Handler & Verbindung
         clientHandler = DktClientHandler(this)
         mystomp = MyStomp(clientHandler)
         mystomp.connect()
 
-
+        // Würfeln
         findViewById<Button>(R.id.rollDiceBtn).setOnClickListener {
-            val payload = JSONObject()
-            payload.put("playerId", "player1")
-            mystomp.sendGameMessage(GameMessage("roll_dice", payload.toString()))
+            val payload = JSONObject().apply {
+                put("playerId", "player1")
+            }
+            val msg = GameMessage("roll_dice", payload.toString())
+            mystomp.sendGameMessage(msg)
         }
 
+        // Views
         response = findViewById(R.id.response_view)
+        findViewById<TextView>(R.id.ownership_view).text = "Noch kein Besitz"
     }
+
 
     fun showBuyButton(tileName: String, tilePos: Int, playerId: String) {
         runOnUiThread {
@@ -71,13 +78,13 @@ class MainActivity : ComponentActivity() {
         }
     }
     fun showOwnership() {
-        val textView = findViewById<TextView>(R.id.response_view)
+        val ownershipTextView = findViewById<TextView>(R.id.ownership_view)
         val sb = StringBuilder()
         for ((player, props) in OwnershipClient.all()) {
-            sb.append("$player besitzt: ${props.joinToString(", ")}\n")
+            sb.append("$player besitzt:\n  - ${props.joinToString("\n  - ")}\n\n")
         }
         runOnUiThread {
-            textView.text = sb.toString()
+            ownershipTextView.text = sb.toString()
         }
     }
 
