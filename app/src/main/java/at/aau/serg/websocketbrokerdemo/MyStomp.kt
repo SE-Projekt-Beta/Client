@@ -15,6 +15,7 @@ import org.hildan.krossbow.stomp.subscribeText
 import org.hildan.krossbow.websocket.okhttp.OkHttpWebSocketClient
 import org.json.JSONObject
 import at.aau.serg.websocketbrokerdemo.dkt.GameMessage
+import at.aau.serg.websocketbrokerdemo.model.GameBoard
 import com.google.gson.Gson
 
 
@@ -40,6 +41,18 @@ class MyStomp(private val dktHandler: DktClientHandler) {
             }
 
 
+            // ✅ Subscribe to /topic/board
+            val boardFlow: Flow<String> = session.subscribeText("/topic/board")
+            launch {
+                boardFlow.collect { msg ->
+                    val board = Gson().fromJson(msg, GameBoard::class.java)
+                    // Do something with board (update UI, pass to handler, etc.)
+                    Log.d("MyStomp", "Received board: $board")
+                    // print the tile at position 5
+                    Log.d("MyStomp", "Tile at position 5: ${board.getTileAt(5)}")
+                }
+            }
+
             Log.i("MyStomp", "Verbindung aufgebaut!")
         }
     }
@@ -64,6 +77,12 @@ class MyStomp(private val dktHandler: DktClientHandler) {
         val json = Gson().toJson(message)
         scope.launch {
             session.sendText("/app/dkt", json)
+        }
+    }
+
+    fun send(destination: String, message: String) {
+        scope.launch {
+            session.sendText(destination, message)
         }
     }
 }

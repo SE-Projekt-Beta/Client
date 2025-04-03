@@ -36,6 +36,10 @@ class MainActivity : ComponentActivity() {
             mystomp.sendGameMessage(GameMessage("roll_dice", payload.toString()))
         }
 
+        findViewById<Button>(R.id.getBoard).setOnClickListener {
+            mystomp.send("/app/get_board", "get_board")
+        }
+
         response = findViewById(R.id.response_view)
     }
 
