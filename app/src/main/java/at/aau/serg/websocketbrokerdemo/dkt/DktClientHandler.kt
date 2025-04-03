@@ -17,6 +17,7 @@ class DktClientHandler(private val activity: MainActivity) {
             "draw_event_card" -> handleDrawEventCard(message.payload)
             "must_pay_rent" -> handleMustPayRent(message.payload)
             "event_card" -> handleEventCard(message.payload)
+            "property_bought" -> handlePropertyBought(message.payload)
             else -> Log.w("DktClientHandler", "Unbekannter Nachrichtentyp: ${message.type}")
         }
     }
@@ -85,6 +86,18 @@ class DktClientHandler(private val activity: MainActivity) {
         Log.i("DktClientHandler", "Ereigniskarte gezogen: $payload")
         activity.showEventCard(payload)
     }
+
+    private fun handlePropertyBought(payload: String) {
+        val json = JSONObject(payload)
+        val playerId = json.getString("playerId")
+        val tileName = json.getString("tileName")
+
+        Log.i("DktClientHandler", "Feld erfolgreich gekauft: $tileName von $playerId")
+
+        OwnershipClient.addProperty(playerId, tileName)
+        activity.showOwnership()
+    }
+
 
 
 }
