@@ -70,6 +70,17 @@ class MainActivity : ComponentActivity() {
 
         }
     }
+    fun showOwnership() {
+        val textView = findViewById<TextView>(R.id.response_view)
+        val sb = StringBuilder()
+        for ((player, props) in OwnershipClient.all()) {
+            sb.append("$player besitzt: ${props.joinToString(", ")}\n")
+        }
+        runOnUiThread {
+            textView.text = sb.toString()
+        }
+    }
+
 
 }
 
