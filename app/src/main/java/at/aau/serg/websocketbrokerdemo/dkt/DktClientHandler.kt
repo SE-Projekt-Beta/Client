@@ -9,7 +9,6 @@ class DktClientHandler(private val activity: MainActivity) {
 
     fun handle(message: GameMessage) {
         when (message.type) {
-            "test" -> handleTest(message.payload)
             "dice_result" -> handleDiceResult(message.payload)
             "buy_property" -> handleBuyProperty(message.payload)
             "player_moved" -> handlePlayerMoved(message.payload)
@@ -17,13 +16,9 @@ class DktClientHandler(private val activity: MainActivity) {
             "property_bought" -> handlePropertyBought(message.payload)
             "draw_event_card" -> handleDrawEventCard(message.payload)
             "must_pay_rent" -> handleMustPayRent(message.payload)
+            "event_card" -> handleEventCard(message.payload)
             else -> Log.w("DktClientHandler", "Unbekannter Nachrichtentyp: ${message.type}")
         }
-    }
-
-    private fun handleTest(payload: String) {
-        Log.i("DktClientHandler", "Test empfangen: $payload")
-        activity.showResponse("Test: $payload")
     }
 
     private fun handleDiceResult(payload: String) {
@@ -47,6 +42,13 @@ class DktClientHandler(private val activity: MainActivity) {
         Log.i("DktClientHandler", "$playerId hat $dice gewürfelt und ist auf Feld $pos gelandet: $tileName ($tileType)")
         activity.showResponse("$playerId → $tileName ($tileType), gewürfelt: $dice")
         GameStateClient.updatePosition(playerId, pos)
+
+        /*  --> Neues: hole Tile aus dem Modell
+        val tile = at.aau.serg.websocketbrokerdemo.model.BoardMap.tiles[pos]
+
+        Log.i("DktClientHandler", "$playerId hat $dice gewürfelt und ist auf Feld $pos gelandet: ${tile.name} (${tile.type})")
+        activity.showResponse("$playerId → ${tile.name} (${tile.type}), gewürfelt: $dice")
+        */
     }
 
     private fun handleCanBuyProperty(payload: String) {
@@ -79,5 +81,11 @@ class DktClientHandler(private val activity: MainActivity) {
         Log.i("DktClientHandler", "$playerId muss Miete an $ownerId zahlen für $tileName")
         activity.showResponse("$playerId muss Miete an $ownerId zahlen für $tileName")
     }
+    private fun handleEventCard(payload: String) {
+        Log.i("DktClientHandler", "Ereigniskarte gezogen: $payload")
+        activity.showEventCard(payload)
+    }
+
 
 }
+
