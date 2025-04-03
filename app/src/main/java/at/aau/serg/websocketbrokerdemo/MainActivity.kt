@@ -8,29 +8,70 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.enableEdgeToEdge
+import at.aau.serg.websocketbrokerdemo.dkt.DktClientHandler
+import at.aau.serg.websocketbrokerdemo.dkt.GameMessage
 import com.example.myapplication.R
+import org.json.JSONObject
 
-class MainActivity : ComponentActivity(), Callbacks {
-    lateinit var mystomp:MyStomp
-    lateinit var  response:TextView
+class MainActivity : ComponentActivity() {
+
+    private lateinit var mystomp: MyStomp
+    private lateinit var clientHandler: DktClientHandler
+    private lateinit var response: TextView
+
     override fun onCreate(savedInstanceState: Bundle?) {
-        mystomp=MyStomp(this)
-
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.fragment_fullscreen)
 
-        findViewById<Button>(R.id.connectbtn).setOnClickListener { mystomp.connect() }
-        findViewById<Button>(R.id.hellobtn).setOnClickListener{mystomp.sendHello()}
-        findViewById<Button>(R.id.jsonbtn).setOnClickListener{mystomp.sendJson()}
-        response=findViewById(R.id.response_view)
+        clientHandler = DktClientHandler(this)
+        mystomp = MyStomp(clientHandler)
 
+        findViewById<Button>(R.id.connectbtn).setOnClickListener {
+            mystomp.connect()
+        }
+
+        findViewById<Button>(R.id.hellobtn).setOnClickListener {
+            mystomp.sendHello()
+        }
+
+        findViewById<Button>(R.id.jsonbtn).setOnClickListener {
+            mystomp.sendJson()
+        }
+
+        findViewById<Button>(R.id.dktbtn).setOnClickListener {
+            val msg = GameMessage("test", "Hallo vom Client")
+            mystomp.sendGameMessage(msg)
+        }
+
+        findViewById<Button>(R.id.rollDiceBtn).setOnClickListener {
+            val payload = JSONObject()
+            payload.put("playerId", "player1")
+            mystomp.sendGameMessage(GameMessage("roll_dice", payload.toString()))
+        }
+
+        response = findViewById(R.id.response_view)
     }
 
-    override fun onResponse(res: String) {
-        response.setText(res)
+    fun showBuyButton(tileName: String, tilePos: Int, playerId: String) {
+        runOnUiThread {
+            val button = findViewById<Button>(R.id.buybtn)
+            button.text = "Kaufen: $tileName"
+            button.visibility = View.VISIBLE
+
+            button.setOnClickListener {
+                val payload = JSONObject()
+                payload.put("playerId", playerId)
+                payload.put("tilePos", tilePos)
+                mystomp.sendGameMessage(GameMessage("buy_property", payload.toString()))
+                button.visibility = View.GONE
+            }
+        }
     }
-
-
+    fun showResponse(msg: String) {
+        runOnUiThread {
+            response.text = msg
+        }
+    }
 }
 
