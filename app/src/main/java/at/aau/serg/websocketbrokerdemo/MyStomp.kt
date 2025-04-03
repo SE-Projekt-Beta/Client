@@ -39,22 +39,6 @@ class MyStomp(private val dktHandler: DktClientHandler) {
                 }
             }
 
-            // Optional: Hello-Response abonnieren
-            val topicFlow: Flow<String> = session.subscribeText("/topic/hello-response")
-            launch {
-                topicFlow.collect { msg ->
-                    Log.i("MyStomp", "Hello-Response: $msg")
-                }
-            }
-
-            // Optional: JSON-Nachrichten empfangen
-            val jsonFlow: Flow<String> = session.subscribeText("/topic/rcv-object")
-            launch {
-                jsonFlow.collect { msg ->
-                    val o = JSONObject(msg)
-                    Log.i("MyStomp", "JSON erhalten: ${o.get("text")}")
-                }
-            }
 
             Log.i("MyStomp", "Verbindung aufgebaut!")
         }
