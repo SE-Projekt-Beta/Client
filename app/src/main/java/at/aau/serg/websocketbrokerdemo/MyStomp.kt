@@ -17,6 +17,7 @@ import org.json.JSONObject
 import at.aau.serg.websocketbrokerdemo.dkt.GameMessage
 import at.aau.serg.websocketbrokerdemo.model.GameBoard
 import com.google.gson.Gson
+import at.aau.serg.websocketbrokerdemo.gson;
 
 
 private  val WEBSOCKET_URI = "ws://10.0.2.2:8080/websocket-example-broker";
@@ -45,11 +46,13 @@ class MyStomp(private val dktHandler: DktClientHandler) {
             val boardFlow: Flow<String> = session.subscribeText("/topic/board")
             launch {
                 boardFlow.collect { msg ->
-                    val board = Gson().fromJson(msg, GameBoard::class.java)
+                    // just print the json
+                    Log.d("MyStomp", "Received board JSON: $msg")
+                    val board = gson.fromJson(msg, GameBoard::class.java)
                     // Do something with board (update UI, pass to handler, etc.)
                     Log.d("MyStomp", "Received board: $board")
                     // print the tile at position 5
-                    Log.d("MyStomp", "Tile at position 5: ${board.getTileAt(5)}")
+                    Log.d("MyStomp", "Tile at position 5: ${board.getTileAt(5).getName()}")
                 }
             }
 
