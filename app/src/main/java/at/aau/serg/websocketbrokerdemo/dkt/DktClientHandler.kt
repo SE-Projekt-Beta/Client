@@ -9,7 +9,6 @@ class DktClientHandler(private val activity: MainActivity) {
 
     fun handle(message: GameMessage) {
         when (message.type) {
-            "test" -> handleTest(message.payload)
             "dice_result" -> handleDiceResult(message.payload)
             "buy_property" -> handleBuyProperty(message.payload)
             "player_moved" -> handlePlayerMoved(message.payload)
@@ -19,11 +18,6 @@ class DktClientHandler(private val activity: MainActivity) {
             "must_pay_rent" -> handleMustPayRent(message.payload)
             else -> Log.w("DktClientHandler", "Unbekannter Nachrichtentyp: ${message.type}")
         }
-    }
-
-    private fun handleTest(payload: String) {
-        Log.i("DktClientHandler", "Test empfangen: $payload")
-        activity.showResponse("Test: $payload")
     }
 
     private fun handleDiceResult(payload: String) {
