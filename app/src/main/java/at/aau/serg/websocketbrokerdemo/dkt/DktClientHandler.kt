@@ -17,19 +17,18 @@ class DktClientHandler(private val activity: MainActivity) {
             "draw_event_card" -> handleDrawEventCard(message.payload)
             "must_pay_rent" -> handleMustPayRent(message.payload)
             "event_card" -> handleEventCard(message.payload)
-            "property_bought" -> handlePropertyBought(message.payload)
             else -> Log.w("DktClientHandler", "Unbekannter Nachrichtentyp: ${message.type}")
         }
     }
 
     private fun handleDiceResult(payload: String) {
         Log.i("DktClientHandler", "Würfelergebnis empfangen: $payload")
-        activity.showResponse("🎲 Gewürfelt: $payload")
+        activity.showResponse("Gewürfelt: $payload")
     }
 
     private fun handleBuyProperty(payload: String) {
         Log.i("DktClientHandler", "Kaufversuch: $payload")
-        activity.showResponse("🛒 Kaufe: $payload")
+        activity.showResponse("Kaufe: $payload")
     }
 
     private fun handlePlayerMoved(payload: String) {
@@ -43,13 +42,6 @@ class DktClientHandler(private val activity: MainActivity) {
         Log.i("DktClientHandler", "$playerId hat $dice gewürfelt und ist auf Feld $pos gelandet: $tileName ($tileType)")
         activity.showResponse("$playerId → $tileName ($tileType), gewürfelt: $dice")
         GameStateClient.updatePosition(playerId, pos)
-
-        /*  --> Neues: hole Tile aus dem Modell
-        val tile = at.aau.serg.websocketbrokerdemo.model.BoardMap.tiles[pos]
-
-        Log.i("DktClientHandler", "$playerId hat $dice gewürfelt und ist auf Feld $pos gelandet: ${tile.name} (${tile.type})")
-        activity.showResponse("$playerId → ${tile.name} (${tile.type}), gewürfelt: $dice")
-        */
     }
 
     private fun handleCanBuyProperty(payload: String) {
@@ -64,9 +56,16 @@ class DktClientHandler(private val activity: MainActivity) {
     }
 
     private fun handlePropertyBought(payload: String) {
-        Log.i("DktClientHandler", "Feld erfolgreich gekauft: $payload")
-        activity.showResponse("Kauf abgeschlossen: $payload")
+        val json = JSONObject(payload)
+        val playerId = json.getString("playerId")
+        val tileName = json.getString("tileName")
+
+        Log.i("DktClientHandler", "Feld erfolgreich gekauft: $tileName von $playerId")
+        OwnershipClient.addProperty(playerId, tileName)
+        activity.showOwnership()
+        activity.showResponse("Kauf abgeschlossen: $tileName für $playerId")
     }
+
 
     private fun handleDrawEventCard(payload: String) {
         Log.i("DktClientHandler", "Ereigniskarte ziehen: $payload")
@@ -86,19 +85,5 @@ class DktClientHandler(private val activity: MainActivity) {
         Log.i("DktClientHandler", "Ereigniskarte gezogen: $payload")
         activity.showEventCard(payload)
     }
-
-    private fun handlePropertyBought(payload: String) {
-        val json = JSONObject(payload)
-        val playerId = json.getString("playerId")
-        val tileName = json.getString("tileName")
-
-        Log.i("DktClientHandler", "Feld erfolgreich gekauft: $tileName von $playerId")
-
-        OwnershipClient.addProperty(playerId, tileName)
-        activity.showOwnership()
-    }
-
-
-
 }
 
