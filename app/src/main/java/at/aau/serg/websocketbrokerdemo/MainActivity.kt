@@ -13,6 +13,7 @@ import at.aau.serg.websocketbrokerdemo.dkt.GameMessage
 import com.example.myapplication.R
 import org.json.JSONObject
 
+
 class MainActivity : ComponentActivity() {
 
     private lateinit var mystomp: MyStomp
@@ -26,23 +27,8 @@ class MainActivity : ComponentActivity() {
 
         clientHandler = DktClientHandler(this)
         mystomp = MyStomp(clientHandler)
+        mystomp.connect()
 
-        findViewById<Button>(R.id.connectbtn).setOnClickListener {
-            mystomp.connect()
-        }
-
-        findViewById<Button>(R.id.hellobtn).setOnClickListener {
-            mystomp.sendHello()
-        }
-
-        findViewById<Button>(R.id.jsonbtn).setOnClickListener {
-            mystomp.sendJson()
-        }
-
-        findViewById<Button>(R.id.dktbtn).setOnClickListener {
-            val msg = GameMessage("test", "Hallo vom Client")
-            mystomp.sendGameMessage(msg)
-        }
 
         findViewById<Button>(R.id.rollDiceBtn).setOnClickListener {
             val payload = JSONObject()
@@ -73,5 +59,17 @@ class MainActivity : ComponentActivity() {
             response.text = msg
         }
     }
+
+    fun showEventCard(text: String) {
+        runOnUiThread {
+            android.app.AlertDialog.Builder(this)
+                .setTitle("📦 Ereigniskarte")
+                .setMessage(text)
+                .setPositiveButton("OK", null)
+                .show()
+
+        }
+    }
+
 }
 
