@@ -51,15 +51,27 @@ class LobbyActivity : AppCompatActivity() {
     }
 
     private fun sendJoinLobby() {
+        if (LobbyClient.playerName.isNotEmpty()) {
+            // Spieler hat sich schon registriert!
+            return
+        }
+
         val playerName = generatePlayerName()
 
         val joinPayload = JSONObject().apply {
             put("playerName", playerName)
         }
 
-        LobbyClient.playerName = playerName
         mystomp.sendGameMessage(GameMessage("join_lobby", joinPayload.toString()))
+
+        LobbyClient.playerName = playerName
+
+        // Nach dem Join den Button deaktivieren!
+        runOnUiThread {
+            buttonJoin.isEnabled = false
+        }
     }
+
 
     private fun generatePlayerName(): String {
         return "Player" + (1..1000).random()
