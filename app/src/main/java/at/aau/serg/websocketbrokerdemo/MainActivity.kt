@@ -60,14 +60,18 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    fun showEventCard(text: String) {
+    fun showEventCard(text: String, description: String) {
         runOnUiThread {
+            val title = when {
+                text.contains("Risiko", ignoreCase = true) -> "⚠️ Risiko-Karte"
+                text.contains("Bank", ignoreCase = true) -> "🏦 Bank-Karte"
+                else -> "📦 Ereigniskarte"
+            }
             android.app.AlertDialog.Builder(this)
-                .setTitle("📦 Ereigniskarte")
+                .setTitle(title)
                 .setMessage(text)
                 .setPositiveButton("OK", null)
                 .show()
-
         }
     }
 
