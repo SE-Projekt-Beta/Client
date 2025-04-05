@@ -52,25 +52,21 @@ class LobbyActivity : AppCompatActivity() {
 
     private fun sendJoinLobby() {
         if (LobbyClient.playerName.isNotEmpty()) {
-            // Spieler hat sich schon registriert!
+            // Schon beigetreten
             return
         }
 
-        val playerName = generatePlayerName()
-
-        val joinPayload = JSONObject().apply {
-            put("playerName", playerName)
-        }
+        // Kein PlayerName mehr erzeugen!
+        val joinPayload = JSONObject() // einfach leer
 
         mystomp.sendGameMessage(GameMessage("join_lobby", joinPayload.toString()))
 
-        LobbyClient.playerName = playerName
-
-        // Nach dem Join den Button deaktivieren!
+        // Button deaktivieren, damit man nicht doppelt klickt
         runOnUiThread {
             buttonJoin.isEnabled = false
         }
     }
+
 
 
     private fun generatePlayerName(): String {
@@ -85,8 +81,8 @@ class LobbyActivity : AppCompatActivity() {
     }
 
     private fun startGame() {
-        val intent = Intent(this, MainActivity::class.java)
-        startActivity(intent)
-        finish()
+        // Sende Start-Befehl an den Server
+        mystomp.sendGameMessage(GameMessage("start_game", ""))
     }
+
 }
