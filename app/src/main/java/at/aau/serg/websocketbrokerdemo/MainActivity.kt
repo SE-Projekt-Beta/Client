@@ -9,6 +9,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.enableEdgeToEdge
 import at.aau.serg.websocketbrokerdemo.dkt.DktClientHandler
 import at.aau.serg.websocketbrokerdemo.dkt.GameMessage
+import at.aau.serg.websocketbrokerdemo.dkt.OwnershipClient
+import at.aau.serg.websocketbrokerdemo.lobby.LobbyClient
 import com.example.myapplication.R
 import org.json.JSONObject
 
@@ -18,51 +20,57 @@ class MainActivity : ComponentActivity() {
     private lateinit var mystomp: MyStomp
     private lateinit var clientHandler: DktClientHandler
 
-    lateinit var response: TextView
-    lateinit var ownershipView: TextView
-    lateinit var lobbyView: TextView
-
+    private lateinit var responseView: TextView
+    private lateinit var ownershipView: TextView
+    private lateinit var lobbyView: TextView
+    private lateinit var rollDiceButton: Button
+    private lateinit var buyButton: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.fragment_fullscreen)
 
-        // Views
-        response = findViewById(R.id.response_view)
+        initViews()
+        setupNetwork()
+        setupButtons()
+    }
+
+    private fun initViews() {
+        responseView = findViewById(R.id.response_view)
         ownershipView = findViewById(R.id.ownership_view)
-        lobbyView = findViewById(R.id.lobby_view)
+        rollDiceButton = findViewById(R.id.rollDiceBtn)
+        buyButton = findViewById(R.id.buybtn)
+        buyButton.visibility = View.GONE
+    }
 
-        // Netzwerk
+    private fun setupNetwork() {
         clientHandler = DktClientHandler(this)
-        mystomp = MyStomp(clientHandler)
+        mystomp = MyStomp(dktHandler = clientHandler)
         mystomp.connect()
+    }
 
-        // Buttons
-        findViewById<Button>(R.id.rollDiceBtn).setOnClickListener {
-            val payload = JSONObject()
-            payload.put("playerId", "player1")
+    private fun setupButtons() {
+        rollDiceButton.setOnClickListener {
+            val payload = JSONObject().apply {
+                put("playerId", LobbyClient.playerName)
+            }
             mystomp.sendGameMessage(GameMessage("roll_dice", payload.toString()))
-        }
-
-        findViewById<Button>(R.id.buybtn).setOnClickListener {
-            // Kaufen wird dynamisch angezeigt, daher kein direkter Code hier nötig
         }
     }
 
     fun showResponse(msg: String) {
         runOnUiThread {
-            response.text = msg
+            responseView.text = msg
         }
     }
 
     fun showOwnership() {
         runOnUiThread {
-            val sb = StringBuilder()
-            for ((player, props) in at.aau.serg.websocketbrokerdemo.dkt.OwnershipClient.all()) {
-                sb.append("$player besitzt:\n  - ${props.joinToString("\n  - ")}\n\n")
+            val text = OwnershipClient.all().entries.joinToString("\n\n") { (player, props) ->
+                "$player besitzt:\n  - ${props.joinToString("\n  - ")}"
             }
-            ownershipView.text = sb.toString()
+            ownershipView.text = text
         }
     }
 
@@ -74,20 +82,20 @@ class MainActivity : ComponentActivity() {
 
     fun showBuyButton(tileName: String, tilePos: Int, playerId: String) {
         runOnUiThread {
-            val button = findViewById<Button>(R.id.buybtn)
-            button.text = "Kaufen: $tileName"
-            button.visibility = View.VISIBLE
-
-            button.setOnClickListener {
-                val payload = JSONObject()
-                payload.put("playerId", playerId)
-                payload.put("tilePos", tilePos)
-                mystomp.sendGameMessage(GameMessage("buy_property", payload.toString()))
-                button.visibility = View.GONE
+            buyButton.apply {
+                text = "Kaufen: $tileName"
+                visibility = View.VISIBLE
+                setOnClickListener {
+                    val payload = JSONObject().apply {
+                        put("playerId", playerId)
+                        put("tilePos", tilePos)
+                    }
+                    mystomp.sendGameMessage(GameMessage("buy_property", payload.toString()))
+                    visibility = View.GONE
+                }
             }
         }
     }
-
 
     fun showEventCard(cardText: String) {
         runOnUiThread {
@@ -99,4 +107,3 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-
