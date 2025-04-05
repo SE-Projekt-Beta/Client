@@ -15,48 +15,36 @@ import org.hildan.krossbow.stomp.subscribeText
 import org.hildan.krossbow.websocket.okhttp.OkHttpWebSocketClient
 import org.json.JSONObject
 import at.aau.serg.websocketbrokerdemo.dkt.GameMessage
+import at.aau.serg.websocketbrokerdemo.lobby.LobbyHandler
 import com.google.gson.Gson
 
 
 private  val WEBSOCKET_URI = "ws://10.0.2.2:8080/websocket-example-broker";
-class MyStomp(private val dktHandler: DktClientHandler) {
-
+class MyStomp(
+    private val dktHandler: DktClientHandler? = null,
+    private val lobbyHandler: LobbyHandler? = null
+) {
     private lateinit var session: StompSession
     private val scope: CoroutineScope = CoroutineScope(Dispatchers.IO)
 
     fun connect() {
         val client = StompClient(OkHttpWebSocketClient())
-
         scope.launch {
             session = client.connect(WEBSOCKET_URI)
 
-            // DKT Topic abonnieren
             val dktFlow: Flow<String> = session.subscribeText("/topic/dkt")
             launch {
                 dktFlow.collect { msg ->
                     val gameMessage = Gson().fromJson(msg, GameMessage::class.java)
-                    dktHandler.handle(gameMessage)
+
+                    if (gameMessage.type.startsWith("lobby")) {
+                        lobbyHandler?.handle(gameMessage)
+                    } else {
+                        dktHandler?.handle(gameMessage)
+                    }
                 }
             }
-
-
             Log.i("MyStomp", "Verbindung aufgebaut!")
-        }
-    }
-
-    fun sendHello() {
-        scope.launch {
-            session.sendText("/app/hello", "message from client")
-        }
-    }
-
-    fun sendJson() {
-        val json = JSONObject()
-        json.put("from", "client")
-        json.put("text", "from client")
-
-        scope.launch {
-            session.sendText("/app/object", json.toString())
         }
     }
 
