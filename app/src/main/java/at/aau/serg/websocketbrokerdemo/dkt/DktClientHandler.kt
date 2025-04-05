@@ -1,11 +1,14 @@
 package at.aau.serg.websocketbrokerdemo.dkt
 
-import org.json.JSONObject
 import android.util.Log
 import at.aau.serg.websocketbrokerdemo.MainActivity
+import at.aau.serg.websocketbrokerdemo.dkt.GameStateClient
+import at.aau.serg.websocketbrokerdemo.dkt.OwnershipClient
+import org.json.JSONObject
 
-
-class DktClientHandler(private val activity: MainActivity) {
+class DktClientHandler(
+    private val activity: MainActivity
+) {
 
     fun handle(message: GameMessage) {
         when (message.type) {
@@ -17,18 +20,16 @@ class DktClientHandler(private val activity: MainActivity) {
             "draw_event_card" -> handleDrawEventCard(message.payload)
             "must_pay_rent" -> handleMustPayRent(message.payload)
             "event_card" -> handleEventCard(message.payload)
-            else -> Log.w("DktClientHandler", "Unbekannter Nachrichtentyp: ${message.type}")
+            else -> Log.w(TAG, "Unbekannter Nachrichtentyp: ${message.type}")
         }
     }
 
     private fun handleDiceResult(payload: String) {
-        Log.i("DktClientHandler", "Würfelergebnis empfangen: $payload")
-        activity.showResponse("Gewürfelt: $payload")
+        logAndShow("Gewürfelergebnis", payload)
     }
 
     private fun handleBuyProperty(payload: String) {
-        Log.i("DktClientHandler", "Kaufversuch: $payload")
-        activity.showResponse("Kaufe: $payload")
+        logAndShow("Kaufversuch", payload)
     }
 
     private fun handlePlayerMoved(payload: String) {
@@ -39,8 +40,9 @@ class DktClientHandler(private val activity: MainActivity) {
         val tileName = json.getString("tileName")
         val tileType = json.getString("tileType")
 
-        Log.i("DktClientHandler", "$playerId hat $dice gewürfelt und ist auf Feld $pos gelandet: $tileName ($tileType)")
+        Log.i(TAG, "$playerId hat $dice gewürfelt und ist auf Feld $pos gelandet: $tileName ($tileType)")
         activity.showResponse("$playerId → $tileName ($tileType), gewürfelt: $dice")
+
         GameStateClient.updatePosition(playerId, pos)
     }
 
@@ -50,7 +52,7 @@ class DktClientHandler(private val activity: MainActivity) {
         val tilePos = json.getInt("tilePos")
         val playerId = json.getString("playerId")
 
-        Log.i("DktClientHandler", "$playerId darf $tileName kaufen!")
+        Log.i(TAG, "$playerId darf $tileName kaufen!")
         activity.showBuyButton(tileName, tilePos, playerId)
         activity.showResponse("$playerId darf $tileName kaufen")
     }
@@ -60,16 +62,14 @@ class DktClientHandler(private val activity: MainActivity) {
         val playerId = json.getString("playerId")
         val tileName = json.getString("tileName")
 
-        Log.i("DktClientHandler", "Feld erfolgreich gekauft: $tileName von $playerId")
+        Log.i(TAG, "Feld erfolgreich gekauft: $tileName von $playerId")
         OwnershipClient.addProperty(playerId, tileName)
         activity.showOwnership()
         activity.showResponse("Kauf abgeschlossen: $tileName für $playerId")
     }
 
-
     private fun handleDrawEventCard(payload: String) {
-        Log.i("DktClientHandler", "Ereigniskarte ziehen: $payload")
-        activity.showResponse("Ereigniskarte: $payload")
+        logAndShow("Ereigniskarte ziehen", payload)
     }
 
     private fun handleMustPayRent(payload: String) {
@@ -78,14 +78,21 @@ class DktClientHandler(private val activity: MainActivity) {
         val ownerId = json.getString("ownerId")
         val tileName = json.getString("tileName")
 
-        Log.i("DktClientHandler", "$playerId muss Miete an $ownerId zahlen für $tileName")
+        Log.i(TAG, "$playerId muss Miete an $ownerId zahlen für $tileName")
         activity.showResponse("$playerId muss Miete an $ownerId zahlen für $tileName")
     }
+
     private fun handleEventCard(payload: String) {
-        Log.i("DktClientHandler", "Ereigniskarte gezogen: $payload")
+        Log.i(TAG, "Ereigniskarte gezogen: $payload")
         activity.showEventCard(payload)
     }
 
+    private fun logAndShow(title: String, payload: String) {
+        Log.i(TAG, "$title: $payload")
+        activity.showResponse("$title: $payload")
+    }
 
+    companion object {
+        private const val TAG = "DktClientHandler"
+    }
 }
-
