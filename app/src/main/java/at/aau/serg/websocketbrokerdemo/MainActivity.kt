@@ -1,7 +1,6 @@
 package at.aau.serg.websocketbrokerdemo
 
 import MyStomp
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
@@ -10,7 +9,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.enableEdgeToEdge
 import at.aau.serg.websocketbrokerdemo.dkt.DktClientHandler
 import at.aau.serg.websocketbrokerdemo.dkt.GameMessage
-import at.aau.serg.websocketbrokerdemo.dkt.OwnershipClient
 import com.example.myapplication.R
 import org.json.JSONObject
 
@@ -19,32 +17,60 @@ class MainActivity : ComponentActivity() {
 
     private lateinit var mystomp: MyStomp
     private lateinit var clientHandler: DktClientHandler
-    private lateinit var response: TextView
+
+    lateinit var response: TextView
+    lateinit var ownershipView: TextView
+    lateinit var lobbyView: TextView
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.fragment_fullscreen)
 
-        // Initialisiere Handler & Verbindung
+        // Views
+        response = findViewById(R.id.response_view)
+        ownershipView = findViewById(R.id.ownership_view)
+        lobbyView = findViewById(R.id.lobby_view)
+
+        // Netzwerk
         clientHandler = DktClientHandler(this)
         mystomp = MyStomp(clientHandler)
         mystomp.connect()
 
-        // Würfeln
+        // Buttons
         findViewById<Button>(R.id.rollDiceBtn).setOnClickListener {
-            val payload = JSONObject().apply {
-                put("playerId", "player1")
-            }
-            val msg = GameMessage("roll_dice", payload.toString())
-            mystomp.sendGameMessage(msg)
+            val payload = JSONObject()
+            payload.put("playerId", "player1")
+            mystomp.sendGameMessage(GameMessage("roll_dice", payload.toString()))
         }
 
-        // Views
-        response = findViewById(R.id.response_view)
-        findViewById<TextView>(R.id.ownership_view).text = "Noch kein Besitz"
+        findViewById<Button>(R.id.buybtn).setOnClickListener {
+            // Kaufen wird dynamisch angezeigt, daher kein direkter Code hier nötig
+        }
     }
 
+    fun showResponse(msg: String) {
+        runOnUiThread {
+            response.text = msg
+        }
+    }
+
+    fun showOwnership() {
+        runOnUiThread {
+            val sb = StringBuilder()
+            for ((player, props) in at.aau.serg.websocketbrokerdemo.dkt.OwnershipClient.all()) {
+                sb.append("$player besitzt:\n  - ${props.joinToString("\n  - ")}\n\n")
+            }
+            ownershipView.text = sb.toString()
+        }
+    }
+
+    fun updateLobby(players: List<String>) {
+        runOnUiThread {
+            lobbyView.text = "Lobby:\n" + players.joinToString("\n") { "- $it" }
+        }
+    }
 
     fun showBuyButton(tileName: String, tilePos: Int, playerId: String) {
         runOnUiThread {
@@ -61,33 +87,16 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-    fun showResponse(msg: String) {
-        runOnUiThread {
-            response.text = msg
-        }
-    }
 
-    fun showEventCard(text: String) {
+
+    fun showEventCard(cardText: String) {
         runOnUiThread {
             android.app.AlertDialog.Builder(this)
-                .setTitle("📦 Ereigniskarte")
-                .setMessage(text)
+                .setTitle("Ereigniskarte")
+                .setMessage(cardText)
                 .setPositiveButton("OK", null)
                 .show()
-
         }
     }
-    fun showOwnership() {
-        val ownershipTextView = findViewById<TextView>(R.id.ownership_view)
-        val sb = StringBuilder()
-        for ((player, props) in OwnershipClient.all()) {
-            sb.append("$player besitzt:\n  - ${props.joinToString("\n  - ")}\n\n")
-        }
-        runOnUiThread {
-            ownershipTextView.text = sb.toString()
-        }
-    }
-
-
 }
 

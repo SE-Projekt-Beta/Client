@@ -85,5 +85,7 @@ class DktClientHandler(private val activity: MainActivity) {
         Log.i("DktClientHandler", "Ereigniskarte gezogen: $payload")
         activity.showEventCard(payload)
     }
+
+
 }
 
