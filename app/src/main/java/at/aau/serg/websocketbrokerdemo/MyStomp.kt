@@ -37,7 +37,7 @@ class MyStomp(
                 dktFlow.collect { msg ->
                     val gameMessage = Gson().fromJson(msg, GameMessage::class.java)
 
-                    if (gameMessage.type.startsWith("lobby")) {
+                    if (gameMessage.type.startsWith("lobby") || gameMessage.type == "start_game") {
                         lobbyHandler?.handle(gameMessage)
                     } else {
                         dktHandler?.handle(gameMessage)
