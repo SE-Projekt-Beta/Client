@@ -25,16 +25,21 @@ class MainActivity : ComponentActivity() {
     private lateinit var lobbyView: TextView
     private lateinit var rollDiceButton: Button
     private lateinit var buyButton: Button
+    private lateinit var myPlayerName: String
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.fragment_fullscreen)
 
+        myPlayerName = intent.getStringExtra("PLAYER_NAME") ?: "unknown"
+
         initViews()
         setupNetwork()
         setupButtons()
     }
+
 
     private fun initViews() {
         responseView = findViewById(R.id.response_view)
@@ -53,7 +58,7 @@ class MainActivity : ComponentActivity() {
     private fun setupButtons() {
         rollDiceButton.setOnClickListener {
             val payload = JSONObject().apply {
-                put("playerId", LobbyClient.playerName)
+                put("playerId", myPlayerName)
             }
             mystomp.sendGameMessage(GameMessage("roll_dice", payload.toString()))
         }

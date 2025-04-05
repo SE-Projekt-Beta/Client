@@ -10,12 +10,15 @@ import org.json.JSONObject
 class LobbyHandler(private val activity: LobbyActivity) {
 
     fun handle(message: GameMessage) {
+        Log.i("LobbyHandler", "Empfange Nachricht: ${message.type}")
         when (message.type) {
             "lobby_update" -> handleLobbyUpdate(message.payload)
             "start_game" -> handleStartGame()
             else -> Log.w("LobbyHandler", "Unbekannter Nachrichtentyp: ${message.type}")
         }
     }
+
+
 
 
     private fun handleLobbyUpdate(payload: String) {
@@ -36,10 +39,14 @@ class LobbyHandler(private val activity: LobbyActivity) {
     }
 
     private fun handleStartGame() {
-        // Wechsel ins Spiel
         val intent = Intent(activity, MainActivity::class.java)
+        intent.putExtra("PLAYER_NAME", LobbyClient.playerName)
         activity.startActivity(intent)
         activity.finish()
     }
+
+
+
+
 
 }
