@@ -14,7 +14,8 @@ class DktClientHandler(private val activity: MainActivity) {
             "player_moved" -> handlePlayerMoved(message.payload)
             "can_buy_property" -> handleCanBuyProperty(message.payload)
             "property_bought" -> handlePropertyBought(message.payload)
-            "draw_event_card" -> handleDrawEventCard(message.payload)
+            "draw_event_risiko_card" -> handleDrawEventRisikoCard(message.payload)
+            "draw_event_bank_card" -> handleDrawEventBankCard(message.payload)
             "must_pay_rent" -> handleMustPayRent(message.payload)
             "event_card" -> handleEventCard(message.payload)
             else -> Log.w("DktClientHandler", "Unbekannter Nachrichtentyp: ${message.type}")
@@ -67,9 +68,14 @@ class DktClientHandler(private val activity: MainActivity) {
         activity.showResponse("Kauf abgeschlossen: $payload")
     }
 
-    private fun handleDrawEventCard(payload: String) {
+    private fun handleDrawEventRisikoCard(payload: String) {
         Log.i("DktClientHandler", "Ereigniskarte ziehen: $payload")
-        activity.showResponse("Ereigniskarte: $payload")
+        activity.showResponse("Risikokarte: $payload")
+    }
+
+    private fun handleDrawEventBankCard(payload: String) {
+        Log.i("DktClientHandler", "Ereigniskarte ziehen: $payload")
+        activity.showResponse("Bankkarte: $payload")
     }
 
     private fun handleMustPayRent(payload: String) {
