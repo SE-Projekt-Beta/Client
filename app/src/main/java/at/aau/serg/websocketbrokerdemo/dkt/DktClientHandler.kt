@@ -82,8 +82,18 @@ class DktClientHandler(private val activity: MainActivity) {
         activity.showResponse("$playerId muss Miete an $ownerId zahlen für $tileName")
     }
     private fun handleEventCard(payload: String) {
-        Log.i("DktClientHandler", "Ereigniskarte gezogen: $payload")
-        activity.showEventCard(payload)
+        try {
+            val json = JSONObject(payload)
+            val type = json.optString("eventType", "unbekannt")
+            val description = json.optString("eventDescription", "Kein Text")
+
+            Log.i("DktClientHandler", "Ereigniskarte: Typ=$type, Text=$description")
+            activity.showEventCard(type, description)
+
+        } catch (e: Exception) {
+            Log.e("DktClientHandler", "Fehler beim Parsen der Ereigniskarte: ${e.message}")
+            activity.showResponse("⚠️ Fehler beim Anzeigen der Ereigniskarte")
+        }
     }
 
 
