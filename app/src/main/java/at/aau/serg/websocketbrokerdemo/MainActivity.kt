@@ -1,5 +1,6 @@
 package at.aau.serg.websocketbrokerdemo
 
+import DktClientHandler
 import MyStomp
 import android.os.Bundle
 import android.view.View
@@ -7,7 +8,6 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.enableEdgeToEdge
-import at.aau.serg.websocketbrokerdemo.dkt.DktClientHandler
 import at.aau.serg.websocketbrokerdemo.dkt.GameMessage
 import at.aau.serg.websocketbrokerdemo.dkt.OwnershipClient
 import at.aau.serg.websocketbrokerdemo.lobby.LobbyClient

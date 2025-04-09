@@ -7,7 +7,6 @@ import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import at.aau.serg.websocketbrokerdemo.dkt.DktClientHandler
 import at.aau.serg.websocketbrokerdemo.dkt.GameMessage
 import at.aau.serg.websocketbrokerdemo.lobby.LobbyClient
 import at.aau.serg.websocketbrokerdemo.lobby.LobbyHandler
