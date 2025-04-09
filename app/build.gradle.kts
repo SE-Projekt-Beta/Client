@@ -105,8 +105,16 @@ sonar {
         )
         property(
             "sonar.coverage.exclusions",
-            "**/MainActivity.kt, **/LobbyActivity.kt, **/MyStomp.kt"
+                    "**/MainActivity.kt, " +
+                    "**/LobbyActivity.kt, " +
+                    "**/MyStomp.kt, " +
+                    "**/MyApplicationTheme.kt, " +
+                    "**/Color.kt, " +
+                    "**/Typography.kt, " +
+                    "**/MyLog.kt, " +
+                    "**/Callbacks.kt"
         )
+
     }
 }
 
@@ -127,6 +135,7 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.androidx.activity)
+    testImplementation("org.mockito.kotlin:mockito-kotlin:5.2.1")
     testImplementation(libs.junit)
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
