@@ -121,6 +121,8 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation("org.json:json:20231013")
     implementation(libs.androidx.appcompat)
+    implementation(libs.material)
+    implementation(libs.androidx.activity)
     testImplementation(libs.junit)
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
