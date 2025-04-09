@@ -25,15 +25,6 @@ class GameViewFragment : Fragment() {
         return binding.root
     }
 
-    /*override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        binding.rollDiceButton?.setOnClickListener {
-            val dice = (1..6).random()
-            binding.diceResultText.text = "Gewürfelt: $dice"
-        }
-    }*/
-
     override fun onPause() {
         super.onPause()
         requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
