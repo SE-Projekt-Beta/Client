@@ -7,14 +7,14 @@ import org.junit.jupiter.api.Test
 
 class GameMessageTest {
     @Test
-    fun `should correctly create a GameMessage`() {
+    fun testGameMessage() {
         val message = GameMessage("test_type", "test_payload")
         assertEquals("test_type", message.type)
         assertEquals("test_payload", message.payload)
     }
 
     @Test
-    fun `should serialize and deserialize playerMoved message`() {
+    fun testPlayerMovedMessage() {
         val payload = JSONObject().apply {
             put("playerId", "player1")
             put("pos", 5)

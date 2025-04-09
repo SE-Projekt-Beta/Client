@@ -6,13 +6,13 @@ import org.junit.jupiter.api.Test
 
 class GameStateClientTest {
     @Test
-    fun `should update and retrieve position`() {
+    fun testUpdateRetrievePosition() {
         GameStateClient.updatePosition("player1", 7)
         assertEquals(7, GameStateClient.getPosition("player1"))
     }
 
     @Test
-    fun `should return default position for unknown player`() {
+    fun testDefaultPositionUnknownPlayer() {
         assertEquals(0, GameStateClient.getPosition("unknown"))
     }
 }

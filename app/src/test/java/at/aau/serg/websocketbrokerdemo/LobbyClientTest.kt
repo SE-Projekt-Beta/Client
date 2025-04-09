@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test
 
 class LobbyClientTest {
     @Test
-    fun `should set and retrieve players`() {
+    fun testSetAndRetrievePlayers() {
         val players = listOf("Player1", "Player2")
         LobbyClient.setPlayers(players)
 
