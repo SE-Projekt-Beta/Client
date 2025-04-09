@@ -108,10 +108,11 @@ sonar {
                     "**/MainActivity.kt, " +
                     "**/LobbyActivity.kt, " +
                     "**/MyStomp.kt, " +
-                    "**/MyApplicationTheme.kt, " +
+                    "**/TileType.kt, " +
                     "**/Color.kt, " +
-                    "**/Typography.kt, " +
-                    "**/MyLog.kt, " +
+                    "**/Tile.kt, " +
+                    "**/Theme.kt," +
+                    "**/Type.kt," +
                     "**/Callbacks.kt"
         )
 
