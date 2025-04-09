@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/frameLayout2"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center">
@@ -12,12 +11,4 @@
         android:text="Bitte Gerät ins Querformat drehen"
         android:textSize="20sp"
         android:textStyle="bold" />
-
-    <Button
-        android:id="@+id/openGameViewBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="open game view" />
-
 </FrameLayout>

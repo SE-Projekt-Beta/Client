@@ -16,10 +16,10 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name="at.aau.serg.websocketbrokerdemo.DiceActivity"
+            android:name="at.aau.serg.websocketbrokerdemo.ui.activities.DiceActivity"
             android:exported="false" />
         <activity
-            android:name="at.aau.serg.websocketbrokerdemo.MainActivity"
+            android:name="at.aau.serg.websocketbrokerdemo.ui.activities.MainActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.MyApplication">

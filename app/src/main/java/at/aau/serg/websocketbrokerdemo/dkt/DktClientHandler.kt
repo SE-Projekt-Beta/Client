@@ -2,7 +2,7 @@ package at.aau.serg.websocketbrokerdemo.dkt
 
 import org.json.JSONObject
 import android.util.Log
-import at.aau.serg.websocketbrokerdemo.MainActivity
+import at.aau.serg.websocketbrokerdemo.ui.activities.MainActivity
 
 
 class DktClientHandler(private val activity: MainActivity) {

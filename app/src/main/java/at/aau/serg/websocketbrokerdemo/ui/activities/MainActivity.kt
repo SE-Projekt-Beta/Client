@@ -1,4 +1,4 @@
-package at.aau.serg.websocketbrokerdemo
+package at.aau.serg.websocketbrokerdemo.ui.activities
 
 import MyStomp
 import android.content.Intent
@@ -36,8 +36,8 @@ class MainActivity : ComponentActivity() {
             mystomp.sendGameMessage(GameMessage("roll_dice", payload.toString()))
         }
 
-        findViewById<Button>(R.id.openDiceScreenBtn).setOnClickListener {
-            val intent = Intent(this, DiceActivity::class.java)
+        findViewById<Button>(R.id.openGameViewBtn).setOnClickListener {
+            val intent = Intent(this, GameViewFragment::class.java)
             startActivity(intent)
         }
 
