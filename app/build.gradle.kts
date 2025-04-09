@@ -105,8 +105,16 @@ sonar {
         )
         property(
             "sonar.coverage.exclusions",
-            "**/MainActivity.kt, **/LobbyActivity.kt, **/MyStomp.kt"
+                    "**/MainActivity.kt, " +
+                    "**/LobbyActivity.kt, " +
+                    "**/MyStomp.kt, " +
+                    "**/MyApplicationTheme.kt, " +
+                    "**/Color.kt, " +
+                    "**/Typography.kt, " +
+                    "**/MyLog.kt, " +
+                    "**/Callbacks.kt"
         )
+
     }
 }
 
