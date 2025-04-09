@@ -62,6 +62,7 @@ class MainActivity : ComponentActivity() {
             }
             mystomp.sendGameMessage(GameMessage("roll_dice", payload.toString()))
         }
+
     }
 
     fun showResponse(msg: String) {
@@ -92,7 +93,7 @@ class MainActivity : ComponentActivity() {
                 visibility = View.VISIBLE
                 setOnClickListener {
                     val payload = JSONObject().apply {
-                        put("playerId", playerId)
+                        put("playerId", myPlayerName)
                         put("tilePos", tilePos)
                     }
                     mystomp.sendGameMessage(GameMessage("buy_property", payload.toString()))
