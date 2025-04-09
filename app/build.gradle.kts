@@ -138,4 +138,19 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation(libs.gson)
     implementation(kotlin("test"))
+
+// Testing dependencies
+    testImplementation(libs.junit)
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.2")
+
+    // MockK for Kotlin-friendly mocking
+    testImplementation("io.mockk:mockk:1.13.8")
+
+    testImplementation("androidx.test.ext:junit:1.1.5")
+    testImplementation("androidx.test:core:1.5.0")
+    testImplementation("org.robolectric:robolectric:4.10.3")
+
+
+
 }
