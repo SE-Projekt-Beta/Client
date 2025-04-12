@@ -8,11 +8,11 @@ import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.enableEdgeToEdge
 import at.aau.serg.websocketbrokerdemo.dkt.DktClientHandler
-import at.aau.serg.websocketbrokerdemo.dkt.GameMessage
+import at.aau.serg.websocketbrokerdemo.network.GameMessage
 import at.aau.serg.websocketbrokerdemo.dkt.OwnershipClient
-import at.aau.serg.websocketbrokerdemo.lobby.LobbyClient
+import at.aau.serg.websocketbrokerdemo.network.MessageType
 import com.example.myapplication.R
-import org.json.JSONObject
+import com.google.gson.JsonObject
 
 
 class MainActivity : ComponentActivity() {
@@ -27,7 +27,6 @@ class MainActivity : ComponentActivity() {
     private lateinit var buyButton: Button
     private lateinit var myPlayerName: String
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -39,7 +38,6 @@ class MainActivity : ComponentActivity() {
         setupNetwork()
         setupButtons()
     }
-
 
     private fun initViews() {
         responseView = findViewById(R.id.response_view)
@@ -57,12 +55,11 @@ class MainActivity : ComponentActivity() {
 
     private fun setupButtons() {
         rollDiceButton.setOnClickListener {
-            val payload = JSONObject().apply {
-                put("playerId", myPlayerName)
+            val payload = JsonObject().apply {
+                addProperty("playerId", myPlayerName)
             }
-            mystomp.sendGameMessage(GameMessage("roll_dice", payload.toString()))
+            mystomp.sendGameMessage(GameMessage(MessageType.ROLL_DICE, payload))
         }
-
     }
 
     fun showResponse(msg: String) {
@@ -92,11 +89,11 @@ class MainActivity : ComponentActivity() {
                 text = "Kaufen: $tileName"
                 visibility = View.VISIBLE
                 setOnClickListener {
-                    val payload = JSONObject().apply {
-                        put("playerId", myPlayerName)
-                        put("tilePos", tilePos)
+                    val payload = JsonObject().apply {
+                        addProperty("playerId", myPlayerName)
+                        addProperty("tilePos", tilePos)
                     }
-                    mystomp.sendGameMessage(GameMessage("buy_property", payload.toString()))
+                    mystomp.sendGameMessage(GameMessage(MessageType.BUY_PROPERTY, payload))
                     visibility = View.GONE
                 }
             }
