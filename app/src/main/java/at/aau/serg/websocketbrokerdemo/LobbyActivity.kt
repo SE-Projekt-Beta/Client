@@ -1,17 +1,18 @@
 package at.aau.serg.websocketbrokerdemo
 
 import MyStomp
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import at.aau.serg.websocketbrokerdemo.dkt.DktClientHandler
-import at.aau.serg.websocketbrokerdemo.dkt.GameMessage
+import at.aau.serg.websocketbrokerdemo.network.GameMessage
 import at.aau.serg.websocketbrokerdemo.lobby.LobbyClient
 import at.aau.serg.websocketbrokerdemo.lobby.LobbyHandler
+import at.aau.serg.websocketbrokerdemo.network.MessageType
 import com.example.myapplication.R
+import com.google.gson.Gson
+import com.google.gson.JsonObject
 import org.json.JSONObject
 
 class LobbyActivity : AppCompatActivity() {
@@ -51,17 +52,13 @@ class LobbyActivity : AppCompatActivity() {
     }
 
     private fun sendJoinLobby() {
-        if (LobbyClient.playerName.isNotEmpty()) {
-            // Schon beigetreten
-            return
-        }
+        if (LobbyClient.playerName.isNotEmpty()) return
 
-        // Kein PlayerName mehr erzeugen!
-        val joinPayload = JSONObject() // einfach leer
+        val joinPayload = Gson().toJsonTree(mapOf("playerName" to "MyPlayerName"))
+        val joinMessage = GameMessage(MessageType.JOIN_LOBBY, joinPayload)
 
-        mystomp.sendGameMessage(GameMessage("join_lobby", joinPayload.toString()))
+        mystomp.sendGameMessage(joinMessage)
 
-        // Button deaktivieren, damit man nicht doppelt klickt
         runOnUiThread {
             buttonJoin.isEnabled = false
         }
@@ -81,8 +78,9 @@ class LobbyActivity : AppCompatActivity() {
     }
 
     private fun startGame() {
-        // Sende Start-Befehl an den Server
-        mystomp.sendGameMessage(GameMessage("start_game", ""))
+        val emptyPayload = JsonObject()
+        mystomp.sendGameMessage(GameMessage(MessageType.START_GAME, emptyPayload))
+
     }
 
 }

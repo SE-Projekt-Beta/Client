@@ -3,10 +3,8 @@ package at.aau.serg.websocketbrokerdemo.lobby
 import android.content.Intent
 import android.util.Log
 import at.aau.serg.websocketbrokerdemo.LobbyActivity
-import at.aau.serg.websocketbrokerdemo.MainActivity
-import at.aau.serg.websocketbrokerdemo.dkt.GameMessage
+import at.aau.serg.websocketbrokerdemo.network.GameMessage
 import io.mockk.*
-import org.json.JSONObject
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 

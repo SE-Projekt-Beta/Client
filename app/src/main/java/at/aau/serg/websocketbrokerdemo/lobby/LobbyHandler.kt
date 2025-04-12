@@ -4,37 +4,29 @@ import android.content.Intent
 import android.util.Log
 import at.aau.serg.websocketbrokerdemo.LobbyActivity
 import at.aau.serg.websocketbrokerdemo.MainActivity
-import at.aau.serg.websocketbrokerdemo.dkt.GameMessage
-import org.json.JSONObject
+import at.aau.serg.websocketbrokerdemo.network.GameMessage
+import at.aau.serg.websocketbrokerdemo.network.MessageType
+import com.google.gson.JsonObject
 
 class LobbyHandler(private val activity: LobbyActivity) {
 
     fun handle(message: GameMessage) {
-        Log.i("LobbyHandler", "Empfange Nachricht: ${message.type}")
         when (message.type) {
-            "lobby_update" -> handleLobbyUpdate(message.payload)
-            "start_game" -> handleStartGame()
-            else -> Log.w("LobbyHandler", "Unbekannter Nachrichtentyp: ${message.type}")
+            MessageType.LOBBY_UPDATE -> handleLobbyUpdate(message.payload.asJsonObject)
+            MessageType.START_GAME -> handleStartGame()
+            else -> Log.w("LobbyHandler", "Unbekannter Typ: ${message.type}")
         }
     }
 
+    private fun handleLobbyUpdate(payload: JsonObject) {
+        val playersJson = payload.getAsJsonArray("players")
 
-
-
-    private fun handleLobbyUpdate(payload: String) {
-        val json = JSONObject(payload)
-        val playersJson = json.getJSONArray("players")
-
-        // Liste der Spieler aktualisieren
         val players = mutableListOf<String>()
-        for (i in 0 until playersJson.length()) {
-            players.add(playersJson.getString(i))
+        for (playerElement in playersJson) {
+            players.add(playerElement.asString)
         }
 
-        // Speichern
         LobbyClient.setPlayers(players)
-
-        // Ansicht aktualisieren
         activity.showLobby()
     }
 
@@ -44,9 +36,4 @@ class LobbyHandler(private val activity: LobbyActivity) {
         activity.startActivity(intent)
         activity.finish()
     }
-
-
-
-
-
 }
