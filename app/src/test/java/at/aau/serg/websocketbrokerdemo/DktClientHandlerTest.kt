@@ -2,6 +2,7 @@ package at.aau.serg.websocketbrokerdemo.dkt
 
 import android.util.Log
 import at.aau.serg.websocketbrokerdemo.MainActivity
+import at.aau.serg.websocketbrokerdemo.network.GameMessage
 import io.mockk.*
 import org.json.JSONObject
 import org.junit.jupiter.api.BeforeEach
