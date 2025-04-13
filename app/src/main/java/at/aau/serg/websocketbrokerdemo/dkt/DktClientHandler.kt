@@ -17,8 +17,8 @@ class DktClientHandler(
             "player_moved" -> handlePlayerMoved(message.payload)
             "can_buy_property" -> handleCanBuyProperty(message.payload)
             "property_bought" -> handlePropertyBought(message.payload)
-            "draw_event_risiko_card" -> handleDrawEventRisikoCard(message.payload)
-            "draw_event_bank_card" -> handleDrawEventBankCard(message.payload)
+            "event_card_risiko" -> handleDrawEventRisikoCard(message.payload)
+            "event_card_bank" -> handleDrawEventBankCard(message.payload)
             "must_pay_rent" -> handleMustPayRent(message.payload)
             else -> Log.w(TAG, "Unbekannter Nachrichtentyp: ${message.type}")
         }
