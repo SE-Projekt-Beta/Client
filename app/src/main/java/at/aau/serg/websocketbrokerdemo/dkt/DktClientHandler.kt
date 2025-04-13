@@ -20,7 +20,6 @@ class DktClientHandler(
             "draw_event_risiko_card" -> handleDrawEventRisikoCard(message.payload)
             "draw_event_bank_card" -> handleDrawEventBankCard(message.payload)
             "must_pay_rent" -> handleMustPayRent(message.payload)
-            "event_card" -> handleEventCard(message.payload)
             else -> Log.w(TAG, "Unbekannter Nachrichtentyp: ${message.type}")
         }
     }
@@ -70,13 +69,35 @@ class DktClientHandler(
     }
 
     private fun handleDrawEventRisikoCard(payload: String) {
-        Log.i("DktClientHandler", "Ereigniskarte ziehen: $payload")
-        activity.showResponse("Risikokarte: $payload")
+        try {
+            val json = JSONObject(payload)
+            val title = json.optString("eventTitle", "Unbekannter Titel")
+            val description = json.optString("eventDescription", "Keine Beschreibung")
+            val amount = json.optInt("eventAmount", 0)
+
+            Log.i(TAG, "Risikokarte: $title – $description (${amount}€)")
+            activity.showEventCard(title, "$description\nBetrag: $amount€")
+
+        } catch (e: Exception) {
+            Log.e(TAG, "Fehler beim Parsen der Risikokarte: ${e.message}")
+            activity.showResponse("⚠️ Fehler beim Anzeigen der Risikokarte")
+        }
     }
 
     private fun handleDrawEventBankCard(payload: String) {
-        Log.i("DktClientHandler", "Ereigniskarte ziehen: $payload")
-        activity.showResponse("Bankkarte: $payload")
+        try {
+            val json = JSONObject(payload)
+            val title = json.optString("eventTitle", "Unbekannter Titel")
+            val description = json.optString("eventDescription", "Keine Beschreibung")
+            val amount = json.optInt("eventAmount", 0)
+
+            Log.i(TAG, "Bankkarte: $title – $description (${amount}€)")
+            activity.showEventCard(title, "$description\nBetrag: $amount€")
+
+        } catch (e: Exception) {
+            Log.e(TAG, "Fehler beim Parsen der Bankkarte: ${e.message}")
+            activity.showResponse("⚠️ Fehler beim Anzeigen der Bankkarte")
+        }
     }
 
     private fun handleMustPayRent(payload: String) {
@@ -87,21 +108,6 @@ class DktClientHandler(
 
         Log.i(TAG, "$playerId muss Miete an $ownerId zahlen für $tileName")
         activity.showResponse("$playerId muss Miete an $ownerId zahlen für $tileName")
-    }
-
-    private fun handleEventCard(payload: String) {
-        try {
-            val json = JSONObject(payload)
-            val type = json.optString("eventType", "unbekannt")
-            val description = json.optString("eventDescription", "Kein Text")
-
-            Log.i("DktClientHandler", "Ereigniskarte: Typ=$type, Text=$description")
-            activity.showEventCard(type, description)
-
-        } catch (e: Exception) {
-            Log.e("DktClientHandler", "Fehler beim Parsen der Ereigniskarte: ${e.message}")
-            activity.showResponse("⚠️ Fehler beim Anzeigen der Ereigniskarte")
-        }
     }
 
     private fun logAndShow(title: String, payload: String) {
