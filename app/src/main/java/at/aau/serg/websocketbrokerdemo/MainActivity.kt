@@ -1,6 +1,6 @@
 package at.aau.serg.websocketbrokerdemo
 
-import MyStomp
+import at.aau.serg.websocketbrokerdemo.network.GameStomp
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
@@ -8,23 +8,23 @@ import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.enableEdgeToEdge
 import at.aau.serg.websocketbrokerdemo.dkt.DktClientHandler
-import at.aau.serg.websocketbrokerdemo.network.GameMessage
+import at.aau.serg.websocketbrokerdemo.network.dto.GameMessage
 import at.aau.serg.websocketbrokerdemo.dkt.OwnershipClient
-import at.aau.serg.websocketbrokerdemo.network.MessageType
+import at.aau.serg.websocketbrokerdemo.network.dto.GameMessageType
 import com.example.myapplication.R
 import com.google.gson.JsonObject
 
 
 class MainActivity : ComponentActivity() {
 
-    private lateinit var mystomp: MyStomp
+    private lateinit var gameStomp: GameStomp
     private lateinit var clientHandler: DktClientHandler
 
     private lateinit var responseView: TextView
     private lateinit var ownershipView: TextView
-    private lateinit var lobbyView: TextView
     private lateinit var rollDiceButton: Button
     private lateinit var buyButton: Button
+
     private lateinit var myPlayerName: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,7 +32,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.fragment_fullscreen)
 
-        myPlayerName = intent.getStringExtra("PLAYER_NAME") ?: "unknown"
+        myPlayerName = intent.getStringExtra("USERNAME") ?: "unknown" // <- war PLAYER_NAME, nun USERNAME!
 
         initViews()
         setupNetwork()
@@ -49,8 +49,8 @@ class MainActivity : ComponentActivity() {
 
     private fun setupNetwork() {
         clientHandler = DktClientHandler(this)
-        mystomp = MyStomp(dktHandler = clientHandler)
-        mystomp.connect()
+        gameStomp = GameStomp(dktHandler = clientHandler)
+        gameStomp.connect()
     }
 
     private fun setupButtons() {
@@ -58,7 +58,7 @@ class MainActivity : ComponentActivity() {
             val payload = JsonObject().apply {
                 addProperty("playerId", myPlayerName)
             }
-            mystomp.sendGameMessage(GameMessage(MessageType.ROLL_DICE, payload))
+            gameStomp.sendGameMessage(GameMessage(GameMessageType.ROLL_DICE, payload))
         }
     }
 
@@ -77,12 +77,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    fun updateLobby(players: List<String>) {
-        runOnUiThread {
-            lobbyView.text = "Lobby:\n" + players.joinToString("\n") { "- $it" }
-        }
-    }
-
     fun showBuyButton(tileName: String, tilePos: Int, playerId: String) {
         runOnUiThread {
             buyButton.apply {
@@ -93,7 +87,7 @@ class MainActivity : ComponentActivity() {
                         addProperty("playerId", myPlayerName)
                         addProperty("tilePos", tilePos)
                     }
-                    mystomp.sendGameMessage(GameMessage(MessageType.BUY_PROPERTY, payload))
+                    gameStomp.sendGameMessage(GameMessage(GameMessageType.BUY_PROPERTY, payload))
                     visibility = View.GONE
                 }
             }

@@ -2,11 +2,10 @@ package at.aau.serg.websocketbrokerdemo.dkt
 
 import android.util.Log
 import at.aau.serg.websocketbrokerdemo.MainActivity
-import at.aau.serg.websocketbrokerdemo.network.GameMessage
-import at.aau.serg.websocketbrokerdemo.network.MessageType
+import at.aau.serg.websocketbrokerdemo.network.dto.GameMessage
+import at.aau.serg.websocketbrokerdemo.network.dto.GameMessageType
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
-import org.json.JSONObject
 
 class DktClientHandler(
     private val activity: MainActivity
@@ -14,11 +13,12 @@ class DktClientHandler(
 
     fun handle(message: GameMessage) {
         when (message.type) {
-            MessageType.PLAYER_MOVED -> handlePlayerMoved(message.payload.asJsonObject)
-            MessageType.CAN_BUY_PROPERTY -> handleCanBuyProperty(message.payload.asJsonObject)
-            MessageType.PROPERTY_BOUGHT -> handlePropertyBought(message.payload.asJsonObject)
-            MessageType.MUST_PAY_RENT -> handleMustPayRent(message.payload.asJsonObject)
-            MessageType.DRAW_EVENT_RISIKO_CARD, MessageType.DRAW_EVENT_BANK_CARD -> handleEventCard(message.payload)
+            GameMessageType.PLAYER_MOVED -> handlePlayerMoved(message.payload.asJsonObject)
+            GameMessageType.CAN_BUY_PROPERTY -> handleCanBuyProperty(message.payload.asJsonObject)
+            GameMessageType.PROPERTY_BOUGHT -> handlePropertyBought(message.payload.asJsonObject)
+            GameMessageType.MUST_PAY_RENT -> handleMustPayRent(message.payload.asJsonObject)
+            GameMessageType.DRAW_EVENT_BANK_CARD, GameMessageType.DRAW_EVENT_RISIKO_CARD -> handleEventCard(message.payload)
+            GameMessageType.ERROR -> handleError(message.payload.asString)
             else -> Log.w(TAG, "Unbekannter Typ: ${message.type}")
         }
     }
@@ -30,7 +30,7 @@ class DktClientHandler(
         val tileName = payload.get("tileName").asString
         val tileType = payload.get("tileType").asString
 
-        Log.i(TAG, "$playerId hat $dice gewürfelt und ist auf Feld $pos gelandet: $tileName ($tileType)")
+        Log.i(TAG, "$playerId hat $dice gewürfelt auf $tileName ($tileType)")
         activity.showResponse("$playerId → $tileName ($tileType), gewürfelt: $dice")
 
         GameStateClient.updatePosition(playerId, pos)
@@ -50,7 +50,7 @@ class DktClientHandler(
         val playerId = payload.get("playerId").asString
         val tileName = payload.get("tileName").asString
 
-        Log.i(TAG, "Feld erfolgreich gekauft: $tileName von $playerId")
+        Log.i(TAG, "Kauf abgeschlossen: $tileName von $playerId")
         OwnershipClient.addProperty(playerId, tileName)
         activity.showOwnership()
         activity.showResponse("Kauf abgeschlossen: $tileName für $playerId")
@@ -68,6 +68,10 @@ class DktClientHandler(
     private fun handleEventCard(payload: JsonElement) {
         Log.i(TAG, "Ereigniskarte gezogen: $payload")
         activity.showEventCard(payload.toString())
+    }
+
+    private fun handleError(errorMessage: String) {
+        Log.e(TAG, "Fehler vom Server: $errorMessage")
     }
 
     companion object {
