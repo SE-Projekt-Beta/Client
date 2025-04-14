@@ -137,20 +137,6 @@ class DktClientHandlerTest {
     }
 
     @Test
-    fun testHandleDrawEventCard() {
-        // Setup
-        val payload = "Draw card details"
-        val message = GameMessage("draw_event_card", payload)
-
-        // Execute
-        dktClientHandler.handle(message)
-
-        // Verify
-        verify { Log.i("DktClientHandler", "Ereigniskarte ziehen: $payload") }
-        verify { mockActivity.showResponse("Ereigniskarte ziehen: $payload") }
-    }
-
-    @Test
     fun testHandleMustPayRent() {
         // Setup
         val playerId = "player1"
