@@ -1,7 +1,7 @@
 package at.aau.serg.websocketbrokerdemo.lobby
 
 object LobbyClient {
-    var playerName: String = ""
+    var username: String = ""
     private val players = mutableListOf<String>()
 
     fun setPlayers(newPlayers: List<String>) {
@@ -9,7 +9,5 @@ object LobbyClient {
         players.addAll(newPlayers)
     }
 
-    fun allPlayers(): List<String> {
-        return players
-    }
+    fun allPlayers(): List<String> = players.toList()
 }
