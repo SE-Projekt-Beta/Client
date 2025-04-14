@@ -1,0 +1,56 @@
+package at.aau.serg.websocketbrokerdemo
+
+
+import LoginHandler
+import android.content.Intent
+import android.os.Bundle
+import android.widget.Button
+import android.widget.EditText
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.media3.common.util.Log
+import at.aau.serg.websocketbrokerdemo.lobby.LobbyClient
+import at.aau.serg.websocketbrokerdemo.lobby.LobbyHandler
+import at.aau.serg.websocketbrokerdemo.network.LobbyMessageListener
+import at.aau.serg.websocketbrokerdemo.network.dto.LobbyMessage
+import at.aau.serg.websocketbrokerdemo.network.dto.LobbyMessageType
+import at.aau.serg.websocketbrokerdemo.network.LobbyStomp
+import com.example.myapplication.R
+import com.google.gson.JsonObject
+
+class UsernameActivity : AppCompatActivity() {
+
+    private lateinit var lobbyStomp: LobbyStomp
+    private lateinit var loginHandler: LoginHandler
+    private lateinit var usernameEditText: EditText
+    private lateinit var enterButton: Button
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_username)
+
+        usernameEditText = findViewById(R.id.usernameEditText)
+        enterButton = findViewById(R.id.enterButton)
+
+        loginHandler = LoginHandler(this)
+        lobbyStomp = LobbyStomp(loginHandler)
+        lobbyStomp.connect()
+
+        enterButton.setOnClickListener {
+            val username = usernameEditText.text.toString().trim()
+            if (username.isNotEmpty()) {
+                LobbyClient.username = username
+                lobbyStomp.sendJoinLobby(username)
+                Log.i("UsernameActivity", "Username sent to server: $username")
+            } else {
+                Toast.makeText(this, "Please enter username", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    fun startLobbyActivity() {
+        val intent = Intent(this, LobbyActivity::class.java)
+        startActivity(intent)
+        finish()
+    }
+}
