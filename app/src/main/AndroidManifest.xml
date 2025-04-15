@@ -18,7 +18,7 @@
 
         <!-- Starte hier: LobbyActivity -->
         <activity
-            android:name="at.aau.serg.websocketbrokerdemo.LobbyActivity"
+            android:name="at.aau.serg.websocketbrokerdemo.ui.activities.LobbyActivity"
             android:exported="true"
             android:theme="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
             <intent-filter>

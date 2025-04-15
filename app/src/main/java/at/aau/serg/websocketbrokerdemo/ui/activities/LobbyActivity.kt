@@ -1,13 +1,11 @@
-package at.aau.serg.websocketbrokerdemo
+package at.aau.serg.websocketbrokerdemo.ui.activities
 
 import MyStomp
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import at.aau.serg.websocketbrokerdemo.dkt.DktClientHandler
 import at.aau.serg.websocketbrokerdemo.dkt.GameMessage
 import at.aau.serg.websocketbrokerdemo.lobby.LobbyClient
 import at.aau.serg.websocketbrokerdemo.lobby.LobbyHandler
@@ -75,7 +73,7 @@ class LobbyActivity : AppCompatActivity() {
 
     fun showLobby() {
         runOnUiThread {
-            playerListView.text = "Lobby:\n" + LobbyClient.allPlayers().joinToString("\n")
+            playerListView.text = LobbyClient.allPlayers().joinToString("\n")
             buttonStart.visibility = if (LobbyClient.allPlayers().size >= 2) View.VISIBLE else View.GONE
         }
     }
