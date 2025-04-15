@@ -25,6 +25,8 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.fragment_fullscreen)
 
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+
         clientHandler = DktClientHandler(this)
         mystomp = MyStomp(clientHandler)
         mystomp.connect()
