@@ -15,23 +15,23 @@
         android:theme="@style/Theme.MyApplication"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
+
+        <!-- Starte hier: LobbyActivity -->
         <activity
-            android:name="at.aau.serg.websocketbrokerdemo.ui.activities.GameViewActivity"
-            android:exported="false" />
-        <activity
-            android:name="at.aau.serg.websocketbrokerdemo.ui.activities.DiceActivity"
-            android:exported="false" />
-        <activity
-            android:name="at.aau.serg.websocketbrokerdemo.ui.activities.MainActivity"
+            android:name="at.aau.serg.websocketbrokerdemo.LobbyActivity"
             android:exported="true"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.MyApplication">
+            android:theme="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+
+        <!-- MainActivity: KEIN intent-filter mehr -->
+        <activity
+            android:name="at.aau.serg.websocketbrokerdemo.MainActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

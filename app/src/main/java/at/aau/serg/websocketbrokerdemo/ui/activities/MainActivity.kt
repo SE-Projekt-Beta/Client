@@ -1,4 +1,4 @@
-package at.aau.serg.websocketbrokerdemo.ui.activities
+package at.aau.serg.websocketbrokerdemo
 
 import MyStomp
 import android.content.Intent
@@ -34,11 +34,6 @@ class MainActivity : ComponentActivity() {
             val payload = JSONObject()
             payload.put("playerId", "player1")
             mystomp.sendGameMessage(GameMessage("roll_dice", payload.toString()))
-        }
-
-        findViewById<Button>(R.id.openGameViewBtn).setOnClickListener {
-            val intent = Intent(this, GameViewFragment::class.java)
-            startActivity(intent)
         }
 
         response = findViewById(R.id.response_view)
