@@ -11,6 +11,7 @@ import at.aau.serg.websocketbrokerdemo.lobby.LobbyClient
 import at.aau.serg.websocketbrokerdemo.lobby.LobbyHandler
 import com.example.myapplication.R
 import org.json.JSONObject
+import androidx.appcompat.app.AppCompatDelegate
 
 class LobbyActivity : AppCompatActivity() {
 

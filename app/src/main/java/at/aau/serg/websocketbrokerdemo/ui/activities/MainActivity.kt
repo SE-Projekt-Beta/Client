@@ -12,6 +12,7 @@ import at.aau.serg.websocketbrokerdemo.dkt.DktClientHandler
 import at.aau.serg.websocketbrokerdemo.dkt.GameMessage
 import com.example.myapplication.R
 import org.json.JSONObject
+import androidx.appcompat.app.AppCompatDelegate
 
 
 class MainActivity : ComponentActivity() {
