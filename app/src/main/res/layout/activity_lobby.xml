@@ -9,7 +9,6 @@
     android:background="#fff8e1"
     tools:context=".LobbyActivity">
 
-        <!-- Überschrift "Lobby" -->
         <ImageView
             android:id="@+id/lobbyImage"
             android:layout_width="150dp"
@@ -70,7 +69,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
-        <!-- Join Game Button -->
         <Button
             android:id="@+id/buttonJoin"
             android:layout_width="wrap_content"
