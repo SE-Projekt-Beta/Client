@@ -16,9 +16,9 @@ class DktClientHandler(
             "buy_property" -> handleBuyProperty(message.payload)
             "player_moved" -> handlePlayerMoved(message.payload)
             "can_buy_property" -> handleCanBuyProperty(message.payload)
-            "property_bought" -> handlePropertyBought(message.payload)
-            "event_card_risiko" -> handleDrawEventRisikoCard(message.payload)
-            "event_card_bank" -> handleDrawEventBankCard(message.payload)
+            //"property_bought" -> handlePropertyBought(message.payload)
+            //"event_card_risiko" -> handleDrawEventRisikoCard(message.payload)
+            //"event_card_bank" -> handleDrawEventBankCard(message.payload)
             "must_pay_rent" -> handleMustPayRent(message.payload)
             else -> Log.w(TAG, "Unbekannter Nachrichtentyp: ${message.type}")
         }
@@ -57,7 +57,7 @@ class DktClientHandler(
         activity.showResponse("$playerId darf $tileName kaufen")
     }
 
-    private fun handlePropertyBought(payload: String) {
+    /*private fun handlePropertyBought(payload: String) {
         val json = JSONObject(payload)
         val playerId = json.getString("playerId")
         val tileName = json.getString("tileName")
@@ -98,7 +98,7 @@ class DktClientHandler(
             Log.e(TAG, "Fehler beim Parsen der Bankkarte: ${e.message}")
             activity.showResponse("⚠️ Fehler beim Anzeigen der Bankkarte")
         }
-    }
+    }*/
 
     private fun handleMustPayRent(payload: String) {
         val json = JSONObject(payload)

@@ -2,7 +2,7 @@ package at.aau.serg.websocketbrokerdemo.lobby
 
 import android.content.Intent
 import android.util.Log
-import at.aau.serg.websocketbrokerdemo.LobbyActivity
+import at.aau.serg.websocketbrokerdemo.ui.activities.LobbyActivity
 import at.aau.serg.websocketbrokerdemo.MainActivity
 import at.aau.serg.websocketbrokerdemo.dkt.GameMessage
 import org.json.JSONObject

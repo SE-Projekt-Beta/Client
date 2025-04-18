@@ -2,11 +2,9 @@ package at.aau.serg.websocketbrokerdemo.lobby
 
 import android.content.Intent
 import android.util.Log
-import at.aau.serg.websocketbrokerdemo.LobbyActivity
-import at.aau.serg.websocketbrokerdemo.MainActivity
+import at.aau.serg.websocketbrokerdemo.ui.activities.LobbyActivity
 import at.aau.serg.websocketbrokerdemo.dkt.GameMessage
 import io.mockk.*
-import org.json.JSONObject
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
