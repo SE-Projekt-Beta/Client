@@ -220,4 +220,25 @@ class DktClientHandlerTest {
         verify(exactly = 0) { mockActivity.showOwnership() }
         verify(exactly = 0) { mockActivity.showEventCard(any(),any()) }
     }
+
+    @Test
+    fun testHandlerGoToJail() {
+        // Setup
+        val playerId = "player1"
+        val jailPos = 10
+        val payload = JSONObject().apply {
+            put("playerId", playerId)
+        }.toString()
+        val message = GameMessage("go_to_jail", payload)
+
+        // Execute
+        dktClientHandler.handle(message)
+
+        // Verify
+        verify {
+            GameStateClient.updatePosition(playerId, jailPos)
+            mockActivity.showResponse("$playerId wurde ins Gefängnis geschickt! 🚔")
+            mockActivity.showJailDialog(playerId)
+        }
+    }
 }

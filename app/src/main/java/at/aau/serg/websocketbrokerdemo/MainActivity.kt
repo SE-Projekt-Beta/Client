@@ -7,6 +7,7 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.material3.AlertDialog
 import at.aau.serg.websocketbrokerdemo.dkt.DktClientHandler
 import at.aau.serg.websocketbrokerdemo.dkt.GameMessage
 import at.aau.serg.websocketbrokerdemo.dkt.OwnershipClient
@@ -113,6 +114,16 @@ class MainActivity : ComponentActivity() {
             android.app.AlertDialog.Builder(this)
                 .setTitle(title)
                 .setMessage(text)
+                .setPositiveButton("OK", null)
+                .show()
+        }
+    }
+
+    fun showJailDialog(playerId: String) {
+        runOnUiThread {
+            android.app.AlertDialog.Builder(this)
+                .setTitle("🚔 Ins Gefängnis!")
+                .setMessage("$playerId wurde ins Gefängnis geschickt.")
                 .setPositiveButton("OK", null)
                 .show()
         }

@@ -20,6 +20,7 @@ class DktClientHandler(
             "event_card_risiko" -> handleDrawEventRisikoCard(message.payload)
             "event_card_bank" -> handleDrawEventBankCard(message.payload)
             "must_pay_rent" -> handleMustPayRent(message.payload)
+            "go_to_jail" -> handleGoToJail(message.payload)
             else -> Log.w(TAG, "Unbekannter Nachrichtentyp: ${message.type}")
         }
     }
@@ -108,6 +109,25 @@ class DktClientHandler(
 
         Log.i(TAG, "$playerId muss Miete an $ownerId zahlen für $tileName")
         activity.showResponse("$playerId muss Miete an $ownerId zahlen für $tileName")
+    }
+
+    private fun handleGoToJail(payload: String) {
+        val json = JSONObject(payload)
+        val playerId = json.getString("playerId")
+        val jailPos = 10 // Position des Gefägnisses
+
+        // Spielerposition im lokalen Spielzustand aktualisieren
+        GameStateClient.updatePosition(playerId, jailPos)
+
+        //Optional: Konsolenlog
+        val message = "$playerId wurde ins Gefängnis geschickt! 🚔"
+        Log.i(TAG, message)
+
+        // Text m UI anzeigen
+        activity.showResponse(message)
+
+        // Jail-Dialog anzeigen
+        activity.showJailDialog(playerId);
     }
 
     private fun logAndShow(title: String, payload: String) {
