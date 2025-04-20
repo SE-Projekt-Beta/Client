@@ -114,13 +114,20 @@ class DktClientHandler(
     private fun handleGoToJail(payload: String) {
         val json = JSONObject(payload)
         val playerId = json.getString("playerId")
-        val jailPos = 10
+        val jailPos = 10 // Position des Gefägnisses
 
+        // Spielerposition im lokalen Spielzustand aktualisieren
         GameStateClient.updatePosition(playerId, jailPos)
 
+        //Optional: Konsolenlog
         val message = "$playerId wurde ins Gefängnis geschickt! 🚔"
         Log.i(TAG, message)
+
+        // Text m UI anzeigen
         activity.showResponse(message)
+
+        // Jail-Dialog anzeigen
+        activity.showJailDialog(playerId);
     }
 
     private fun logAndShow(title: String, payload: String) {
