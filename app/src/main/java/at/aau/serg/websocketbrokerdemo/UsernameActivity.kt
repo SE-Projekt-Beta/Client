@@ -1,7 +1,7 @@
 package at.aau.serg.websocketbrokerdemo
 
 
-import LoginHandler
+
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
@@ -10,13 +10,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.media3.common.util.Log
 import at.aau.serg.websocketbrokerdemo.lobby.LobbyClient
-import at.aau.serg.websocketbrokerdemo.lobby.LobbyHandler
-import at.aau.serg.websocketbrokerdemo.network.LobbyMessageListener
-import at.aau.serg.websocketbrokerdemo.network.dto.LobbyMessage
-import at.aau.serg.websocketbrokerdemo.network.dto.LobbyMessageType
 import at.aau.serg.websocketbrokerdemo.network.LobbyStomp
 import com.example.myapplication.R
-import com.google.gson.JsonObject
 
 class UsernameActivity : AppCompatActivity() {
 
@@ -54,3 +49,4 @@ class UsernameActivity : AppCompatActivity() {
         finish()
     }
 }
+

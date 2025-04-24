@@ -1,8 +1,8 @@
 package at.aau.serg.websocketbrokerdemo.network
 
-import at.aau.serg.websocketbrokerdemo.network.dto.LobbyMessage
+import at.aau.serg.websocketbrokerdemo.network.dto.PlayerDTO
 
 interface LobbyMessageListener {
-    fun onLobbyUpdate(usernames: List<String>)
+    fun onLobbyUpdate(players: List<PlayerDTO>)
     fun onStartGame()
 }

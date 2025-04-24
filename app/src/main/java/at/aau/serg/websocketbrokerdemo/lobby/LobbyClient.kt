@@ -1,13 +1,16 @@
 package at.aau.serg.websocketbrokerdemo.lobby
+import at.aau.serg.websocketbrokerdemo.network.dto.PlayerDTO
+
 
 object LobbyClient {
     var username: String = ""
-    private val players = mutableListOf<String>()
+    private val players = mutableListOf<PlayerDTO>()
 
-    fun setPlayers(newPlayers: List<String>) {
+    fun setPlayers(newPlayers: List<PlayerDTO>) {
         players.clear()
         players.addAll(newPlayers)
     }
 
-    fun allPlayers(): List<String> = players.toList()
+    fun allPlayers(): List<PlayerDTO> = players.toList()
 }
+
