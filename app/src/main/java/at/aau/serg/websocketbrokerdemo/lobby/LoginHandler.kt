@@ -6,6 +6,7 @@ import at.aau.serg.websocketbrokerdemo.lobby.LobbyClient
 import at.aau.serg.websocketbrokerdemo.network.LobbyMessageListener
 import at.aau.serg.websocketbrokerdemo.network.dto.PlayerDTO
 import com.google.gson.Gson
+import com.google.gson.JsonObject
 
 class LoginHandler(private val activity: UsernameActivity) : LobbyMessageListener {
 
@@ -37,7 +38,25 @@ class LoginHandler(private val activity: UsernameActivity) : LobbyMessageListene
     }
 
 
-    override fun onStartGame() {
-        // nicht benötigt hier
+    override fun onStartGame(payload: JsonObject) {
+        // JSON parsen
+        val playersJson = payload.getAsJsonArray("players")
+        val players = playersJson.map {
+            val obj = it.asJsonObject
+            PlayerDTO(
+                id = obj.get("id").asString,
+                username = obj.get("username").asString
+            )
+        }
+
+        LobbyClient.setPlayers(players)
+
+        val intent = Intent(activity, MainActivity::class.java).apply {
+            putExtra("players_json", Gson().toJson(players))
+            putExtra("USERNAME", LobbyClient.username)
+        }
+        activity.startActivity(intent)
+        activity.finish()
     }
+
 }
