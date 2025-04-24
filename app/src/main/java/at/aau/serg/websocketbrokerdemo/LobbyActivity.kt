@@ -1,3 +1,4 @@
+
 package at.aau.serg.websocketbrokerdemo
 
 import android.content.Intent
@@ -9,12 +10,11 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import at.aau.serg.websocketbrokerdemo.lobby.LobbyClient
 import at.aau.serg.websocketbrokerdemo.lobby.LobbyHandler
-import at.aau.serg.websocketbrokerdemo.network.LobbyMessageListener
 import at.aau.serg.websocketbrokerdemo.network.LobbyStomp
-import at.aau.serg.websocketbrokerdemo.network.dto.LobbyMessage
-import at.aau.serg.websocketbrokerdemo.network.dto.LobbyMessageType
+import at.aau.serg.websocketbrokerdemo.network.dto.PlayerDTO
 import com.example.myapplication.R
-import com.google.gson.JsonObject
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 
 class LobbyActivity : AppCompatActivity() {
 
@@ -34,16 +34,40 @@ class LobbyActivity : AppCompatActivity() {
         lobbyStomp = LobbyStomp(lobbyHandler)
         lobbyStomp.connect()
 
+        // Spieler direkt beim Start aus übergebenem JSON anzeigen
+        val gson = Gson()
+        val json = intent.getStringExtra("players_json")
+
+        if (json != null) {
+            val type = object : TypeToken<List<PlayerDTO>>() {}.type
+            val players: List<PlayerDTO> = gson.fromJson(json, type)
+            LobbyClient.setPlayers(players)
+            updateLobby(players.map { it.username })
+        } else {
+            // Fallback, falls keine Liste übergeben wurde
+            val existingPlayers = LobbyClient.allPlayers()
+            if (existingPlayers.isNotEmpty()) {
+                updateLobby(existingPlayers.map { it.username })
+            } else {
+                updateLobby(emptyList())
+            }
+        }
+
         startButton.setOnClickListener {
             lobbyStomp.sendStartGame()
         }
     }
 
-    fun updateLobby(players: List<String>) {
+    fun updateLobby(playerNames: List<String>) {
         runOnUiThread {
-            Log.i("LobbyActivity", "Updating lobby with players: $players")
-            playersTextView.text = players.joinToString("\n") { "- $it" }
-            startButton.visibility = if (players.size >= 2) View.VISIBLE else View.GONE
+            Log.i("LobbyActivity", "Updating lobby with players: $playerNames")
+            playersTextView.text = if (playerNames.isNotEmpty()) {
+                playerNames.joinToString("\n") { "- $it" }
+            } else {
+                "Waiting for players..."
+            }
+
+            startButton.visibility = if (playerNames.size >= 2) View.VISIBLE else View.GONE
         }
     }
 
