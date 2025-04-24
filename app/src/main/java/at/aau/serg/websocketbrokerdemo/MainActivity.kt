@@ -10,10 +10,13 @@ import androidx.activity.enableEdgeToEdge
 import at.aau.serg.websocketbrokerdemo.dkt.DktClientHandler
 import at.aau.serg.websocketbrokerdemo.network.dto.GameMessage
 import at.aau.serg.websocketbrokerdemo.dkt.OwnershipClient
+import at.aau.serg.websocketbrokerdemo.lobby.LobbyClient
 import at.aau.serg.websocketbrokerdemo.network.dto.GameMessageType
+import at.aau.serg.websocketbrokerdemo.network.dto.PlayerDTO
 import com.example.myapplication.R
+import com.google.common.reflect.TypeToken
+import com.google.gson.Gson
 import com.google.gson.JsonObject
-
 
 class MainActivity : ComponentActivity() {
 
@@ -32,11 +35,19 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.fragment_fullscreen)
 
-        myPlayerName = intent.getStringExtra("USERNAME") ?: "unknown" // <- war PLAYER_NAME, nun USERNAME!
+        myPlayerName = intent.getStringExtra("USERNAME") ?: "unknown"
+
+        val playersJson = intent.getStringExtra("players_json")
+        if (playersJson != null) {
+            val type = object : TypeToken<List<PlayerDTO>>() {}.type
+            val players = Gson().fromJson<List<PlayerDTO>>(playersJson, type)
+            LobbyClient.setPlayers(players)
+        }
 
         initViews()
         setupNetwork()
         setupButtons()
+        checkIfMyTurn()
     }
 
     private fun initViews() {
@@ -59,6 +70,16 @@ class MainActivity : ComponentActivity() {
                 addProperty("playerId", myPlayerName)
             }
             gameStomp.sendGameMessage(GameMessage(GameMessageType.ROLL_DICE, payload))
+        }
+    }
+
+    private fun checkIfMyTurn() {
+        val order = LobbyClient.allPlayers()
+        val myIndex = order.indexOfFirst { it.username == myPlayerName }
+
+        val isMyTurn = myIndex == 0 // aktuell: erster ist dran
+        runOnUiThread {
+            rollDiceButton.visibility = if (isMyTurn) View.VISIBLE else View.GONE
         }
     }
 

@@ -77,7 +77,7 @@ class LobbyStomp(private val listener: LobbyMessageListener) {
                 listener.onLobbyUpdate(players)
             }
 
-            LobbyMessageType.START_GAME -> listener.onStartGame()
+            LobbyMessageType.START_GAME -> listener.onStartGame(message.payload.asJsonObject)
 
             else -> Log.w("LobbyStomp", "Unhandled message type: ${message.type}")
         }
