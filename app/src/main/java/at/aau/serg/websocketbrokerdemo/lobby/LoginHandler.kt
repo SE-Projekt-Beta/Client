@@ -39,24 +39,7 @@ class LoginHandler(private val activity: UsernameActivity) : LobbyMessageListene
 
 
     override fun onStartGame(payload: JsonObject) {
-        // JSON parsen
-        val playersJson = payload.getAsJsonArray("players")
-        val players = playersJson.map {
-            val obj = it.asJsonObject
-            PlayerDTO(
-                id = obj.get("id").asString,
-                username = obj.get("username").asString
-            )
-        }
 
-        LobbyClient.setPlayers(players)
-
-        val intent = Intent(activity, MainActivity::class.java).apply {
-            putExtra("players_json", Gson().toJson(players))
-            putExtra("USERNAME", LobbyClient.username)
-        }
-        activity.startActivity(intent)
-        activity.finish()
     }
 
 }

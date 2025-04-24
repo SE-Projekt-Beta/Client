@@ -124,4 +124,21 @@ class MainActivity : ComponentActivity() {
                 .show()
         }
     }
+    fun enableDiceButton() {
+        runOnUiThread {
+            rollDiceButton.visibility = View.VISIBLE
+        }
+    }
+
+    fun disableDiceButton() {
+        runOnUiThread {
+            rollDiceButton.visibility = View.GONE
+        }
+    }
+
+    fun getMyPlayerName(): String {
+        return myPlayerName
+    }
+
+
 }

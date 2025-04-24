@@ -71,11 +71,13 @@ class LobbyActivity : AppCompatActivity() {
         }
     }
 
-    fun startGame() {
-        runOnUiThread {
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
-            finish()
+    fun startGame(order: List<PlayerDTO>) {
+        val intent = Intent(this, MainActivity::class.java).apply {
+            putExtra("USERNAME", LobbyClient.username)
+            putExtra("ORDER", Gson().toJson(order))
         }
+        startActivity(intent)
+        finish()
     }
+
 }

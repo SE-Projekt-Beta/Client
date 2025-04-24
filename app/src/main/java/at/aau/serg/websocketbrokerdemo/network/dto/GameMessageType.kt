@@ -12,5 +12,6 @@ enum class GameMessageType {
     GO_TO_JAIL,
     SKIPPED,
     MUST_PAY_RENT,
-    ERROR
+    ERROR,
+    CURRENT_PLAYER
 }

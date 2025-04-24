@@ -13,6 +13,7 @@ class DktClientHandler(
 
     fun handle(message: GameMessage) {
         when (message.type) {
+            GameMessageType.CURRENT_PLAYER -> handleCurrentPlayer(message.payload.asJsonObject)
             GameMessageType.PLAYER_MOVED -> handlePlayerMoved(message.payload.asJsonObject)
             GameMessageType.CAN_BUY_PROPERTY -> handleCanBuyProperty(message.payload.asJsonObject)
             GameMessageType.PROPERTY_BOUGHT -> handlePropertyBought(message.payload.asJsonObject)
@@ -77,4 +78,16 @@ class DktClientHandler(
     companion object {
         private const val TAG = "DktClientHandler"
     }
+
+    private fun handleCurrentPlayer(payload: JsonObject) {
+        val currentPlayerId = payload.get("playerId").asString
+        val myId = activity.getMyPlayerName()
+
+        if (currentPlayerId == myId) {
+            activity.enableDiceButton()
+        } else {
+            activity.disableDiceButton()
+        }
+    }
+
 }
