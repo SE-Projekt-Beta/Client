@@ -138,20 +138,6 @@ class DktClientHandlerTest {
     }
 
     @Test
-    fun testHandleDrawEventCard() {
-        // Setup
-        val payload = "Draw card details"
-        val message = GameMessage("draw_event_card", payload)
-
-        // Execute
-        dktClientHandler.handle(message)
-
-        // Verify
-        verify { Log.i("DktClientHandler", "Ereigniskarte ziehen: $payload") }
-        verify { mockActivity.showResponse("Ereigniskarte ziehen: $payload") }
-    }
-
-    @Test
     fun testHandleMustPayRent() {
         // Setup
         val playerId = "player1"
@@ -175,17 +161,47 @@ class DktClientHandlerTest {
     }
 
     @Test
-    fun testHandleEventCard() {
+    fun testHandleEventCardRisiko() {
         // Setup
-        val payload = "You won the lottery!"
-        val message = GameMessage("event_card", payload)
+        val payload = """
+        {
+            "eventTitle": "Unfall",
+            "eventDescription": "Du musst ins Krankenhaus.",
+            "eventAmount": 200
+        }
+    """.trimIndent()
+        val message = GameMessage("event_card_risiko", payload)
 
         // Execute
         dktClientHandler.handle(message)
 
         // Verify
-        verify { Log.i("DktClientHandler", "Ereigniskarte gezogen: $payload") }
-        verify { mockActivity.showEventCard(payload) }
+        verify {
+            Log.i("DktClientHandler", "Risikokarte: Unfall – Du musst ins Krankenhaus. (200€)")
+            mockActivity.showEventCard("Unfall", "Du musst ins Krankenhaus.\nBetrag: 200€")
+        }
+    }
+
+    @Test
+    fun testHandleEventCardBank() {
+        // Setup
+        val payload = """
+        {
+            "eventTitle": "Steuererstattung",
+            "eventDescription": "Du erhältst Geld zurück.",
+            "eventAmount": 150
+        }
+    """.trimIndent()
+        val message = GameMessage("event_card_bank", payload)
+
+        // Execute
+        dktClientHandler.handle(message)
+
+        // Verify
+        verify {
+            Log.i("DktClientHandler", "Bankkarte: Steuererstattung – Du erhältst Geld zurück. (150€)")
+            mockActivity.showEventCard("Steuererstattung", "Du erhältst Geld zurück.\nBetrag: 150€")
+        }
     }
 
     @Test
@@ -203,6 +219,27 @@ class DktClientHandlerTest {
         verify(exactly = 0) { mockActivity.showResponse(any()) }
         verify(exactly = 0) { mockActivity.showBuyButton(any(), any(), any()) }
         verify(exactly = 0) { mockActivity.showOwnership() }
-        verify(exactly = 0) { mockActivity.showEventCard(any()) }
+        verify(exactly = 0) { mockActivity.showEventCard(any(),any()) }
+    }
+
+    @Test
+    fun testHandlerGoToJail() {
+        // Setup
+        val playerId = "player1"
+        val jailPos = 10
+        val payload = JSONObject().apply {
+            put("playerId", playerId)
+        }.toString()
+        val message = GameMessage("go_to_jail", payload)
+
+        // Execute
+        dktClientHandler.handle(message)
+
+        // Verify
+        verify {
+            GameStateClient.updatePosition(playerId, jailPos)
+            mockActivity.showResponse("$playerId wurde ins Gefängnis geschickt! 🚔")
+            mockActivity.showJailDialog(playerId)
+        }
     }
 }

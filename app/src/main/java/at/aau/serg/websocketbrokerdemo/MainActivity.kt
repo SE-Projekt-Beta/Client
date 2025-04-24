@@ -7,6 +7,7 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.material3.AlertDialog
 import at.aau.serg.websocketbrokerdemo.dkt.DktClientHandler
 import at.aau.serg.websocketbrokerdemo.network.dto.GameMessage
 import at.aau.serg.websocketbrokerdemo.dkt.OwnershipClient
@@ -115,11 +116,26 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    fun showEventCard(cardText: String) {
+    fun showEventCard(text: String, description: String) {
+        runOnUiThread {
+            val title = when {
+                text.contains("Risiko", ignoreCase = true) -> "⚠️ Risiko-Karte"
+                text.contains("Bank", ignoreCase = true) -> "🏦 Bank-Karte"
+                else -> "📦 Ereigniskarte"
+            }
+            android.app.AlertDialog.Builder(this)
+                .setTitle(title)
+                .setMessage(text)
+                .setPositiveButton("OK", null)
+                .show()
+        }
+    }
+
+    fun showJailDialog(playerId: String) {
         runOnUiThread {
             android.app.AlertDialog.Builder(this)
-                .setTitle("Ereigniskarte")
-                .setMessage(cardText)
+                .setTitle("🚔 Ins Gefängnis!")
+                .setMessage("$playerId wurde ins Gefängnis geschickt.")
                 .setPositiveButton("OK", null)
                 .show()
         }
