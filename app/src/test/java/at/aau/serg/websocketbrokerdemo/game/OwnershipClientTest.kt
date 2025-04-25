@@ -2,16 +2,29 @@ package at.aau.serg.websocketbrokerdemo.game
 
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class OwnershipClientTest {
 
+    @BeforeEach
+    fun setup() {
+        // Rücksetzen des Zustands vor jedem Test
+        OwnershipClient.all().keys.forEach { player ->
+            OwnershipClient.getProperties(player).forEach { property ->
+                // Keine Remove-Funktion, daher alternativer Ansatz
+                // da OwnershipClient nicht verändert werden darf, wird hier implizit neuer Player genutzt
+            }
+        }
+    }
+
     @Test
     fun testAddAndRetrieveProperties() {
-        OwnershipClient.addProperty("player1", "Kärntner Straße")
-        OwnershipClient.addProperty("player1", "Opernring")
+        val player = "playerX"
+        OwnershipClient.addProperty(player, "Kärntner Straße")
+        OwnershipClient.addProperty(player, "Opernring")
 
-        val properties = OwnershipClient.getProperties("player1")
+        val properties = OwnershipClient.getProperties(player)
         assertEquals(2, properties.size)
         assertTrue(properties.contains("Kärntner Straße"))
         assertTrue(properties.contains("Opernring"))
@@ -19,17 +32,20 @@ class OwnershipClientTest {
 
     @Test
     fun testGetPropertiesForUnknownPlayer() {
-        val result = OwnershipClient.getProperties("unbekannt")
+        val result = OwnershipClient.getProperties("unknown_player")
         assertTrue(result.isEmpty())
     }
 
     @Test
     fun testAllPropertiesMap() {
-        OwnershipClient.addProperty("A", "Straße 1")
-        OwnershipClient.addProperty("B", "Straße 2")
+        val player1 = "playerA"
+        val player2 = "playerB"
+
+        OwnershipClient.addProperty(player1, "Straße 1")
+        OwnershipClient.addProperty(player2, "Straße 2")
 
         val all = OwnershipClient.all()
-        assertEquals(1, all["A"]?.size)
-        assertEquals(1, all["B"]?.size)
+        assertEquals(listOf("Straße 1"), all[player1])
+        assertEquals(listOf("Straße 2"), all[player2])
     }
 }
