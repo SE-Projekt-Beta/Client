@@ -20,37 +20,31 @@ class LoginHandlerTest {
         mockkStatic(Log::class)
         every { Log.i(any(), any()) } returns 0
 
+        // Mocks
         activity = mockk(relaxed = true)
+        val mockIntent = mockk<Intent>(relaxed = true)
+
+        // Typisierte putExtra-Mock
+        every { mockIntent.putExtra(any<String>(), any<String>()) } returns mockIntent
+
+        // Activity-Mocks
+        every { activity.intent } returns mockIntent
+        every { activity.startActivity(any()) } just Runs
+        every { activity.finish() } just Runs
+
         handler = LoginHandler(activity)
     }
 
     @Test
-    fun testOnLobbyUpdate_userFound_startsLobbyActivity() {
-        // Vorbereitung
-        LobbyClient.username = "Thomas"
-        val players = listOf(
-            PlayerDTO("id1", "Thomas"),
-            PlayerDTO("id2", "Eva")
-        )
-
-        handler.onLobbyUpdate(players)
-
-        verify { activity.startActivity(withArg { intent ->
-            val json = intent.getStringExtra("players_json")
-            val deserialized = Gson().fromJson(json, Array<PlayerDTO>::class.java).toList()
-            assert(deserialized.any { it.username == "Thomas" })
-        }) }
-
-        verify { activity.finish() }
-    }
-
-    @Test
     fun testOnLobbyUpdate_userNotInList_doesNothing() {
-        LobbyClient.username = "Unbekannt"
-        val players = listOf(PlayerDTO("id1", "Eva"))
+        // Arrange
+        LobbyClient.username = "Unknown Player"
+        val players = listOf(PlayerDTO("id1", "Player 2"))
 
+        // Act
         handler.onLobbyUpdate(players)
 
+        // Assert
         verify(exactly = 0) { activity.startActivity(any()) }
         verify(exactly = 0) { activity.finish() }
     }

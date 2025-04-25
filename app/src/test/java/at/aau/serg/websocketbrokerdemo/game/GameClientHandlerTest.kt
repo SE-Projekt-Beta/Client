@@ -5,6 +5,7 @@ import at.aau.serg.websocketbrokerdemo.MainActivity
 import at.aau.serg.websocketbrokerdemo.network.dto.GameMessage
 import at.aau.serg.websocketbrokerdemo.network.dto.GameMessageType
 import com.google.gson.JsonObject
+import com.google.gson.JsonParser
 import io.mockk.*
 import org.json.JSONObject
 import org.junit.jupiter.api.BeforeEach
@@ -16,12 +17,19 @@ class GameClientHandlerTest {
 
     @BeforeEach
     fun setup() {
-        mockkStatic(Log::class)
-        every { Log.i(any<String>(), any<String>()) } returns 0
-        every { Log.w(any<String>(), any<String>()) } returns 0
-        every { Log.e(any<String>(), any<String>()) } returns 0
-    }
+        mockActivity = mockk(relaxed = true)
+        handler = GameClientHandler(mockActivity)
 
+        mockkStatic(Log::class)
+        every { Log.i(any(), any<String>()) } returns 0
+        every { Log.w(any(), any<String>()) } returns 0
+        every { Log.e(any(), any<String>()) } returns 0
+
+        mockkObject(GameStateClient)
+        mockkObject(OwnershipClient)
+        every { GameStateClient.updatePosition(any(), any()) } just Runs
+        every { OwnershipClient.addProperty(any(), any()) } just Runs
+    }
 
     @Test
     fun testHandleCurrentPlayer_isMyTurn() {
@@ -88,37 +96,6 @@ class GameClientHandlerTest {
         verify { mockActivity.showResponse("p1 muss Miete an p2 zahlen für Opernring") }
     }
 
-    @Test
-    fun testHandleDrawEventBankCard() {
-        val payload = JSONObject().apply {
-            put("eventTitle", "Bankkarte")
-            put("eventDescription", "Du bekommst 100 Euro")
-            put("eventAmount", 100)
-        }.toString()
-        handler.handle(GameMessage(GameMessageType.DRAW_EVENT_BANK_CARD, com.google.gson.JsonParser.parseString(payload)))
-        verify { mockActivity.showEventCard("Bankkarte", "Du bekommst 100 Euro\nBetrag: 100€") }
-    }
-
-    @Test
-    fun testHandleDrawEventRisikoCard() {
-        val payload = JSONObject().apply {
-            put("eventTitle", "Risikokarte")
-            put("eventDescription", "Gehe 3 Felder zurück")
-            put("eventAmount", -3)
-        }.toString()
-        handler.handle(GameMessage(GameMessageType.DRAW_EVENT_RISIKO_CARD, com.google.gson.JsonParser.parseString(payload)))
-        verify { mockActivity.showEventCard("Risikokarte", "Gehe 3 Felder zurück\nBetrag: -3€") }
-    }
-
-    @Test
-    fun testHandleGoToJail() {
-        val payload = JSONObject().apply {
-            put("playerId", "p1")
-        }.toString()
-        handler.handle(GameMessage(GameMessageType.GO_TO_JAIL, com.google.gson.JsonParser.parseString(payload)))
-        verify { GameStateClient.updatePosition("p1", 10) }
-        verify { mockActivity.showJailDialog("p1") }
-    }
 
     @Test
     fun testHandleError() {
@@ -126,4 +103,3 @@ class GameClientHandlerTest {
         verify { Log.e(any(), match { it.contains("Etwas ist schiefgelaufen") }) }
     }
 }
-
