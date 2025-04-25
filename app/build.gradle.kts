@@ -105,17 +105,21 @@ sonar {
         )
         property(
             "sonar.coverage.exclusions",
-                    "**/MainActivity.kt, " +
-                    "**/LobbyActivity.kt, " +
-                    "**/MyStomp.kt, " +
-                    "**/TileType.kt, " +
-                    "**/Color.kt, " +
-                    "**/Tile.kt, " +
+            "**/MainActivity.kt," +
+                    "**/LobbyActivity.kt," +
+                    "**/UsernameActivity.kt," +
                     "**/Theme.kt," +
+                    "**/Color.kt," +
+                    "**/TileType.kt," +
+                    "**/Tile.kt," +
                     "**/Type.kt," +
-                    "**/Callbacks.kt"
+                    "**/MyStomp.kt," +
+                    "**/Callbacks.kt," +
+                    "**/ui/**," +
+                    "**/*Activity.kt," +
+                    "**/*Adapter.kt," +
+                    "**/dto/**"
         )
-
     }
 }
 
@@ -133,9 +137,11 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.constraintlayout)
     implementation("org.json:json:20231013")
+    implementation("com.google.code.gson:gson:2.10.1")
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.androidx.activity)
+    implementation(libs.androidx.media3.common.ktx)
     testImplementation(libs.junit)
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)

@@ -1,88 +1,83 @@
+
 package at.aau.serg.websocketbrokerdemo
 
-import MyStomp
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import at.aau.serg.websocketbrokerdemo.dkt.DktClientHandler
-import at.aau.serg.websocketbrokerdemo.dkt.GameMessage
 import at.aau.serg.websocketbrokerdemo.lobby.LobbyClient
 import at.aau.serg.websocketbrokerdemo.lobby.LobbyHandler
+import at.aau.serg.websocketbrokerdemo.network.LobbyStomp
+import at.aau.serg.websocketbrokerdemo.network.dto.PlayerDTO
 import com.example.myapplication.R
-import org.json.JSONObject
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 
 class LobbyActivity : AppCompatActivity() {
 
-    private lateinit var playerListView: TextView
-    private lateinit var buttonJoin: Button
-    private lateinit var buttonStart: Button
-
-    private lateinit var mystomp: MyStomp
+    private lateinit var lobbyStomp: LobbyStomp
     private lateinit var lobbyHandler: LobbyHandler
+    private lateinit var playersTextView: TextView
+    private lateinit var startButton: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_lobby)
 
-        initViews()
-        setupNetwork()
-        setupButtons()
-    }
+        playersTextView = findViewById(R.id.playerListView)
+        startButton = findViewById(R.id.buttonStart)
 
-    private fun initViews() {
-        playerListView = findViewById(R.id.playerListView)
-        buttonJoin = findViewById(R.id.buttonJoin)
-        buttonStart = findViewById(R.id.buttonStart)
-        buttonStart.visibility = View.GONE
-    }
-
-    private fun setupNetwork() {
         lobbyHandler = LobbyHandler(this)
-        mystomp = MyStomp(lobbyHandler = lobbyHandler)
-        mystomp.connect()
-    }
+        lobbyStomp = LobbyStomp(lobbyHandler)
+        lobbyStomp.connect()
 
-    private fun setupButtons() {
-        buttonJoin.setOnClickListener { sendJoinLobby() }
-        buttonStart.setOnClickListener { startGame() }
-    }
+        // Spieler direkt beim Start aus übergebenem JSON anzeigen
+        val gson = Gson()
+        val json = intent.getStringExtra("players_json")
 
-    private fun sendJoinLobby() {
-        if (LobbyClient.playerName.isNotEmpty()) {
-            // Schon beigetreten
-            return
+        if (json != null) {
+            val type = object : TypeToken<List<PlayerDTO>>() {}.type
+            val players: List<PlayerDTO> = gson.fromJson(json, type)
+            LobbyClient.setPlayers(players)
+            updateLobby(players.map { it.username })
+        } else {
+            // Fallback, falls keine Liste übergeben wurde
+            val existingPlayers = LobbyClient.allPlayers()
+            if (existingPlayers.isNotEmpty()) {
+                updateLobby(existingPlayers.map { it.username })
+            } else {
+                updateLobby(emptyList())
+            }
         }
 
-        // Kein PlayerName mehr erzeugen!
-        val joinPayload = JSONObject() // einfach leer
+        startButton.setOnClickListener {
+            lobbyStomp.sendStartGame()
+        }
+    }
 
-        mystomp.sendGameMessage(GameMessage("join_lobby", joinPayload.toString()))
-
-        // Button deaktivieren, damit man nicht doppelt klickt
+    fun updateLobby(playerNames: List<String>) {
         runOnUiThread {
-            buttonJoin.isEnabled = false
+            Log.i("LobbyActivity", "Updating lobby with players: $playerNames")
+            playersTextView.text = if (playerNames.isNotEmpty()) {
+                playerNames.joinToString("\n") { "- $it" }
+            } else {
+                "Waiting for players..."
+            }
+
+            startButton.visibility = if (playerNames.size >= 2) View.VISIBLE else View.GONE
         }
     }
 
-
-
-    private fun generatePlayerName(): String {
-        return "Player" + (1..1000).random()
-    }
-
-    fun showLobby() {
-        runOnUiThread {
-            playerListView.text = "Lobby:\n" + LobbyClient.allPlayers().joinToString("\n")
-            buttonStart.visibility = if (LobbyClient.allPlayers().size >= 2) View.VISIBLE else View.GONE
+    fun startGame(order: List<PlayerDTO>) {
+        val intent = Intent(this, MainActivity::class.java).apply {
+            putExtra("USERNAME", LobbyClient.username)
+            putExtra("ORDER", Gson().toJson(order))
         }
-    }
-
-    private fun startGame() {
-        // Sende Start-Befehl an den Server
-        mystomp.sendGameMessage(GameMessage("start_game", ""))
+        startActivity(intent)
+        finish()
     }
 
 }

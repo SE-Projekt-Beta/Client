@@ -1,52 +1,35 @@
 package at.aau.serg.websocketbrokerdemo.lobby
 
+
 import android.content.Intent
-import android.util.Log
 import at.aau.serg.websocketbrokerdemo.LobbyActivity
+import at.aau.serg.websocketbrokerdemo.network.LobbyMessageListener
+import at.aau.serg.websocketbrokerdemo.network.dto.PlayerDTO
+import android.util.Log
 import at.aau.serg.websocketbrokerdemo.MainActivity
-import at.aau.serg.websocketbrokerdemo.dkt.GameMessage
-import org.json.JSONObject
+import com.google.gson.Gson
+import com.google.gson.JsonObject
 
-class LobbyHandler(private val activity: LobbyActivity) {
 
-    fun handle(message: GameMessage) {
-        Log.i("LobbyHandler", "Empfange Nachricht: ${message.type}")
-        when (message.type) {
-            "lobby_update" -> handleLobbyUpdate(message.payload)
-            "start_game" -> handleStartGame()
-            else -> Log.w("LobbyHandler", "Unbekannter Nachrichtentyp: ${message.type}")
+class LobbyHandler(private val activity: LobbyActivity) : LobbyMessageListener {
+
+    override fun onStartGame(payload: JsonObject) {
+        val orderJson = payload.getAsJsonArray("playerOrder")
+        val order = orderJson.map {
+            val obj = it.asJsonObject
+            PlayerDTO(
+                id = obj.get("id").asString,
+                username = obj.get("username").asString
+            )
         }
+        activity.startGame(order)
     }
 
-
-
-
-    private fun handleLobbyUpdate(payload: String) {
-        val json = JSONObject(payload)
-        val playersJson = json.getJSONArray("players")
-
-        // Liste der Spieler aktualisieren
-        val players = mutableListOf<String>()
-        for (i in 0 until playersJson.length()) {
-            players.add(playersJson.getString(i))
-        }
-
-        // Speichern
+    override fun onLobbyUpdate(players: List<PlayerDTO>) {
         LobbyClient.setPlayers(players)
-
-        // Ansicht aktualisieren
-        activity.showLobby()
+        activity.updateLobby(players.map { it.username })
     }
-
-    private fun handleStartGame() {
-        val intent = Intent(activity, MainActivity::class.java)
-        intent.putExtra("PLAYER_NAME", LobbyClient.playerName)
-        activity.startActivity(intent)
-        activity.finish()
-    }
-
-
-
-
 
 }
+
+

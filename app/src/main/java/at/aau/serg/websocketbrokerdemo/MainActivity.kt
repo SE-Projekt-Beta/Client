@@ -1,46 +1,54 @@
 package at.aau.serg.websocketbrokerdemo
 
-import MyStomp
+import at.aau.serg.websocketbrokerdemo.network.GameStomp
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.material3.AlertDialog
-import at.aau.serg.websocketbrokerdemo.dkt.DktClientHandler
-import at.aau.serg.websocketbrokerdemo.dkt.GameMessage
-import at.aau.serg.websocketbrokerdemo.dkt.OwnershipClient
+import at.aau.serg.websocketbrokerdemo.game.GameClientHandler
+import at.aau.serg.websocketbrokerdemo.network.dto.GameMessage
+import at.aau.serg.websocketbrokerdemo.game.OwnershipClient
 import at.aau.serg.websocketbrokerdemo.lobby.LobbyClient
+import at.aau.serg.websocketbrokerdemo.network.dto.GameMessageType
+import at.aau.serg.websocketbrokerdemo.network.dto.PlayerDTO
 import com.example.myapplication.R
-import org.json.JSONObject
-
+import com.google.common.reflect.TypeToken
+import com.google.gson.Gson
+import com.google.gson.JsonObject
 
 class MainActivity : ComponentActivity() {
 
-    private lateinit var mystomp: MyStomp
-    private lateinit var clientHandler: DktClientHandler
+    private lateinit var gameStomp: GameStomp
+    private lateinit var clientHandler: GameClientHandler
 
     private lateinit var responseView: TextView
     private lateinit var ownershipView: TextView
-    private lateinit var lobbyView: TextView
     private lateinit var rollDiceButton: Button
     private lateinit var buyButton: Button
-    private lateinit var myPlayerName: String
 
+    private lateinit var myPlayerName: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.fragment_fullscreen)
 
-        myPlayerName = intent.getStringExtra("PLAYER_NAME") ?: "unknown"
+        myPlayerName = intent.getStringExtra("USERNAME") ?: "unknown"
+
+        val playersJson = intent.getStringExtra("players_json")
+        if (playersJson != null) {
+            val type = object : TypeToken<List<PlayerDTO>>() {}.type
+            val players = Gson().fromJson<List<PlayerDTO>>(playersJson, type)
+            LobbyClient.setPlayers(players)
+        }
 
         initViews()
         setupNetwork()
         setupButtons()
+        checkIfMyTurn()
     }
-
 
     private fun initViews() {
         responseView = findViewById(R.id.response_view)
@@ -51,19 +59,28 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun setupNetwork() {
-        clientHandler = DktClientHandler(this)
-        mystomp = MyStomp(dktHandler = clientHandler)
-        mystomp.connect()
+        clientHandler = GameClientHandler(this)
+        gameStomp = GameStomp(dktHandler = clientHandler)
+        gameStomp.connect()
     }
 
     private fun setupButtons() {
         rollDiceButton.setOnClickListener {
-            val payload = JSONObject().apply {
-                put("playerId", myPlayerName)
+            val payload = JsonObject().apply {
+                addProperty("playerId", myPlayerName)
             }
-            mystomp.sendGameMessage(GameMessage("roll_dice", payload.toString()))
+            gameStomp.sendGameMessage(GameMessage(GameMessageType.ROLL_DICE, payload))
         }
+    }
 
+    private fun checkIfMyTurn() {
+        val order = LobbyClient.allPlayers()
+        val myIndex = order.indexOfFirst { it.username == myPlayerName }
+
+        val isMyTurn = myIndex == 0 // aktuell: erster ist dran
+        runOnUiThread {
+            rollDiceButton.visibility = if (isMyTurn) View.VISIBLE else View.GONE
+        }
     }
 
     fun showResponse(msg: String) {
@@ -81,23 +98,17 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    fun updateLobby(players: List<String>) {
-        runOnUiThread {
-            lobbyView.text = "Lobby:\n" + players.joinToString("\n") { "- $it" }
-        }
-    }
-
     fun showBuyButton(tileName: String, tilePos: Int, playerId: String) {
         runOnUiThread {
             buyButton.apply {
                 text = "Kaufen: $tileName"
                 visibility = View.VISIBLE
                 setOnClickListener {
-                    val payload = JSONObject().apply {
-                        put("playerId", myPlayerName)
-                        put("tilePos", tilePos)
+                    val payload = JsonObject().apply {
+                        addProperty("playerId", myPlayerName)
+                        addProperty("tilePos", tilePos)
                     }
-                    mystomp.sendGameMessage(GameMessage("buy_property", payload.toString()))
+                    gameStomp.sendGameMessage(GameMessage(GameMessageType.BUY_PROPERTY, payload))
                     visibility = View.GONE
                 }
             }
@@ -128,4 +139,21 @@ class MainActivity : ComponentActivity() {
                 .show()
         }
     }
+    fun enableDiceButton() {
+        runOnUiThread {
+            rollDiceButton.visibility = View.VISIBLE
+        }
+    }
+
+    fun disableDiceButton() {
+        runOnUiThread {
+            rollDiceButton.visibility = View.GONE
+        }
+    }
+
+    fun getMyPlayerName(): String {
+        return myPlayerName
+    }
+
+
 }

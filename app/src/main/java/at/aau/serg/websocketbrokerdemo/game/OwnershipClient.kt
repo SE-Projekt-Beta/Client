@@ -1,4 +1,4 @@
-package at.aau.serg.websocketbrokerdemo.dkt
+package at.aau.serg.websocketbrokerdemo.game
 
 object OwnershipClient {
     private val ownership = mutableMapOf<String, MutableList<String>>()
