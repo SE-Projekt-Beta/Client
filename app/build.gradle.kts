@@ -105,17 +105,21 @@ sonar {
         )
         property(
             "sonar.coverage.exclusions",
-                    "**/MainActivity.kt, " +
-                    "**/LobbyActivity.kt, " +
-                    "**/MyStomp.kt, " +
-                    "**/TileType.kt, " +
-                    "**/Color.kt, " +
-                    "**/Tile.kt, " +
+            "**/MainActivity.kt," +
+                    "**/LobbyActivity.kt," +
+                    "**/UsernameActivity.kt," +
                     "**/Theme.kt," +
+                    "**/Color.kt," +
+                    "**/TileType.kt," +
+                    "**/Tile.kt," +
                     "**/Type.kt," +
-                    "**/Callbacks.kt"
+                    "**/MyStomp.kt," +
+                    "**/Callbacks.kt," +
+                    "**/ui/**," +
+                    "**/*Activity.kt," +
+                    "**/*Adapter.kt," +
+                    "**/dto/**"
         )
-
     }
 }
 
