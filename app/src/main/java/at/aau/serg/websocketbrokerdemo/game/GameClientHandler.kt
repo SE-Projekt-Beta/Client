@@ -1,14 +1,13 @@
-package at.aau.serg.websocketbrokerdemo.dkt
+package at.aau.serg.websocketbrokerdemo.game
 
 import android.util.Log
 import at.aau.serg.websocketbrokerdemo.MainActivity
 import at.aau.serg.websocketbrokerdemo.network.dto.GameMessage
 import at.aau.serg.websocketbrokerdemo.network.dto.GameMessageType
-import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import org.json.JSONObject
 
-class DktClientHandler(
+class GameClientHandler(
     private val activity: MainActivity
 ) {
 

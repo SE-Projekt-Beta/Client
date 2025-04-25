@@ -7,10 +7,9 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.material3.AlertDialog
-import at.aau.serg.websocketbrokerdemo.dkt.DktClientHandler
+import at.aau.serg.websocketbrokerdemo.game.GameClientHandler
 import at.aau.serg.websocketbrokerdemo.network.dto.GameMessage
-import at.aau.serg.websocketbrokerdemo.dkt.OwnershipClient
+import at.aau.serg.websocketbrokerdemo.game.OwnershipClient
 import at.aau.serg.websocketbrokerdemo.lobby.LobbyClient
 import at.aau.serg.websocketbrokerdemo.network.dto.GameMessageType
 import at.aau.serg.websocketbrokerdemo.network.dto.PlayerDTO
@@ -22,7 +21,7 @@ import com.google.gson.JsonObject
 class MainActivity : ComponentActivity() {
 
     private lateinit var gameStomp: GameStomp
-    private lateinit var clientHandler: DktClientHandler
+    private lateinit var clientHandler: GameClientHandler
 
     private lateinit var responseView: TextView
     private lateinit var ownershipView: TextView
@@ -60,7 +59,7 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun setupNetwork() {
-        clientHandler = DktClientHandler(this)
+        clientHandler = GameClientHandler(this)
         gameStomp = GameStomp(dktHandler = clientHandler)
         gameStomp.connect()
     }

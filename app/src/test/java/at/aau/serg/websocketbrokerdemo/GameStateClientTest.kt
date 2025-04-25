@@ -1,6 +1,6 @@
 package at.aau.serg.websocketbrokerdemo
 
-import at.aau.serg.websocketbrokerdemo.dkt.GameStateClient
+import at.aau.serg.websocketbrokerdemo.game.GameStateClient
 import junit.framework.TestCase.assertEquals
 import org.junit.jupiter.api.Test
 

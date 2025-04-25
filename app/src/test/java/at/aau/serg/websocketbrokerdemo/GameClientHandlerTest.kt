@@ -1,4 +1,4 @@
-package at.aau.serg.websocketbrokerdemo.dkt
+package at.aau.serg.websocketbrokerdemo.game
 
 import android.util.Log
 import at.aau.serg.websocketbrokerdemo.MainActivity
@@ -8,9 +8,9 @@ import org.json.JSONObject
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-class DktClientHandlerTest {
+class GameClientHandlerTest {
     private lateinit var mockActivity: MainActivity
-    private lateinit var dktClientHandler: DktClientHandler
+    private lateinit var dktClientHandler: GameClientHandler
 
     @BeforeEach
     fun setUp() {
@@ -29,7 +29,7 @@ class DktClientHandlerTest {
         mockkObject(OwnershipClient)
         every { OwnershipClient.addProperty(any(), any()) } just Runs
 
-        dktClientHandler = DktClientHandler(mockActivity)
+        dktClientHandler = GameClientHandler(mockActivity)
     }
 
     @Test

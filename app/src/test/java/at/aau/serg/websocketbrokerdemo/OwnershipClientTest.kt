@@ -1,6 +1,6 @@
 package at.aau.serg.websocketbrokerdemo
 
-import at.aau.serg.websocketbrokerdemo.dkt.OwnershipClient
+import at.aau.serg.websocketbrokerdemo.game.OwnershipClient
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
 import org.junit.jupiter.api.Test

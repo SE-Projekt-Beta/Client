@@ -2,7 +2,7 @@ package at.aau.serg.websocketbrokerdemo.network
 
 import WEBSOCKET_URI
 import android.util.Log
-import at.aau.serg.websocketbrokerdemo.dkt.DktClientHandler
+import at.aau.serg.websocketbrokerdemo.game.GameClientHandler
 import at.aau.serg.websocketbrokerdemo.network.dto.GameMessage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -16,7 +16,7 @@ import org.hildan.krossbow.websocket.okhttp.OkHttpWebSocketClient
 import com.google.gson.GsonBuilder
 
 class GameStomp(
-    private val dktHandler: DktClientHandler,
+    private val dktHandler: GameClientHandler,
     private val onConnected: (() -> Unit)? = null
 ) {
     private lateinit var session: StompSession
