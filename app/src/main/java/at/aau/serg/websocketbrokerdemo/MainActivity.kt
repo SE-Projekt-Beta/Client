@@ -75,9 +75,9 @@ class MainActivity : ComponentActivity() {
 
     private fun checkIfMyTurn() {
         val order = LobbyClient.allPlayers()
-        val myIndex = order.indexOfFirst { it.username == myPlayerName }
+        val myIndex = order.indexOfFirst { it.nickname == myPlayerName }
 
-        val isMyTurn = myIndex == 0 // aktuell: erster ist dran
+        val isMyTurn = myIndex == 0
         runOnUiThread {
             rollDiceButton.visibility = if (isMyTurn) View.VISIBLE else View.GONE
         }
