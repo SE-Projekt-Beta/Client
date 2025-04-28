@@ -39,7 +39,7 @@ class LoginHandlerTest {
     fun testOnLobbyUpdate_userNotInList_doesNothing() {
         // Arrange
         LobbyClient.username = "Unknown Player"
-        val players = listOf(PlayerDTO("id1", "Player 2"))
+        val players = listOf(PlayerDTO(1, "Player 2"))
 
         // Act
         handler.onLobbyUpdate(players)

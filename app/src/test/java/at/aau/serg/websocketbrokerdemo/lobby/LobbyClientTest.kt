@@ -9,16 +9,16 @@ class LobbyClientTest {
     @Test
     fun testSetAndGetPlayers() {
         val players = listOf(
-            PlayerDTO("id1", "Anna"),
-            PlayerDTO("id2", "Ben")
+            PlayerDTO(1, "Anna"),
+            PlayerDTO(2, "Ben")
         )
 
         LobbyClient.setPlayers(players)
         val result = LobbyClient.allPlayers()
 
         assertEquals(2, result.size)
-        assertEquals("Anna", result[0].username)
-        assertEquals("Ben", result[1].username)
+        assertEquals("Anna", result[0].nickname)
+        assertEquals("Ben", result[1].nickname)
     }
 
     @Test

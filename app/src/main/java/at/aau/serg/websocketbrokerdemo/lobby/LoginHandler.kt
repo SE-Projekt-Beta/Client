@@ -13,17 +13,14 @@ class LoginHandler(private val activity: UsernameActivity) : LobbyMessageListene
     override fun onLobbyUpdate(players: List<PlayerDTO>) {
         Log.i("LoginHandler", "Lobby update received during login: $players")
 
-        // Nur fortfahren, wenn der eigene Benutzername dabei ist
-        val ownUsername = LobbyClient.username
-        val isOwnUserPresent = players.any { it.username == ownUsername }
+        val ownNickname = LobbyClient.username
+        val isOwnUserPresent = players.any { it.nickname == ownNickname }
 
         if (isOwnUserPresent) {
-            Log.i("LoginHandler", "Username $ownUsername is in lobby, starting LobbyActivity")
+            Log.i("LoginHandler", "Nickname $ownNickname is in lobby, starting LobbyActivity")
 
-            // Spieler in LobbyClient speichern
             LobbyClient.setPlayers(players)
 
-            // Spieler-Liste als JSON an LobbyActivity übergeben
             val gson = Gson()
             val playersJson = gson.toJson(players)
 
@@ -33,7 +30,7 @@ class LoginHandler(private val activity: UsernameActivity) : LobbyMessageListene
             activity.startActivity(intent)
             activity.finish()
         } else {
-            Log.i("LoginHandler", "Own user $ownUsername not in list yet, ignoring update.")
+            Log.i("LoginHandler", "Own nickname $ownNickname not in list yet, ignoring update.")
         }
     }
 

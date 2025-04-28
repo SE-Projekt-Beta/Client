@@ -42,12 +42,12 @@ class LobbyActivity : AppCompatActivity() {
             val type = object : TypeToken<List<PlayerDTO>>() {}.type
             val players: List<PlayerDTO> = gson.fromJson(json, type)
             LobbyClient.setPlayers(players)
-            updateLobby(players.map { it.username })
+            updateLobby(players.map { it.nickname })
         } else {
             // Fallback, falls keine Liste übergeben wurde
             val existingPlayers = LobbyClient.allPlayers()
             if (existingPlayers.isNotEmpty()) {
-                updateLobby(existingPlayers.map { it.username })
+                updateLobby(existingPlayers.map { it.nickname })
             } else {
                 updateLobby(emptyList())
             }

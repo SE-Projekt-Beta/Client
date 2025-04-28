@@ -18,8 +18,8 @@ class LobbyHandler(private val activity: LobbyActivity) : LobbyMessageListener {
         val order = orderJson.map {
             val obj = it.asJsonObject
             PlayerDTO(
-                id = obj.get("id").asString,
-                username = obj.get("username").asString
+                id = obj.get("id").asInt,
+                nickname = obj.get("nickname").asString
             )
         }
         activity.startGame(order)
@@ -27,7 +27,7 @@ class LobbyHandler(private val activity: LobbyActivity) : LobbyMessageListener {
 
     override fun onLobbyUpdate(players: List<PlayerDTO>) {
         LobbyClient.setPlayers(players)
-        activity.updateLobby(players.map { it.username })
+        activity.updateLobby(players.map { it.nickname })
     }
 
 }
