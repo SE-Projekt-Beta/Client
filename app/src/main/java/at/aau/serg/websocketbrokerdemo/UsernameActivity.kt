@@ -35,8 +35,12 @@ class UsernameActivity : AppCompatActivity() {
             val username = usernameEditText.text.toString().trim()
             if (username.isNotEmpty()) {
                 LobbyClient.username = username
-                lobbyStomp.sendJoinLobby(username)
-                Log.i("UsernameActivity", "Username sent to server: $username")
+                Log.i("UsernameActivity", "Username set: $username")
+
+                // Navigate to the lobby screen
+                val intent = Intent(this, MainActivity::class.java)
+                startActivity(intent)
+                finish()
             } else {
                 Toast.makeText(this, "Please enter username", Toast.LENGTH_SHORT).show()
             }
