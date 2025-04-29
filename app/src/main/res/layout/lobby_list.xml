@@ -6,10 +6,10 @@
     android:padding="16dp">
 
     <Button
-        android:id="@+id/createLobbyButton"
+        android:id="@+id/newLobbyButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Create Lobby" />
+        android:text="New Lobby" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/lobbyRecyclerView"

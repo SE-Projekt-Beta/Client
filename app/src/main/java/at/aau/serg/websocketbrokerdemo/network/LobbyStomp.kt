@@ -39,10 +39,20 @@ class LobbyStomp(private val listener: LobbyMessageListener) {
         }
     }
 
-    fun sendCreateLobby() {
-        val createMessage = LobbyMessage(LobbyMessageType.CREATE_LOBBY, JsonObject())
+    fun sendCreateLobby(lobbyName: String) {
+        val payload = JsonObject().apply {
+            addProperty("lobbyName", lobbyName)
+        }
+        val createMessage = LobbyMessage(LobbyMessageType.CREATE_LOBBY, payload)
         scope.launch {
             session.sendText("/app/lobby", Gson().toJson(createMessage))
+        }
+    }
+
+    fun sendListLobbies() {
+        val listMessage = LobbyMessage(LobbyMessageType.LIST_LOBBIES, JsonObject())
+        scope.launch {
+            session.sendText("/app/lobby", Gson().toJson(listMessage))
         }
     }
 
@@ -99,6 +109,22 @@ class LobbyStomp(private val listener: LobbyMessageListener) {
                         id = obj.get("id").asString,
                         name = obj.get("name").asString
                     )
+                }
+                Log.i("LobbyStomp", "Parsed lobbies: $lobbies")
+                listener.onLobbyUpdate(lobbies)
+            }
+
+            LobbyMessageType.LOBBY_LIST -> {
+                val lobbiesJson = message.payload.asJsonArray
+                val lobbies = lobbiesJson.map {
+                    val obj = it.asJsonObject
+                    LobbyDTO(
+                        id = obj.get("lobbyId").asString,
+                        name = obj.get("lobbyName").asString
+                    ).apply {
+                        val playerCount = obj.get("playerCount").asInt
+                        Log.i("LobbyStomp", "Lobby $id has $playerCount players.")
+                    }
                 }
                 Log.i("LobbyStomp", "Parsed lobbies: $lobbies")
                 listener.onLobbyUpdate(lobbies)

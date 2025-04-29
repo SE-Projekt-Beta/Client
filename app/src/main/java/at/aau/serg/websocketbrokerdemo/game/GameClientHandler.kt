@@ -1,14 +1,12 @@
 package at.aau.serg.websocketbrokerdemo.game
 
 import android.util.Log
-import at.aau.serg.websocketbrokerdemo.MainActivity
+import at.aau.serg.websocketbrokerdemo.ListLobby
 import at.aau.serg.websocketbrokerdemo.network.dto.GameMessage
 import at.aau.serg.websocketbrokerdemo.network.dto.GameMessageType
-import com.google.gson.JsonObject
-import org.json.JSONObject
 
 class GameClientHandler(
-    private val activity: MainActivity
+    private val activity: ListLobby
 ) {
 
     fun handle(message: GameMessage) {
