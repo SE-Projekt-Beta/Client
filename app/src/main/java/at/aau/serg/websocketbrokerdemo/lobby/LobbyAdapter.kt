@@ -15,6 +15,7 @@ class LobbyAdapter(
 
     class LobbyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val lobbyName: TextView = itemView.findViewById(R.id.lobbyName)
+        val playerCount: TextView = itemView.findViewById(R.id.playerCount)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LobbyViewHolder {
@@ -26,6 +27,7 @@ class LobbyAdapter(
     override fun onBindViewHolder(holder: LobbyViewHolder, position: Int) {
         val lobby = lobbies[position]
         holder.lobbyName.text = lobby.name
+        holder.playerCount.text = "${lobby.playerCount} players"
         holder.itemView.setOnClickListener { onLobbyClick(lobby) }
     }
 
