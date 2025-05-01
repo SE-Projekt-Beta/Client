@@ -56,9 +56,10 @@ class LobbyStomp(private val listener: LobbyMessageListener) {
         }
     }
 
-    fun sendJoinLobby(username: String) {
+    fun sendJoinLobby(username: String, lobbyId: String) {
         val payload = JsonObject().apply {
             addProperty("username", username)
+            addProperty("lobbyId", lobbyId)
         }
         val joinMessage = LobbyMessage(LobbyMessageType.JOIN_LOBBY, payload)
         scope.launch {

@@ -65,6 +65,21 @@ class ListLobby : ComponentActivity() {
     }
 
     private fun joinLobby(lobby: LobbyDTO) {
+
+        //get username from shared preferences
+        val sharedPreferences = getSharedPreferences("AppPreferences", MODE_PRIVATE)
+        val username = sharedPreferences.getString("username", "Guest") ?: "Guest"
+
+        // send a joinlobby via lobbyStomp
+        lobbyStomp.sendJoinLobby(username, lobby.id)
+
+        //log it
+        Log.i("ListLobby", "Joining lobby: ${lobby.id}")
+        val intent = Intent(this, LobbyActivity::class.java)
+        intent.putExtra("lobbyId", lobby.id)
+        // start the lobby activity
+        startActivity(intent)
+        finish()
         // Handle joining the lobby
     }
 }

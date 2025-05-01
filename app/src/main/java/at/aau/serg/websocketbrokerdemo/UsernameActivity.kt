@@ -34,6 +34,12 @@ class UsernameActivity : AppCompatActivity() {
         enterButton.setOnClickListener {
             val username = usernameEditText.text.toString().trim()
             if (username.isNotEmpty()) {
+                // Save the username in SharedPreferences
+                val sharedPreferences = getSharedPreferences("AppPreferences", MODE_PRIVATE)
+                val editor = sharedPreferences.edit()
+                editor.putString("username", username)
+                editor.apply()
+
                 LobbyClient.username = username
                 Log.i("UsernameActivity", "Username set: $username")
 
