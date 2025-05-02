@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import androidx.activity.ComponentActivity
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import at.aau.serg.websocketbrokerdemo.lobby.LobbyAdapter
@@ -18,9 +17,8 @@ import at.aau.serg.websocketbrokerdemo.network.dto.LobbyDTO
 import at.aau.serg.websocketbrokerdemo.network.dto.PlayerDTO
 import com.example.myapplication.R
 import com.google.gson.JsonObject
-import kotlinx.coroutines.launch
 
-class ListLobby : ComponentActivity() {
+class ListLobbyActivity : ComponentActivity() {
 
     private lateinit var lobbyRecyclerView: RecyclerView
     private lateinit var newLobbyButton: Button

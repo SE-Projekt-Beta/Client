@@ -35,7 +35,7 @@
 
         <!-- MainActivity: Spiel -->
         <activity
-            android:name="at.aau.serg.websocketbrokerdemo.ListLobby"
+            android:name="at.aau.serg.websocketbrokerdemo.ListLobbyActivity"
             android:exported="false"
             android:theme="@style/Theme.MaterialComponents.DayNight.DarkActionBar" />
 

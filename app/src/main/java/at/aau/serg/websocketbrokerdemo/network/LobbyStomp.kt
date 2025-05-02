@@ -1,3 +1,4 @@
+// src/main/java/at/aau/serg/websocketbrokerdemo/network/LobbyStomp.kt
 package at.aau.serg.websocketbrokerdemo.network
 
 import WEBSOCKET_URI
@@ -20,9 +21,10 @@ import org.hildan.krossbow.websocket.okhttp.OkHttpWebSocketClient
 
 class LobbyStomp(private val listener: LobbyMessageListener) {
 
+    // ↓ NEW: one-time callback used by ListLobby to know when to send LIST_LOBBIES
     private var onConnected: (() -> Unit)? = null
 
-    /** Allow callers to register a one‐time callback. */
+    /** Register a callback to fire right after the WebSocket opens. */
     fun setOnConnectedListener(cb: () -> Unit) {
         onConnected = cb
     }
@@ -35,13 +37,13 @@ class LobbyStomp(private val listener: LobbyMessageListener) {
         scope.launch {
             session = client.connect(WEBSOCKET_URI)
 
-            // right after connect() returns, the socket is OPEN…
+            // Socket is open—invoke the one-time listener
             onConnected?.invoke()
 
-            // Subscribe to lobby updates
-            session.subscribeText("/topic/lobby").collect { message ->
-                Log.i("LobbyStomp", "Received from /topic/lobby: $message")
-                handleLobbyMessage(parseLobbyMessage(message))
+            // Subscribe to the global lobby list topic
+            session.subscribeText("/topic/lobby").collect { raw ->
+                Log.i("LobbyStomp", "Received from /topic/lobby: $raw")
+                handleLobbyMessage(parseLobbyMessage(raw))
             }
 
             Log.i("LobbyStomp", "Connected to WebSocket. Waiting for lobby updates.")
@@ -49,20 +51,14 @@ class LobbyStomp(private val listener: LobbyMessageListener) {
     }
 
     fun sendCreateLobby(lobbyName: String) {
-        val payload = JsonObject().apply {
-            addProperty("lobbyName", lobbyName)
-        }
-        val createMessage = LobbyMessage(LobbyMessageType.CREATE_LOBBY, payload)
-        scope.launch {
-            session.sendText("/app/lobby", Gson().toJson(createMessage))
-        }
+        val payload = JsonObject().apply { addProperty("lobbyName", lobbyName) }
+        val msg = LobbyMessage(null, LobbyMessageType.CREATE_LOBBY, payload)
+        scope.launch { session.sendText("/app/lobby", Gson().toJson(msg)) }
     }
 
     fun sendListLobbies() {
-        val listMessage = LobbyMessage(LobbyMessageType.LIST_LOBBIES, JsonObject())
-        scope.launch {
-            session.sendText("/app/lobby", Gson().toJson(listMessage))
-        }
+        val msg = LobbyMessage(null, LobbyMessageType.LIST_LOBBIES, JsonObject())
+        scope.launch { session.sendText("/app/lobby", Gson().toJson(msg)) }
     }
 
     fun sendJoinLobby(username: String, lobbyId: String) {
@@ -70,92 +66,57 @@ class LobbyStomp(private val listener: LobbyMessageListener) {
             addProperty("username", username)
             addProperty("lobbyId", lobbyId)
         }
-        val joinMessage = LobbyMessage(LobbyMessageType.JOIN_LOBBY, payload)
+        val msg = LobbyMessage(lobbyId, LobbyMessageType.JOIN_LOBBY, payload)
         scope.launch {
-            session.sendText("/app/lobby", Gson().toJson(joinMessage))
-            Log.i("LobbyStomp", "Sent JOIN_LOBBY message for username: $username")
+            session.sendText("/app/lobby", Gson().toJson(msg))
+            Log.i("LobbyStomp", "Sent JOIN_LOBBY for user=$username, lobbyId=$lobbyId")
         }
     }
 
     fun sendStartGame() {
-
-        // get the lobbyid from the lobbyclient
-        val lobbyId = LobbyClient.lobbyId
-
-        val payload = JsonObject().apply {
-            addProperty("lobbyId", lobbyId)
-        }
-        val startMessage = LobbyMessage(LobbyMessageType.START_GAME, payload)
-        scope.launch {
-            session.sendText("/app/lobby", Gson().toJson(startMessage))
-        }
+        val id = LobbyClient.lobbyId
+        val payload = JsonObject().apply { addProperty("lobbyId", id) }
+        val msg = LobbyMessage(id, LobbyMessageType.START_GAME, payload)
+        scope.launch { session.sendText("/app/lobby", Gson().toJson(msg)) }
     }
 
-    private fun parseLobbyMessage(json: String): LobbyMessage {
-        return Gson().fromJson(json, LobbyMessage::class.java)
-    }
-
-//    private fun handleLobbyMessage(message: LobbyMessage) {
-//        when (message.type) {
-//            LobbyMessageType.LOBBY_UPDATE -> {
-//                val playersJson = message.payload.asJsonObject.getAsJsonArray("players")
-//                val players = playersJson.map {
-//                    val obj = it.asJsonObject
-//                    PlayerDTO(
-//                        id = obj.get("id").asInt,
-//                        nickname = obj.get("nickname").asString
-//                    )
-//                }
-//                Log.i("LobbyStomp", "Parsed players: $players")
-//                listener.onLobbyUpdate(players)
-//            }
-//
-//            LobbyMessageType.START_GAME -> listener.onStartGame(message.payload.asJsonObject)
-//
-//            else -> Log.w("LobbyStomp", "Unhandled message type: ${message.type}")
-//        }
-//    }
+    private fun parseLobbyMessage(json: String): LobbyMessage =
+        Gson().fromJson(json, LobbyMessage::class.java)
 
     private fun handleLobbyMessage(message: LobbyMessage) {
         when (message.type) {
-            LobbyMessageType.LOBBY_UPDATE -> {
-                // print the message raw
-                Log.i("LobbyStomp", "Received LOBBY_UPDATE message: $message")
-                val playersJson = message.payload.asJsonObject.getAsJsonArray("players")
-                val players = playersJson.map {
-                    val obj = it.asJsonObject
-                    PlayerDTO(
-                        id = obj.get("id").asInt,
-                        nickname = obj.get("nickname").asString
+            LobbyMessageType.LOBBY_CREATED -> {
+                val lobbyid = message.lobbyId
+                LobbyClient.lobbyId = lobbyid
+                listener.onLobbyListUpdate(listOf()) // or trigger a fetch
+            }
+            LobbyMessageType.LOBBY_LIST -> {
+                val arr = message.payload.asJsonArray
+                val lobbies = arr.map { elem ->
+                    val o = elem.asJsonObject
+                    LobbyDTO(
+                        id = o.get("lobbyId").asString,
+                        name = o.get("lobbyName").asString,
+                        playerCount = o.get("playerCount").asInt
                     )
                 }
-                Log.i("LobbyStomp", "Parsed players: $players")
-                listener.onLobbyUpdate(players)
-            }
-
-            LobbyMessageType.LOBBY_LIST -> {
-                val lobbiesJson = message.payload.asJsonArray
-                val lobbies = lobbiesJson.map {
-                    val obj = it.asJsonObject
-                    LobbyDTO(
-                        id = obj.get("lobbyId").asString,
-                        name = obj.get("lobbyName").asString,
-                        playerCount = obj.get("playerCount").asInt
-                    ).apply {
-                        val playerCount = obj.get("playerCount").asInt
-                        Log.i("LobbyStomp", "Lobby $id has $playerCount players.")
-                    }
-                }
-                Log.i("LobbyStomp", "Parsed lobbies: $lobbies")
                 listener.onLobbyListUpdate(lobbies)
             }
-
-            LobbyMessageType.START_GAME -> listener.onStartGame(message.payload.asJsonObject)
-
+            LobbyMessageType.LOBBY_UPDATE -> {
+                val playersJson = message.payload.asJsonObject.getAsJsonArray("players")
+                val players = playersJson.map {
+                    val o = it.asJsonObject
+                    PlayerDTO(o.get("id").asInt, o.get("nickname").asString)
+                }
+                listener.onLobbyUpdate(players)
+            }
+            LobbyMessageType.START_GAME -> {
+                listener.onStartGame(message.payload.asJsonObject)
+            }
+            LobbyMessageType.ERROR -> {
+                Log.e("LobbyStomp", "Server error: ${message.payload}")
+            }
             else -> Log.w("LobbyStomp", "Unhandled message type: ${message.type}")
         }
     }
-
-
-
 }

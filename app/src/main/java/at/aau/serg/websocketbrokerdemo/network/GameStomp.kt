@@ -6,7 +6,7 @@ import at.aau.serg.websocketbrokerdemo.game.GameClientHandler
 import at.aau.serg.websocketbrokerdemo.network.dto.GameMessage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.hildan.krossbow.stomp.StompClient
 import org.hildan.krossbow.stomp.StompSession
@@ -15,8 +15,12 @@ import org.hildan.krossbow.stomp.subscribeText
 import org.hildan.krossbow.websocket.okhttp.OkHttpWebSocketClient
 import com.google.gson.GsonBuilder
 
+/**
+ * Handles game‐level STOMP messaging for a specific lobby.
+ */
 class GameStomp(
     private val dktHandler: GameClientHandler,
+    private val lobbyId: Int,
     private val onConnected: (() -> Unit)? = null
 ) {
     private lateinit var session: StompSession
@@ -28,15 +32,16 @@ class GameStomp(
         scope.launch {
             session = client.connect(WEBSOCKET_URI)
 
-            val gameFlow: Flow<String> = session.subscribeText("/topic/dkt")
+            // Only receive messages for this lobby
             launch {
-                gameFlow.collect { msg ->
-                    Log.i("GameStomp", "Nachricht vom Server: $msg")
-                    val gameMessage = gson.fromJson(msg, GameMessage::class.java)
-                    dktHandler.handle(gameMessage)
+                session.subscribeText("/topic/dkt/$lobbyId").collect { raw ->
+                    Log.i("GameStomp", "≪ /topic/dkt/$lobbyId: $raw")
+                    val gm = gson.fromJson(raw, GameMessage::class.java)
+                    dktHandler.handle(gm)
                 }
             }
-            Log.i("GameStomp", "Game-Verbindung aufgebaut")
+
+            Log.i("GameStomp", "Connected to game lobby $lobbyId")
             onConnected?.invoke()
         }
     }
@@ -44,7 +49,8 @@ class GameStomp(
     fun sendGameMessage(message: GameMessage) {
         val json = gson.toJson(message)
         scope.launch {
-            session.sendText("/app/dkt", json)
+            session.sendText("/app/dkt/$lobbyId", json)
+            Log.i("GameStomp", "≫ /app/dkt/$lobbyId: $json")
         }
     }
 }

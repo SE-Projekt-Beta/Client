@@ -1,12 +1,12 @@
 package at.aau.serg.websocketbrokerdemo.game
 
 import android.util.Log
-import at.aau.serg.websocketbrokerdemo.ListLobby
+import at.aau.serg.websocketbrokerdemo.ListLobbyActivity
 import at.aau.serg.websocketbrokerdemo.network.dto.GameMessage
 import at.aau.serg.websocketbrokerdemo.network.dto.GameMessageType
 
 class GameClientHandler(
-    private val activity: ListLobby
+    private val activity: ListLobbyActivity
 ) {
 
     fun handle(message: GameMessage) {

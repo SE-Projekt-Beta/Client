@@ -38,7 +38,7 @@ class UsernameActivity : AppCompatActivity() {
                 Log.i("UsernameActivity", "Username set: $username")
 
                 // Navigate to the lobby screen
-                val intent = Intent(this, ListLobby::class.java)
+                val intent = Intent(this, ListLobbyActivity::class.java)
                 startActivity(intent)
                 finish()
             } else {

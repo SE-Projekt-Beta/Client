@@ -5,15 +5,10 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import androidx.activity.ComponentActivity
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import at.aau.serg.websocketbrokerdemo.lobby.LobbyAdapter
 import at.aau.serg.websocketbrokerdemo.lobby.LobbyHandler
-import at.aau.serg.websocketbrokerdemo.network.LobbyMessageListener
 import at.aau.serg.websocketbrokerdemo.network.LobbyStomp
 import at.aau.serg.websocketbrokerdemo.network.dto.LobbyDTO
 import com.example.myapplication.R
-import com.google.gson.JsonObject
 
 class CreateLobbyActivity : ComponentActivity() {
 
@@ -38,7 +33,7 @@ class CreateLobbyActivity : ComponentActivity() {
             if (lobbyName.isNotEmpty()) {
                 lobbyStomp.sendCreateLobby(lobbyName)
             }
-            val intent = Intent(this, ListLobby::class.java)
+            val intent = Intent(this, ListLobbyActivity::class.java)
             startActivity(intent)
             finish()
         }
