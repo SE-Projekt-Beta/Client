@@ -23,7 +23,11 @@ class LobbyHandler(private val context: Context) : LobbyMessageListener {
         }
     }
 
-    override fun onLobbyUpdate(lobbies: List<LobbyDTO>) {
+    override fun onLobbyListUpdate(lobbies: List<LobbyDTO>) {
         // Your Implementation here.
+    }
+
+    override fun onLobbyUpdate(players: List<PlayerDTO>) {
+        // huh
     }
 }

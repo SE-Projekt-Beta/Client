@@ -8,7 +8,6 @@ import com.google.gson.JsonObject
 import io.mockk.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import kotlin.test.assertEquals
 
 class LobbyHandlerTest {
 
@@ -67,7 +66,7 @@ class LobbyHandlerTest {
         )
 
         // Act
-        handler.onLobbyUpdate(players)
+        handler.onLobbyListUpdate(players)
 
         // Assert: Überprüfe, dass updateLobby aufgerufen wurde
         verify {

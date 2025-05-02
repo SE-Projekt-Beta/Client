@@ -5,15 +5,20 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import androidx.activity.ComponentActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import at.aau.serg.websocketbrokerdemo.lobby.LobbyAdapter
+import at.aau.serg.websocketbrokerdemo.lobby.LobbyClient
+import at.aau.serg.websocketbrokerdemo.lobby.LobbyClient.username
 import at.aau.serg.websocketbrokerdemo.lobby.LobbyHandler
 import at.aau.serg.websocketbrokerdemo.network.LobbyMessageListener
 import at.aau.serg.websocketbrokerdemo.network.LobbyStomp
 import at.aau.serg.websocketbrokerdemo.network.dto.LobbyDTO
+import at.aau.serg.websocketbrokerdemo.network.dto.PlayerDTO
 import com.example.myapplication.R
 import com.google.gson.JsonObject
+import kotlinx.coroutines.launch
 
 class ListLobby : ComponentActivity() {
 
@@ -31,13 +36,17 @@ class ListLobby : ComponentActivity() {
 
         lobbyHandler = LobbyHandler(this)
         lobbyStomp = LobbyStomp(object : LobbyMessageListener {
-            override fun onLobbyUpdate(lobbies: List<LobbyDTO>) {
+            override fun onLobbyListUpdate(lobbies: List<LobbyDTO>) {
                 Log.i("ListLobby", "Lobby update received: $lobbies")
                 runOnUiThread {
                     lobbyRecyclerView.adapter = LobbyAdapter(lobbies) { lobby ->
                         joinLobby(lobby)
                     }
                 }
+            }
+            override fun onLobbyUpdate(players: List<PlayerDTO>) {
+                Log.i("ListLobby", "Lobby update received: $players")
+                // Handle lobby update
             }
 
             override fun onStartGame(payload: JsonObject) {
@@ -51,27 +60,25 @@ class ListLobby : ComponentActivity() {
         newLobbyButton.setOnClickListener {
             val intent = Intent(this, CreateLobbyActivity::class.java)
             startActivity(intent)
-            finish()
         }
-
+        // register before calling connect
+        lobbyStomp.setOnConnectedListener {
+            // this will only run once the socket is open
+            lobbyStomp.sendListLobbies()
+        }
         lobbyStomp.connect()
-
-        // wait one secon
-        Thread.sleep(1000)
-
-        // Request the list of lobbies
-        lobbyStomp.sendListLobbies()
 
     }
 
     private fun joinLobby(lobby: LobbyDTO) {
 
-        //get username from shared preferences
-        val sharedPreferences = getSharedPreferences("AppPreferences", MODE_PRIVATE)
-        val username = sharedPreferences.getString("username", "Guest") ?: "Guest"
+        username = LobbyClient.username
 
         // send a joinlobby via lobbyStomp
         lobbyStomp.sendJoinLobby(username, lobby.id)
+
+        //set the lobbyid
+        LobbyClient.lobbyId = lobby.id
 
         //log it
         Log.i("ListLobby", "Joining lobby: ${lobby.id}")
@@ -79,7 +86,5 @@ class ListLobby : ComponentActivity() {
         intent.putExtra("lobbyId", lobby.id)
         // start the lobby activity
         startActivity(intent)
-        finish()
-        // Handle joining the lobby
     }
 }

@@ -11,7 +11,6 @@ import com.google.gson.Gson
 import com.google.gson.JsonObject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.hildan.krossbow.stomp.StompClient
 import org.hildan.krossbow.stomp.StompSession
@@ -21,6 +20,13 @@ import org.hildan.krossbow.websocket.okhttp.OkHttpWebSocketClient
 
 class LobbyStomp(private val listener: LobbyMessageListener) {
 
+    private var onConnected: (() -> Unit)? = null
+
+    /** Allow callers to register a one‐time callback. */
+    fun setOnConnectedListener(cb: () -> Unit) {
+        onConnected = cb
+    }
+
     private lateinit var session: StompSession
     private val scope = CoroutineScope(Dispatchers.IO)
 
@@ -28,6 +34,9 @@ class LobbyStomp(private val listener: LobbyMessageListener) {
         val client = StompClient(OkHttpWebSocketClient())
         scope.launch {
             session = client.connect(WEBSOCKET_URI)
+
+            // right after connect() returns, the socket is OPEN…
+            onConnected?.invoke()
 
             // Subscribe to lobby updates
             session.subscribeText("/topic/lobby").collect { message ->
@@ -69,7 +78,14 @@ class LobbyStomp(private val listener: LobbyMessageListener) {
     }
 
     fun sendStartGame() {
-        val startMessage = LobbyMessage(LobbyMessageType.START_GAME, JsonObject())
+
+        // get the lobbyid from the lobbyclient
+        val lobbyId = LobbyClient.lobbyId
+
+        val payload = JsonObject().apply {
+            addProperty("lobbyId", lobbyId)
+        }
+        val startMessage = LobbyMessage(LobbyMessageType.START_GAME, payload)
         scope.launch {
             session.sendText("/app/lobby", Gson().toJson(startMessage))
         }
@@ -103,17 +119,18 @@ class LobbyStomp(private val listener: LobbyMessageListener) {
     private fun handleLobbyMessage(message: LobbyMessage) {
         when (message.type) {
             LobbyMessageType.LOBBY_UPDATE -> {
-                val lobbiesJson = message.payload.asJsonObject.getAsJsonArray("lobbies")
-                val lobbies = lobbiesJson.map {
+                // print the message raw
+                Log.i("LobbyStomp", "Received LOBBY_UPDATE message: $message")
+                val playersJson = message.payload.asJsonObject.getAsJsonArray("players")
+                val players = playersJson.map {
                     val obj = it.asJsonObject
-                    LobbyDTO(
-                        id = obj.get("id").asString,
-                        name = obj.get("name").asString,
-                        playerCount = obj.get("playerCount").asInt
+                    PlayerDTO(
+                        id = obj.get("id").asInt,
+                        nickname = obj.get("nickname").asString
                     )
                 }
-                Log.i("LobbyStomp", "Parsed lobbies: $lobbies")
-                listener.onLobbyUpdate(lobbies)
+                Log.i("LobbyStomp", "Parsed players: $players")
+                listener.onLobbyUpdate(players)
             }
 
             LobbyMessageType.LOBBY_LIST -> {
@@ -130,7 +147,7 @@ class LobbyStomp(private val listener: LobbyMessageListener) {
                     }
                 }
                 Log.i("LobbyStomp", "Parsed lobbies: $lobbies")
-                listener.onLobbyUpdate(lobbies)
+                listener.onLobbyListUpdate(lobbies)
             }
 
             LobbyMessageType.START_GAME -> listener.onStartGame(message.payload.asJsonObject)
