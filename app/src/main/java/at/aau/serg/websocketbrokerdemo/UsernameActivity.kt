@@ -47,10 +47,5 @@ class UsernameActivity : AppCompatActivity() {
         }
     }
 
-    fun startLobbyActivity() {
-        val intent = Intent(this, LobbyActivity::class.java)
-        startActivity(intent)
-        finish()
-    }
 }
 
