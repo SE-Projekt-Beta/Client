@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.enableEdgeToEdge
 import at.aau.serg.websocketbrokerdemo.game.GameClientHandler
+import at.aau.serg.websocketbrokerdemo.game.GameStateClient
 import at.aau.serg.websocketbrokerdemo.network.dto.GameMessage
 import at.aau.serg.websocketbrokerdemo.game.OwnershipClient
 import at.aau.serg.websocketbrokerdemo.lobby.LobbyClient
@@ -91,9 +92,11 @@ class MainActivity : ComponentActivity() {
 
     fun showOwnership() {
         runOnUiThread {
-            val text = OwnershipClient.all().entries.joinToString("\n\n") { (player, props) ->
-                "$player besitzt:\n  - ${props.joinToString("\n  - ")}"
-            }
+            val text = GameStateClient.getAllPositions().entries.joinToString("\n\n") { (id, pos) ->
+                val state = GameStateClient.getPlayerState(id)
+                val props = state?.properties?.joinToString(", ") ?: "keine"
+                "$id -> Feld: $pos, Besitz: $props, Geld: ${state?.money}€"
+        }
             ownershipView.text = text
         }
     }

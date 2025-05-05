@@ -4,6 +4,7 @@ import android.util.Log
 import at.aau.serg.websocketbrokerdemo.MainActivity
 import at.aau.serg.websocketbrokerdemo.network.dto.GameMessage
 import at.aau.serg.websocketbrokerdemo.network.dto.GameMessageType
+import com.google.gson.Gson
 import com.google.gson.JsonObject
 import org.json.JSONObject
 
@@ -48,6 +49,7 @@ class GameClientHandler(
         activity.showResponse("$playerId → $tileName ($tileType), gewürfelt: $dice")
 
         GameStateClient.updatePosition(playerId, pos)
+        GameStateClient.setDiceRoll(dice)
     }
 
     private fun handleCanBuyProperty(payload: JsonObject) {
@@ -120,6 +122,11 @@ class GameClientHandler(
         Log.i(TAG, message)
         activity.showResponse(message)
         activity.showJailDialog(playerId)
+    }
+
+    private fun handlePlayerUpdate(payload: JsonObject) {
+        val player = Gson().fromJson(payload.toString(), PlayerState::class.java)
+        GameStateClient.updatePlayer(player)
     }
 
     private fun handleError(errorMessage: String) {
