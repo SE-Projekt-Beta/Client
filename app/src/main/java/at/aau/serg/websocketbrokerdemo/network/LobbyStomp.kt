@@ -4,6 +4,7 @@ import WEBSOCKET_URI
 import android.util.Log
 import at.aau.serg.websocketbrokerdemo.game.OwnershipClient
 import at.aau.serg.websocketbrokerdemo.lobby.LobbyClient
+import at.aau.serg.websocketbrokerdemo.model.BoardMap
 import at.aau.serg.websocketbrokerdemo.network.dto.LobbyMessage
 import at.aau.serg.websocketbrokerdemo.network.dto.LobbyMessageType
 import at.aau.serg.websocketbrokerdemo.network.dto.PlayerDTO
@@ -80,8 +81,8 @@ class LobbyStomp(private val listener: LobbyMessageListener) {
                     )
                 }
                 players.forEach { player ->
-                    OwnershipClient.setProperties(player.id.toString(), player.properties)
-
+                    val tileNames = player.properties.map { BoardMap.getTile(it).name }
+                    OwnershipClient.setProperties(player.id.toString(), tileNames)
                 }
                 Log.i("LobbyStomp", "Parsed players: $players")
                 listener.onLobbyUpdate(players)
