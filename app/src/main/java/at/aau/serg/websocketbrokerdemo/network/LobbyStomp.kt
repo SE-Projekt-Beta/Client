@@ -2,6 +2,7 @@ package at.aau.serg.websocketbrokerdemo.network
 
 import WEBSOCKET_URI
 import android.util.Log
+import at.aau.serg.websocketbrokerdemo.game.OwnershipClient
 import at.aau.serg.websocketbrokerdemo.lobby.LobbyClient
 import at.aau.serg.websocketbrokerdemo.network.dto.LobbyMessage
 import at.aau.serg.websocketbrokerdemo.network.dto.LobbyMessageType
@@ -77,6 +78,10 @@ class LobbyStomp(private val listener: LobbyMessageListener) {
                         inJail = obj.get("inJail").asBoolean,
                         hasEscapedCard = obj.get("hasEscapedCard").asBoolean
                     )
+                }
+                players.forEach { player ->
+                    OwnershipClient.setProperties(player.id.toString(), player.properties)
+
                 }
                 Log.i("LobbyStomp", "Parsed players: $players")
                 listener.onLobbyUpdate(players)
