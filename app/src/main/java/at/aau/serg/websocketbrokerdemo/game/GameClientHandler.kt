@@ -4,6 +4,7 @@ import android.util.Log
 import at.aau.serg.websocketbrokerdemo.MainActivity
 import at.aau.serg.websocketbrokerdemo.network.dto.GameMessage
 import at.aau.serg.websocketbrokerdemo.network.dto.GameMessageType
+import at.aau.serg.websocketbrokerdemo.network.dto.PlayerDTO
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import org.json.JSONObject
@@ -29,7 +30,7 @@ class GameClientHandler(
     }
 
     private fun handlePlayerUpdate(payload: JsonObject) {
-        val player = Gson().fromJson(payload.toString(), PlayerState::class.java)
+        val player = Gson().fromJson(payload.toString(), PlayerDTO::class.java)
         GameStateClient.updatePlayer(player)
         Log.i(TAG, "Spielerzustand aktualisiert: $player")
     }

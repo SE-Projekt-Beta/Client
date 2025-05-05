@@ -70,7 +70,12 @@ class LobbyStomp(private val listener: LobbyMessageListener) {
                     val obj = it.asJsonObject
                     PlayerDTO(
                         id = obj.get("id").asInt,
-                        nickname = obj.get("nickname").asString
+                        nickname = obj.get("nickname").asString,
+                        position = obj.get("position").asInt,
+                        money = obj.get("money").asInt,
+                        properties = obj.get("properties").asJsonArray.map{it.asInt},
+                        inJail = obj.get("inJail").asBoolean,
+                        hasEscapedCard = obj.get("hasEscapedCard").asBoolean
                     )
                 }
                 Log.i("LobbyStomp", "Parsed players: $players")

@@ -1,16 +1,18 @@
 package at.aau.serg.websocketbrokerdemo.game
 
+import at.aau.serg.websocketbrokerdemo.network.dto.PlayerDTO
+
 object GameStateClient {
     private val playerPositions = mutableMapOf<String, Int>()
-    private val players: MutableMap<String, PlayerState> = mutableMapOf()
+    private val players: MutableMap<String, PlayerDTO> = mutableMapOf()
     var currentDiceRoll: Int = 0
     var currentPlayerId: String? = null
 
-    fun updatePlayer(player: PlayerState) {
+    fun updatePlayer(player: PlayerDTO) {
         players[player.id] = player
     }
 
-    fun getPlayerState(playerId: String): PlayerState? {
+    fun getPlayerState(playerId: String): PlayerDTO? {
         return players[playerId]
     }
 
