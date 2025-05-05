@@ -81,7 +81,7 @@ class LobbyStomp(private val listener: LobbyMessageListener) {
                     )
                 }
                 players.forEach { player ->
-                    val tileNames = player.properties.map { BoardMap.getTile(it).name }
+                    val tileNames = player.properties?.map { BoardMap.getTile(it).name }
                     OwnershipClient.setProperties(player.id.toString(), tileNames)
                 }
                 Log.i("LobbyStomp", "Parsed players: $players")

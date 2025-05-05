@@ -1,13 +1,9 @@
 package at.aau.serg.websocketbrokerdemo.lobby
 
 
-import android.content.Intent
 import at.aau.serg.websocketbrokerdemo.LobbyActivity
 import at.aau.serg.websocketbrokerdemo.network.LobbyMessageListener
 import at.aau.serg.websocketbrokerdemo.network.dto.PlayerDTO
-import android.util.Log
-import at.aau.serg.websocketbrokerdemo.MainActivity
-import com.google.gson.Gson
 import com.google.gson.JsonObject
 
 

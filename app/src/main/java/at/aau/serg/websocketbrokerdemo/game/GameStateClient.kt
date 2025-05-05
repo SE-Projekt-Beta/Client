@@ -9,7 +9,7 @@ object GameStateClient {
     var currentPlayerId: String? = null
 
     fun updatePlayer(player: PlayerDTO) {
-        players[player.id] = player
+        players[player.id.toString()] = player
     }
 
     fun getPlayerState(playerId: String): PlayerDTO? {
