@@ -14,6 +14,7 @@ class GameClientHandler(
 
     fun handle(message: GameMessage) {
         when (message.type) {
+            GameMessageType.PLAYER_UPDATE -> handlePlayerUpdate(message.payload.asJsonObject)
             GameMessageType.CURRENT_PLAYER -> handleCurrentPlayer(message.payload.asJsonObject)
             GameMessageType.PLAYER_MOVED -> handlePlayerMoved(message.payload.asJsonObject)
             GameMessageType.CAN_BUY_PROPERTY -> handleCanBuyProperty(message.payload.asJsonObject)
@@ -25,6 +26,12 @@ class GameClientHandler(
             GameMessageType.ERROR -> handleError(message.payload.asString)
             else -> Log.w(TAG, "Unbekannter Typ: ${message.type}")
         }
+    }
+
+    private fun handlePlayerUpdate(payload: JsonObject) {
+        val player = Gson().fromJson(payload.toString(), PlayerState::class.java)
+        GameStateClient.updatePlayer(player)
+        Log.i(TAG, "Spielerzustand aktualisiert: $player")
     }
 
     private fun handleCurrentPlayer(payload: JsonObject) {
@@ -124,10 +131,6 @@ class GameClientHandler(
         activity.showJailDialog(playerId)
     }
 
-    private fun handlePlayerUpdate(payload: JsonObject) {
-        val player = Gson().fromJson(payload.toString(), PlayerState::class.java)
-        GameStateClient.updatePlayer(player)
-    }
 
     private fun handleError(errorMessage: String) {
         Log.e(TAG, "Fehler vom Server: $errorMessage")
