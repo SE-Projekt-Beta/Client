@@ -11,7 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.media3.common.util.Log
 import at.aau.serg.websocketbrokerdemo.lobby.LobbyClient
 import at.aau.serg.websocketbrokerdemo.network.LobbyStomp
-import com.example.myapplication.R
+import at.aau.serg.websocketbrokerdemo.R
 
 class UsernameActivity : AppCompatActivity() {
 
