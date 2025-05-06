@@ -43,7 +43,7 @@ class ListLobbyActivity : ComponentActivity() {
                 }
             }
             override fun onLobbyUpdate(players: List<PlayerDTO>) {
-                Log.i("ListLobby", "Lobby update received: $players")
+                Log.i("LobbyUpdate", "Lobby update received: $players")
                 // Handle lobby update
             }
 
@@ -66,6 +66,20 @@ class ListLobbyActivity : ComponentActivity() {
         }
         lobbyStomp.connect()
 
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Ensure that the lobby list is refreshed whenever the activity is resumed
+        sendLobbyListRequest()
+    }
+
+    private fun sendLobbyListRequest() {
+        // register before calling connect
+        lobbyStomp.setOnConnectedListener {
+            // this will only run once the socket is open
+            lobbyStomp.sendListLobbies()
+        }
     }
 
     private fun joinLobby(lobby: LobbyDTO) {
