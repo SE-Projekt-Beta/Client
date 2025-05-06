@@ -21,8 +21,8 @@ class GameClientHandler(
             GameMessageType.CAN_BUY_PROPERTY -> handleCanBuyProperty(message.payload.asJsonObject)
             GameMessageType.PROPERTY_BOUGHT -> handlePropertyBought(message.payload.asJsonObject)
             GameMessageType.MUST_PAY_RENT -> handleMustPayRent(message.payload.asJsonObject)
-            GameMessageType.DRAW_EVENT_BANK_CARD -> handleDrawEventBankCard(message.payload.asString)
-            GameMessageType.DRAW_EVENT_RISIKO_CARD -> handleDrawEventRisikoCard(message.payload.asString)
+            GameMessageType.DRAW_EVENT_BANK_CARD -> handleDrawEventBankCard(message.payload.asJsonObject)
+            GameMessageType.DRAW_EVENT_RISIKO_CARD -> handleDrawEventRisikoCard(message.payload.asJsonObject)
             GameMessageType.GO_TO_JAIL -> handleGoToJail(message.payload.asString)
             GameMessageType.ERROR -> handleError(message.payload.asString)
             else -> Log.w(TAG, "Unbekannter Typ: ${message.type}")
@@ -89,34 +89,22 @@ class GameClientHandler(
         activity.showResponse("$playerId muss Miete an $ownerId zahlen für $tileName")
     }
 
-    private fun handleDrawEventRisikoCard(payload: String) {
-        try {
-            val json = JSONObject(payload)
-            val title = json.optString("eventTitle", "Unbekannter Titel")
-            val description = json.optString("eventDescription", "Keine Beschreibung")
-            val amount = json.optInt("eventAmount", 0)
+    private fun handleDrawEventRisikoCard(payload: JsonObject) {
+        val playerId = payload.get("playerId").asString
+        val title = payload.get("title").asString
+        val description = payload.get("description").asString
 
-            Log.i(TAG, "Risikokarte: $title – $description (${amount}€)")
-            activity.showEventCard(title, "$description\nBetrag: $amount€")
-        } catch (e: Exception) {
-            Log.e(TAG, "Fehler beim Parsen der Risikokarte: ${e.message}")
-            activity.showResponse("⚠️ Fehler beim Anzeigen der Risikokarte")
-        }
+        Log.i(TAG, "Risikokarte: $title – $description")
+        activity.showEventCard(title, "$description")
     }
 
-    private fun handleDrawEventBankCard(payload: String) {
-        try {
-            val json = JSONObject(payload)
-            val title = json.optString("eventTitle", "Unbekannter Titel")
-            val description = json.optString("eventDescription", "Keine Beschreibung")
-            val amount = json.optInt("eventAmount", 0)
+    private fun handleDrawEventBankCard(payload: JsonObject) {
+        val playerId = payload.get("playerId").asString
+        val title = payload.get("title").asString
+        val description = payload.get("description").asString
 
-            Log.i(TAG, "Bankkarte: $title – $description (${amount}€)")
-            activity.showEventCard(title, "$description\nBetrag: $amount€")
-        } catch (e: Exception) {
-            Log.e(TAG, "Fehler beim Parsen der Bankkarte: ${e.message}")
-            activity.showResponse("⚠️ Fehler beim Anzeigen der Bankkarte")
-        }
+        Log.i(TAG, "Bankkarte: $title – $description")
+        activity.showEventCard(title, "$description")
     }
 
     private fun handleGoToJail(payload: String) {
