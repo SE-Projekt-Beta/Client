@@ -4,6 +4,7 @@ import android.content.Intent
 import android.util.Log
 import at.aau.serg.websocketbrokerdemo.lobby.LobbyClient
 import at.aau.serg.websocketbrokerdemo.network.LobbyMessageListener
+import at.aau.serg.websocketbrokerdemo.network.dto.GameStartedPayload
 import at.aau.serg.websocketbrokerdemo.network.dto.PlayerDTO
 import com.google.gson.Gson
 import com.google.gson.JsonObject
@@ -35,7 +36,9 @@ class LoginHandler(private val activity: UsernameActivity) : LobbyMessageListene
     }
 
 
-    override fun onStartGame(payload: JsonObject) {
+    override fun onStartGame(payload: GameStartedPayload) {
+        Log.i("LoginHandler", "Start game message received during login: $payload")
+        // Handle start game message if needed
 
     }
 

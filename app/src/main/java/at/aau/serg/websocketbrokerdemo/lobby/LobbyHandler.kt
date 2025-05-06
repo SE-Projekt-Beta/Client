@@ -7,19 +7,18 @@ import at.aau.serg.websocketbrokerdemo.network.LobbyMessageListener
 import at.aau.serg.websocketbrokerdemo.network.dto.PlayerDTO
 import android.util.Log
 import at.aau.serg.websocketbrokerdemo.MainActivity
+import at.aau.serg.websocketbrokerdemo.network.dto.GameStartedPayload
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 
 
 class LobbyHandler(private val activity: LobbyActivity) : LobbyMessageListener {
 
-    override fun onStartGame(payload: JsonObject) {
-        val orderJson = payload.getAsJsonArray("playerOrder")
-        val order = orderJson.map {
-            val obj = it.asJsonObject
+    override fun onStartGame(payload: GameStartedPayload) {
+        val order: List<PlayerDTO> = payload.playerOrder.map { entry ->
             PlayerDTO(
-                id = obj.get("id").asInt,
-                nickname = obj.get("nickname").asString
+                id       = entry.playerId,
+                nickname = entry.nickname
             )
         }
         activity.startGame(order)

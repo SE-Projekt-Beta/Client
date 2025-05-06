@@ -4,5 +4,5 @@ import com.google.gson.JsonElement
 
 data class LobbyMessage(
     val type: LobbyMessageType,
-    val payload: JsonElement
+    val payload: Any
 )
