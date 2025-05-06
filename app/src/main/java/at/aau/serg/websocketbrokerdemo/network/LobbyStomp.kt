@@ -73,17 +73,23 @@ class LobbyStomp(private val listener: LobbyMessageListener) {
                     PlayerDTO(
                         id = obj.get("id").asInt,
                         nickname = obj.get("nickname").asString,
+                        /*
                         position = obj.get("position").asInt,
                         money = obj.get("money").asInt,
                         properties = obj.get("properties").asJsonArray.map{it.asInt},
                         inJail = obj.get("inJail").asBoolean,
                         hasEscapedCard = obj.get("hasEscapedCard").asBoolean
+
+                         */
                     )
                 }
+                /*
                 players.forEach { player ->
                     val tileNames = player.properties?.map { BoardMap.getTile(it).name }
                     OwnershipClient.setProperties(player.id.toString(), tileNames)
                 }
+
+                 */
                 Log.i("LobbyStomp", "Parsed players: $players")
                 listener.onLobbyUpdate(players)
             }
