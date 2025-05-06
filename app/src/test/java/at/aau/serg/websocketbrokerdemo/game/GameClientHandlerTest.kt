@@ -1,5 +1,6 @@
 package at.aau.serg.websocketbrokerdemo.game
 
+import GameStateClient
 import android.util.Log
 import at.aau.serg.websocketbrokerdemo.MainActivity
 import at.aau.serg.websocketbrokerdemo.network.dto.GameMessage
