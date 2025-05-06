@@ -4,15 +4,16 @@ import at.aau.serg.websocketbrokerdemo.network.dto.PlayerDTO
 
 object GameStateClient {
     private val playerPositions = mutableMapOf<String, Int>()
-    private val players: MutableMap<String, PlayerDTO> = mutableMapOf()
+    private val players: MutableMap<String, Player> = mutableMapOf()
     var currentDiceRoll: Int = 0
-    var currentPlayerId: String? = null
+    var currentPlayerId: Int? = null
+    var currentPhase: GamePhase = GamePhase.WAITING_FOR_TURN
 
-    fun updatePlayer(player: PlayerDTO) {
+    fun updatePlayer(player: Player) {
         players[player.id.toString()] = player
     }
 
-    fun getPlayerState(playerId: String): PlayerDTO? {
+    fun getPlayerState(playerId: String): Player? {
         return players[playerId]
     }
 
@@ -29,7 +30,7 @@ object GameStateClient {
     }
 
     fun updateMoney(playerId: String, amount: Int) {
-        players[playerId]?.money = amount
+        players[playerId]?.cash = amount
     }
 
     fun setDiceRoll(value: Int) {
@@ -43,4 +44,31 @@ object GameStateClient {
     fun updateProperties(playerId: String, newProps: List<Int>) {
         players[playerId]?.properties = newProps
     }
+
+    fun getAllPlayers(): List<Player> {
+      return players.values.toList()
+    }
+
+    fun clear() {
+        players.clear()
+        currentDiceRoll = 0
+        currentPlayerId = null
+    }
+
+    private fun initializePLayer(playerId: String, nickname: String): Player {
+        return players.getOrPut(playerId) {
+            Player(
+                id = playerId.toInt(), // falls playerId ein Int als String ist
+                nickname = nickname,
+                position = 1,
+                cash = 0,
+                properties = null,
+                suspensionRounds = 0,
+                inJail = false,
+                hasEscapedCard = false,
+                cheatFlag = false
+            )
+        }
+    }
+
 }

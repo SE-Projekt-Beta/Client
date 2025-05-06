@@ -30,7 +30,7 @@ class GameClientHandler(
     }
 
     private fun handlePlayerUpdate(payload: JsonObject) {
-        val player = Gson().fromJson(payload.toString(), PlayerDTO::class.java)
+        val player = Gson().fromJson(payload.toString(), Player::class.java)
         GameStateClient.updatePlayer(player)
         Log.i(TAG, "Spielerzustand aktualisiert: $player")
     }

@@ -92,12 +92,16 @@ class MainActivity : ComponentActivity() {
 
     fun showOwnership() {
         runOnUiThread {
+            /*
             val text = GameStateClient.getAllPositions().entries.joinToString("\n\n") { (id, pos) ->
                 val state = GameStateClient.getPlayerState(id)
                 val props = state?.properties?.joinToString(", ") ?: "keine"
                 "$id -> Feld: $pos, Besitz: $props, Geld: ${state?.money}€"
         }
+
             ownershipView.text = text
+
+             */
         }
     }
 

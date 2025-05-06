@@ -16,11 +16,6 @@ class LobbyHandler(private val activity: LobbyActivity) : LobbyMessageListener {
             PlayerDTO(
                 id = obj.get("id").asInt,
                 nickname = obj.get("nickname").asString,
-                position = obj.get("position").asInt,
-                money = obj.get("money").asInt,
-                properties = obj.get("properties").asJsonArray.map{it.asInt},
-                inJail = obj.get("inJail").asBoolean,
-                hasEscapedCard = obj.get("hasEscapedCard").asBoolean
             )
         }
         activity.startGame(order)
