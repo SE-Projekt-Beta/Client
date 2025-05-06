@@ -9,6 +9,7 @@ class GameStateClientTest {
 
     @BeforeEach
     fun setup() {
+        GameStateClient.clear()
         println("Resetting GameStateClient state before test")
         // Reset the state before each test
         GameStateClient.getAllPositions().keys.forEach { player ->

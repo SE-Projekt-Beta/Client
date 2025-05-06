@@ -1,6 +1,8 @@
 object GameStateClient {
     private val playerPositions = mutableMapOf<String, Int>()
 
+    fun clear() = playerPositions.clear()
+
     fun updatePosition(playerId: String, newPos: Int) {
         playerPositions[playerId] = newPos
     }

@@ -10,6 +10,7 @@ class OwnershipClientTest {
 
     @BeforeEach
     fun setup() {
+        OwnershipClient.clear()
         println("Setting up OwnershipClientTest")
 
         // Reset the state before each test
