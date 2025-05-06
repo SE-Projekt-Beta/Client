@@ -1,33 +1,34 @@
 package at.aau.serg.websocketbrokerdemo.game
 
+import junit.framework.TestCase.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.Assertions.assertEquals
 
 class GameStateClientTest {
 
     @BeforeEach
     fun setup() {
-        // Clear state before each test
-        GameStateClient.clear()
-    }
-
-    @Test
-    fun testDefaultPositionForUnknown() {
-        // Unknown players should start at position 0
-        assertEquals(0, GameStateClient.getPosition("unknownPlayer"))
+        // Rücksetzen des Zustands vor jedem Test
+        GameStateClient.getAllPositions().keys.forEach { player ->
+            GameStateClient.updatePosition(player, 0)
+        }
     }
 
     @Test
     fun testUpdateAndGetPosition() {
-        // After updating, getPosition should return the new value
-        GameStateClient.updatePosition("playerX", 5)
-        assertEquals(5, GameStateClient.getPosition("playerX"))
+        GameStateClient.updatePosition("player1", 5)
+        val result = GameStateClient.getPosition("player1")
+        assertEquals(5, result)
+    }
+
+    @Test
+    fun testDefaultPositionForUnknownPlayer() {
+        val result = GameStateClient.getPosition("unknown")
+        assertEquals(0, result)
     }
 
     @Test
     fun testAllPositions() {
-        // Updating multiple players and retrieving the full map
         GameStateClient.updatePosition("playerA", 3)
         GameStateClient.updatePosition("playerB", 7)
 
