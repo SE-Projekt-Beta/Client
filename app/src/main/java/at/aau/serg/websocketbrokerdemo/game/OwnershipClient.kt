@@ -3,6 +3,8 @@ package at.aau.serg.websocketbrokerdemo.game
 object OwnershipClient {
     private val ownership = mutableMapOf<String, MutableList<String>?>() // playerId -> List of tileNames
 
+    fun clear() = ownership.clear()
+
     fun addProperty(playerId: String, tileName: String) {
         val list = ownership.getOrPut(playerId) { mutableListOf() }
         if (!list?.contains(tileName)!!) {
@@ -22,7 +24,4 @@ object OwnershipClient {
         return ownership.toMap()
     }
 
-    fun clear() {
-        ownership.clear()
-    }
 }

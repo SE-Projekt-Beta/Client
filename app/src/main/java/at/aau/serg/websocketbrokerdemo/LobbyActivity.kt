@@ -12,7 +12,7 @@ import at.aau.serg.websocketbrokerdemo.lobby.LobbyClient
 import at.aau.serg.websocketbrokerdemo.lobby.LobbyHandler
 import at.aau.serg.websocketbrokerdemo.network.LobbyStomp
 import at.aau.serg.websocketbrokerdemo.network.dto.PlayerDTO
-import com.example.myapplication.R
+import at.aau.serg.websocketbrokerdemo.R
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 

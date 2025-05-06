@@ -7,11 +7,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.myapplication"
+    namespace = "at.aau.serg.websocketbrokerdemo"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.example.myapplication"
+        applicationId = "at.aau.serg.websocketbrokerdemo"
         minSdk = 30
         targetSdk = 35
         versionCode = 1
@@ -108,6 +108,8 @@ sonar {
             "**/MainActivity.kt," +
                     "**/LobbyActivity.kt," +
                     "**/UsernameActivity.kt," +
+                    "**/CreateLobbyActivity.kt," +
+                    "**/ListLobbyActivity.kt," +
                     "**/Theme.kt," +
                     "**/Color.kt," +
                     "**/TileType.kt," +

@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import at.aau.serg.websocketbrokerdemo.lobby.LobbyClient
 import at.aau.serg.websocketbrokerdemo.network.LobbyStomp
 import com.example.myapplication.R
+import at.aau.serg.websocketbrokerdemo.lobby.LobbyClient.lobbyId
 
 class UsernameActivity : AppCompatActivity() {
 
@@ -32,21 +33,30 @@ class UsernameActivity : AppCompatActivity() {
         lobbyStomp.connect()
 
         enterButton.setOnClickListener {
+            lobbyId = LobbyClient.lobbyId
             val username = usernameEditText.text.toString().trim()
             if (username.isNotEmpty()) {
                 LobbyClient.username = username
-                lobbyStomp.sendJoinLobby(username)
-                Log.i("UsernameActivity", "Username sent to server: $username")
+                Log.i("UsernameActivity", "Username set: $username")
+
+                // check if lobbyId is not null
+                if (lobbyId == null) {
+                    Toast.makeText(this, "Lobby ID is null", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+
+                // join the lobby
+                lobbyStomp.sendJoinLobby(lobbyId!!, username)
+
+                // Navigate to the lobby screen
+                val intent = Intent(this, ListLobbyActivity::class.java)
+                startActivity(intent)
+                finish()
             } else {
                 Toast.makeText(this, "Please enter username", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
-    fun startLobbyActivity() {
-        val intent = Intent(this, LobbyActivity::class.java)
-        startActivity(intent)
-        finish()
-    }
 }
 
