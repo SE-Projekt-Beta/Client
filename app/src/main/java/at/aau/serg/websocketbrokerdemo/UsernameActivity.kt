@@ -49,7 +49,7 @@ class UsernameActivity : AppCompatActivity() {
                 lobbyStomp.sendJoinLobby(lobbyId!!, username)
 
                 // Navigate to the lobby screen
-                val intent = Intent(this, ListLobbyActivity::class.java)
+                val intent = Intent(this, LobbyActivity::class.java)
                 startActivity(intent)
                 finish()
             } else {

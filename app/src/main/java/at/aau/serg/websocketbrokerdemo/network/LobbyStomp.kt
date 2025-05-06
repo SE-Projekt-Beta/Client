@@ -106,7 +106,7 @@ class LobbyStomp(private val listener: LobbyMessageListener) {
                 val playersJson = message.payload.asJsonObject.getAsJsonArray("players")
                 val players = playersJson.map {
                     val o = it.asJsonObject
-                    PlayerDTO(o.get("id").asInt, o.get("nickname").asString)
+                    PlayerDTO(o.get("playerId").asInt, o.get("nickname").asString)
                 }
                 listener.onLobbyUpdate(players)
             }

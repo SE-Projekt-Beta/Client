@@ -1,6 +1,7 @@
 package at.aau.serg.websocketbrokerdemo.lobby
 
 import android.content.Context
+import android.util.Log
 import at.aau.serg.websocketbrokerdemo.LobbyActivity
 import at.aau.serg.websocketbrokerdemo.network.LobbyMessageListener
 import at.aau.serg.websocketbrokerdemo.network.dto.LobbyDTO
@@ -15,7 +16,7 @@ class LobbyHandler(private val context: Context) : LobbyMessageListener {
             val order = orderJson.map {
                 val obj = it.asJsonObject
                 PlayerDTO(
-                    id = obj.get("id").asInt,
+                    id = obj.get("playerId").asInt,
                     nickname = obj.get("nickname").asString
                 )
             }
