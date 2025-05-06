@@ -15,7 +15,6 @@ class GameClientHandler(
 
     fun handle(message: GameMessage) {
         when (message.type) {
-            GameMessageType.PLAYER_UPDATE -> handlePlayerUpdate(message.payload.asJsonObject)
             GameMessageType.CURRENT_PLAYER -> handleCurrentPlayer(message.payload.asJsonObject)
             GameMessageType.PLAYER_MOVED -> handlePlayerMoved(message.payload.asJsonObject)
             GameMessageType.CAN_BUY_PROPERTY -> handleCanBuyProperty(message.payload.asJsonObject)
@@ -23,16 +22,10 @@ class GameClientHandler(
             GameMessageType.MUST_PAY_RENT -> handleMustPayRent(message.payload.asJsonObject)
             GameMessageType.DRAW_EVENT_BANK_CARD -> handleDrawEventBankCard(message.payload.asJsonObject)
             GameMessageType.DRAW_EVENT_RISIKO_CARD -> handleDrawEventRisikoCard(message.payload.asJsonObject)
-            GameMessageType.GO_TO_JAIL -> handleGoToJail(message.payload.asString)
+            GameMessageType.GO_TO_JAIL -> handleGoToJail(message.payload.asJsonObject)
             GameMessageType.ERROR -> handleError(message.payload.asString)
             else -> Log.w(TAG, "Unbekannter Typ: ${message.type}")
         }
-    }
-
-    private fun handlePlayerUpdate(payload: JsonObject) {
-        val player = Gson().fromJson(payload.toString(), Player::class.java)
-        GameStateClient.updatePlayer(player)
-        Log.i(TAG, "Spielerzustand aktualisiert: $player")
     }
 
     private fun handleCurrentPlayer(payload: JsonObject) {
@@ -84,9 +77,13 @@ class GameClientHandler(
         val playerId = payload.get("playerId").asString
         val ownerId = payload.get("ownerId").asString
         val tileName = payload.get("tileName").asString
+        val amount = payload.get("amount").asInt
 
         Log.i(TAG, "$playerId muss Miete an $ownerId zahlen für $tileName")
         activity.showResponse("$playerId muss Miete an $ownerId zahlen für $tileName")
+
+        GameStateClient.deductMoney(playerId, amount)
+        GameStateClient.addMoney(ownerId, amount)
     }
 
     private fun handleDrawEventRisikoCard(payload: JsonObject) {
@@ -96,6 +93,8 @@ class GameClientHandler(
 
         Log.i(TAG, "Risikokarte: $title – $description")
         activity.showEventCard(title, "$description")
+
+        // Eventuell Geld hinzufügen oder abziehen
     }
 
     private fun handleDrawEventBankCard(payload: JsonObject) {
@@ -105,19 +104,20 @@ class GameClientHandler(
 
         Log.i(TAG, "Bankkarte: $title – $description")
         activity.showEventCard(title, "$description")
+
+        // Eventuell Geld hinzufügen oder abziehen
     }
 
-    private fun handleGoToJail(payload: String) {
-        val json = JSONObject(payload)
-        val playerId = json.getString("playerId")
-        val jailPos = 10 // Position des Gefängnisses
+    private fun handleGoToJail(payload: JsonObject) {
+        val playerId = payload.get("playerId").asString
+        val jailPos = payload.get("tilePos").asInt
 
         GameStateClient.updatePosition(playerId, jailPos)
 
         val message = "$playerId wurde ins Gefängnis geschickt! 🚔"
         Log.i(TAG, message)
         activity.showResponse(message)
-        activity.showJailDialog(playerId)
+        // activity.showJailDialog(playerId)
     }
 
 

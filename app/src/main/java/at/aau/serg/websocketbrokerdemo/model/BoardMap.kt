@@ -47,4 +47,12 @@ object BoardMap {
     fun getTile(id: Int): Tile {
         return tiles[id]
     }
+
+    fun getTileType(id: Int): TileType {
+        return tiles[id].type
+    }
+
+    fun getTileName(id: Int): String {
+        return tiles[id].name
+    }
 }

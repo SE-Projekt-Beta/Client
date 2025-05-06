@@ -1,13 +1,13 @@
 package at.aau.serg.websocketbrokerdemo.game
 
-class Player(
+data class Player(
     val id: Int,
     val nickname: String,
-    var position: Int,
-    var cash: Int,
-    var properties: List<Int>?,  // IDs der gekauften Tiles
-    var suspensionRounds: Int,
-    var inJail: Boolean,
-    var hasEscapedCard: Boolean,
-    var cheatFlag: Boolean
+    var position: Int = 0,
+    var cash: Int = 1500,
+    var properties: List<Int> = emptyList(),  // IDs der gekauften Tiles
+    var suspensionRounds: Int = 0,
+    var inJail: Boolean = false,
+    var hasEscapedCard: Boolean = false,
+    var cheatFlag: Boolean = false
 )
