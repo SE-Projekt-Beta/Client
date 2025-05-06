@@ -28,6 +28,11 @@ class LobbyHandler(private val context: Context) : LobbyMessageListener {
     }
 
     override fun onLobbyUpdate(players: List<PlayerDTO>) {
-        // huh
+        if (context !is LobbyActivity) {
+            return
+        }
+        val activity = context as LobbyActivity
+        LobbyClient.setPlayers(players)
+        activity.updateLobby(players.map { it.nickname })
     }
 }

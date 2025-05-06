@@ -5,18 +5,21 @@ import at.aau.serg.websocketbrokerdemo.MainActivity
 import at.aau.serg.websocketbrokerdemo.network.dto.GameMessage
 import at.aau.serg.websocketbrokerdemo.network.dto.GameMessageType
 import com.google.gson.JsonObject
-import com.google.gson.JsonParser
 import io.mockk.*
-import org.json.JSONObject
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 
 class GameClientHandlerTest {
+
     private lateinit var mockActivity: MainActivity
     private lateinit var handler: GameClientHandler
 
     @BeforeEach
     fun setup() {
+        println("Setting up GameClientHandlerTest")
+
+        // Mocking and setting up the mock objects
         mockActivity = mockk(relaxed = true)
         handler = GameClientHandler(mockActivity)
 
@@ -25,10 +28,23 @@ class GameClientHandlerTest {
         every { Log.w(any(), any<String>()) } returns 0
         every { Log.e(any(), any<String>()) } returns 0
 
+        // Mock GameStateClient and OwnershipClient
         mockkObject(GameStateClient)
         mockkObject(OwnershipClient)
         every { GameStateClient.updatePosition(any(), any()) } just Runs
         every { OwnershipClient.addProperty(any(), any()) } just Runs
+
+        println("State after mock setup: ${GameStateClient.getAllPositions()}")
+    }
+
+    @AfterEach
+    fun cleanup() {
+        println("Cleaning up after GameClientHandlerTest")
+        // Clean up any mocked state if necessary
+        GameStateClient.getAllPositions().keys.forEach { player ->
+            GameStateClient.updatePosition(player, 0)
+        }
+        println("State after cleanup: ${GameStateClient.getAllPositions()}")
     }
 
     @Test
@@ -95,7 +111,6 @@ class GameClientHandlerTest {
         handler.handle(GameMessage(GameMessageType.MUST_PAY_RENT, payload))
         verify { mockActivity.showResponse("p1 muss Miete an p2 zahlen für Opernring") }
     }
-
 
     @Test
     fun testHandleError() {

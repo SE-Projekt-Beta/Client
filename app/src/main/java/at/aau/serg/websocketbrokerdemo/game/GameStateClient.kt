@@ -1,5 +1,3 @@
-package at.aau.serg.websocketbrokerdemo.game
-
 object GameStateClient {
     private val playerPositions = mutableMapOf<String, Int>()
 
