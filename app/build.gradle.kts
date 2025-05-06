@@ -108,6 +108,8 @@ sonar {
             "**/MainActivity.kt," +
                     "**/LobbyActivity.kt," +
                     "**/UsernameActivity.kt," +
+                    "**/CreateLobbyActivity.kt," +
+                    "**/ListLobbyActivity.kt," +
                     "**/Theme.kt," +
                     "**/Color.kt," +
                     "**/TileType.kt," +
