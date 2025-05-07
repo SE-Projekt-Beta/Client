@@ -5,7 +5,6 @@ import android.util.Log
 import at.aau.serg.websocketbrokerdemo.LoginHandler
 import at.aau.serg.websocketbrokerdemo.UsernameActivity
 import at.aau.serg.websocketbrokerdemo.network.dto.PlayerDTO
-import com.google.gson.Gson
 import io.mockk.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -42,7 +41,7 @@ class LoginHandlerTest {
         val players = listOf(PlayerDTO(1, "Player 2"))
 
         // Act
-        handler.onLobbyUpdate(players)
+        handler.onLobbyListUpdate(players)
 
         // Assert
         verify(exactly = 0) { activity.startActivity(any()) }

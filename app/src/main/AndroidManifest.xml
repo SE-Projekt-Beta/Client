@@ -37,9 +37,22 @@
 
         <!-- MainActivity: Spiel -->
         <activity
+            android:name="at.aau.serg.websocketbrokerdemo.ListLobbyActivity"
+            android:exported="false"
+            android:theme="@style/Theme.MaterialComponents.DayNight.DarkActionBar" />
+
+        <!-- LobbyActivity: Lobby List Screen -->
+        <activity
+            android:name="at.aau.serg.websocketbrokerdemo.CreateLobbyActivity"
+            android:exported="false"
+            android:theme="@style/Theme.MaterialComponents.DayNight.DarkActionBar" />
+
+        <!-- MainActivity: Spiel -->
+        <activity
             android:name="at.aau.serg.websocketbrokerdemo.MainActivity"
             android:exported="false"
             android:theme="@style/Theme.MaterialComponents.DayNight.DarkActionBar" />
+
     </application>
 
 </manifest>

@@ -1,18 +1,16 @@
 package at.aau.serg.websocketbrokerdemo.game
 
 import android.util.Log
-import at.aau.serg.websocketbrokerdemo.MainActivity
+import at.aau.serg.websocketbrokerdemo.ListLobbyActivity
 import at.aau.serg.websocketbrokerdemo.network.dto.GameMessage
 import at.aau.serg.websocketbrokerdemo.network.dto.GameMessageType
 import com.google.gson.JsonObject
-import com.google.gson.JsonParser
 import io.mockk.*
-import org.json.JSONObject
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class GameClientHandlerTest {
-    private lateinit var mockActivity: MainActivity
+    private lateinit var mockActivity: ListLobbyActivity
     private lateinit var handler: GameClientHandler
 
     @BeforeEach

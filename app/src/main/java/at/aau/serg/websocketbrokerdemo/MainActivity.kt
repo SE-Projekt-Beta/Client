@@ -17,6 +17,7 @@ import at.aau.serg.websocketbrokerdemo.R
 import com.google.common.reflect.TypeToken
 import com.google.gson.Gson
 import com.google.gson.JsonObject
+import android.util.Log
 
 class MainActivity : ComponentActivity() {
 
@@ -60,7 +61,7 @@ class MainActivity : ComponentActivity() {
 
     private fun setupNetwork() {
         clientHandler = GameClientHandler(this)
-        gameStomp = GameStomp(dktHandler = clientHandler)
+        gameStomp = GameStomp(dktHandler = clientHandler, 1)
         gameStomp.connect()
     }
 
@@ -69,7 +70,9 @@ class MainActivity : ComponentActivity() {
             val payload = JsonObject().apply {
                 addProperty("playerId", myPlayerName)
             }
-            gameStomp.sendGameMessage(GameMessage(GameMessageType.ROLL_DICE, payload))
+            // log the payload
+            Log.i("MainActivity", "Sending roll dice payload: $payload")
+            gameStomp.sendGameMessage(GameMessage(1, GameMessageType.ROLL_DICE, payload))
         }
     }
 
@@ -108,7 +111,7 @@ class MainActivity : ComponentActivity() {
                         addProperty("playerId", myPlayerName)
                         addProperty("tilePos", tilePos)
                     }
-                    gameStomp.sendGameMessage(GameMessage(GameMessageType.BUY_PROPERTY, payload))
+                    gameStomp.sendGameMessage(GameMessage(1, GameMessageType.BUY_PROPERTY, payload))
                     visibility = View.GONE
                 }
             }
