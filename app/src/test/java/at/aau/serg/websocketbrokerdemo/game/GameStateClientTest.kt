@@ -53,6 +53,7 @@ class GameStateClientTest {
         GameStateClient.updatePosition("1", 3)
         GameStateClient.updatePosition("2", 5)
 
+
         val all = GameStateClient.getAllPositions()
         assertEquals(3, all["1"])
         assertEquals(5, all["2"])

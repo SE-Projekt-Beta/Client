@@ -17,6 +17,7 @@ object GameStateClient {
     fun getAllPlayers(): Collection<Player> = players.values
 
     // Position ändern
+
     fun updatePosition(playerId: String, newPos: Int) {
         players[playerId]?.position = newPos
     }
@@ -69,7 +70,7 @@ object GameStateClient {
     }
 
     fun leaveJail(playerId: String) {
-        if (players[playerId]?.suspensionRounds == 0 || players[playerId]?.hasEscapedCard == true){
+        if (players[playerId]?.suspensionRounds == 0 || players[playerId]?.hasEscapedCard == true) {
             players[playerId]?.inJail = false
         } else {
             // Kann/darf Gefägnis nicht verlassen
@@ -113,5 +114,5 @@ object GameStateClient {
         currentDiceRoll = 0
         currentPlayerId = null
     }
-
 }
+

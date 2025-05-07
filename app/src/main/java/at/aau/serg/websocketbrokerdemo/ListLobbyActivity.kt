@@ -15,7 +15,6 @@ import at.aau.serg.websocketbrokerdemo.network.LobbyMessageListener
 import at.aau.serg.websocketbrokerdemo.network.LobbyStomp
 import at.aau.serg.websocketbrokerdemo.network.dto.LobbyDTO
 import at.aau.serg.websocketbrokerdemo.network.dto.PlayerDTO
-import com.example.myapplication.R
 import com.google.gson.JsonObject
 
 class ListLobbyActivity : ComponentActivity() {

@@ -2,14 +2,15 @@ package at.aau.serg.websocketbrokerdemo
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.media3.common.util.Log
+import at.aau.serg.websocketbrokerdemo.lobby.LobbyClient.lobbyId
 import at.aau.serg.websocketbrokerdemo.lobby.LobbyClient
 import at.aau.serg.websocketbrokerdemo.network.LobbyStomp
-import com.example.myapplication.R
+import at.aau.serg.websocketbrokerdemo.R
 
 class UsernameActivity : AppCompatActivity() {
 

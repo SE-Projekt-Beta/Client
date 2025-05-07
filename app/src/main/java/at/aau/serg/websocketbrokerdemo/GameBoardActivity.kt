@@ -108,7 +108,6 @@ class GameBoardActivity : ComponentActivity() {
             } else {
                 "Kein aktueller Spieler ausgewählt."
             }
-
             ownershipView.text = text
         }
     }
