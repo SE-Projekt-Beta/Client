@@ -1,6 +1,5 @@
 package at.aau.serg.websocketbrokerdemo.game
 
-import junit.framework.TestCase.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.assertEquals

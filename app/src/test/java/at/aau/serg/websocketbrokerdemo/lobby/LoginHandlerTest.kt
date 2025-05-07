@@ -41,7 +41,7 @@ class LoginHandlerTest {
         val players = listOf(PlayerDTO(1, "Player 2"))
 
         // Act
-        handler.onLobbyListUpdate(players)
+        handler.onLobbyUpdate(players)
 
         // Assert
         verify(exactly = 0) { activity.startActivity(any()) }

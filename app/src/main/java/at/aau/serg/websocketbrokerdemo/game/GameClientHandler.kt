@@ -70,7 +70,7 @@ class GameClientHandler(
 
         Log.i(TAG, "Kauf abgeschlossen: $tileName von $playerId")
         GameStateClient.addProperty(playerId, tilePos)
-        activity.showCurrentPlayerOwnership()
+        activity.showOwnership()
         activity.showResponse("Kauf abgeschlossen: $tileName für $playerId")
     }
 
