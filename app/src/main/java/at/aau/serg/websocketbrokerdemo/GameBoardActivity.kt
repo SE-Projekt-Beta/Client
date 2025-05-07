@@ -95,7 +95,7 @@ class GameBoardActivity : ComponentActivity() {
     fun showOwnership() {
         runOnUiThread {
             val text = OwnershipClient.all().entries.joinToString("\n\n") { (player, props) ->
-                "$player besitzt:\n  - ${props?.joinToString("\n  - ")}"
+                "$player besitzt:\n  - ${props.joinToString("\n  - ")}"
             }
             ownershipView.text = text
         }

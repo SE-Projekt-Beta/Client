@@ -66,7 +66,7 @@ class LobbyHandlerTest {
         )
 
         // Act
-        handler.onLobbyUpdate(players)
+        handler.onLobbyListUpdate(players)
 
         // Assert: Überprüfe, dass updateLobby aufgerufen wurde
         verify {

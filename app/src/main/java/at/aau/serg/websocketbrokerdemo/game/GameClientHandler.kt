@@ -5,8 +5,6 @@ import at.aau.serg.websocketbrokerdemo.GameBoardActivity
 import at.aau.serg.websocketbrokerdemo.ListLobbyActivity
 import at.aau.serg.websocketbrokerdemo.network.dto.GameMessage
 import at.aau.serg.websocketbrokerdemo.network.dto.GameMessageType
-import at.aau.serg.websocketbrokerdemo.network.dto.PlayerDTO
-import com.google.gson.Gson
 import com.google.gson.JsonObject
 
 class GameClientHandler(
@@ -20,9 +18,9 @@ class GameClientHandler(
             GameMessageType.CAN_BUY_PROPERTY -> handleCanBuyProperty(message.payload.asJsonObject)
             GameMessageType.PROPERTY_BOUGHT -> handlePropertyBought(message.payload.asJsonObject)
             GameMessageType.MUST_PAY_RENT -> handleMustPayRent(message.payload.asJsonObject)
-            GameMessageType.DRAW_EVENT_BANK_CARD -> handleDrawEventBankCard(message.payload.asJsonObject)
-            GameMessageType.DRAW_EVENT_RISIKO_CARD -> handleDrawEventRisikoCard(message.payload.asJsonObject)
-            GameMessageType.GO_TO_JAIL -> handleGoToJail(message.payload.asJsonObject)
+//            GameMessageType.DRAW_EVENT_BANK_CARD -> handleDrawEventBankCard(message.payload.asString)
+//            GameMessageType.DRAW_EVENT_RISIKO_CARD -> handleDrawEventRisikoCard(message.payload.asString)
+//            GameMessageType.GO_TO_JAIL -> handleGoToJail(message.payload.asString)
             GameMessageType.ERROR -> handleError(message.payload.asString)
             else -> Log.w(TAG, "Unbekannter Typ: ${message.type}")
         }
@@ -50,7 +48,6 @@ class GameClientHandler(
         activity.showResponse("$playerId → $tileName ($tileType), gewürfelt: $dice")
 
         GameStateClient.updatePosition(playerId, pos)
-        GameStateClient.setDiceRoll(dice)
     }
 
     private fun handleCanBuyProperty(payload: JsonObject) {
@@ -66,10 +63,9 @@ class GameClientHandler(
     private fun handlePropertyBought(payload: JsonObject) {
         val playerId = payload.get("playerId").asString
         val tileName = payload.get("tileName").asString
-        val tilePos = payload.get("tilePos").asInt
 
         Log.i(TAG, "Kauf abgeschlossen: $tileName von $playerId")
-        GameStateClient.addProperty(playerId, tilePos)
+        OwnershipClient.addProperty(playerId, tileName)
         activity.showOwnership()
         activity.showResponse("Kauf abgeschlossen: $tileName für $playerId")
     }
@@ -78,49 +74,53 @@ class GameClientHandler(
         val playerId = payload.get("playerId").asString
         val ownerId = payload.get("ownerId").asString
         val tileName = payload.get("tileName").asString
-        val amount = payload.get("amount").asInt
 
         Log.i(TAG, "$playerId muss Miete an $ownerId zahlen für $tileName")
         activity.showResponse("$playerId muss Miete an $ownerId zahlen für $tileName")
-
-        GameStateClient.deductMoney(playerId, amount)
-        GameStateClient.addMoney(ownerId, amount)
     }
 
-    private fun handleDrawEventRisikoCard(payload: JsonObject) {
-        val playerId = payload.get("playerId").asString
-        val title = payload.get("title").asString
-        val description = payload.get("description").asString
-
-        Log.i(TAG, "Risikokarte: $title – $description")
-        activity.showEventCard(title, "$description")
-
-        // Eventuell Geld hinzufügen oder abziehen
-    }
-
-    private fun handleDrawEventBankCard(payload: JsonObject) {
-        val playerId = payload.get("playerId").asString
-        val title = payload.get("title").asString
-        val description = payload.get("description").asString
-
-        Log.i(TAG, "Bankkarte: $title – $description")
-        activity.showEventCard(title, "$description")
-
-        // Eventuell Geld hinzufügen oder abziehen
-    }
-
-    private fun handleGoToJail(payload: JsonObject) {
-        val playerId = payload.get("playerId").asString
-        val jailPos = payload.get("tilePos").asInt
-
-        GameStateClient.updatePosition(playerId, jailPos)
-
-        val message = "$playerId wurde ins Gefängnis geschickt! 🚔"
-        Log.i(TAG, message)
-        activity.showResponse(message)
-        // activity.showJailDialog(playerId)
-    }
-
+//    private fun handleDrawEventRisikoCard(payload: String) {
+//        try {
+//            val json = JSONObject(payload)
+//            val title = json.optString("eventTitle", "Unbekannter Titel")
+//            val description = json.optString("eventDescription", "Keine Beschreibung")
+//            val amount = json.optInt("eventAmount", 0)
+//
+//            Log.i(TAG, "Risikokarte: $title – $description (${amount}€)")
+//            activity.showEventCard(title, "$description\nBetrag: $amount€")
+//        } catch (e: Exception) {
+//            Log.e(TAG, "Fehler beim Parsen der Risikokarte: ${e.message}")
+//            activity.showResponse("⚠️ Fehler beim Anzeigen der Risikokarte")
+//        }
+//    }
+//
+//    private fun handleDrawEventBankCard(payload: String) {
+//        try {
+//            val json = JSONObject(payload)
+//            val title = json.optString("eventTitle", "Unbekannter Titel")
+//            val description = json.optString("eventDescription", "Keine Beschreibung")
+//            val amount = json.optInt("eventAmount", 0)
+//
+//            Log.i(TAG, "Bankkarte: $title – $description (${amount}€)")
+//            activity.showEventCard(title, "$description\nBetrag: $amount€")
+//        } catch (e: Exception) {
+//            Log.e(TAG, "Fehler beim Parsen der Bankkarte: ${e.message}")
+//            activity.showResponse("⚠️ Fehler beim Anzeigen der Bankkarte")
+//        }
+//    }
+//
+//    private fun handleGoToJail(payload: String) {
+//        val json = JSONObject(payload)
+//        val playerId = json.getString("playerId")
+//        val jailPos = 10 // Position des Gefängnisses
+//
+//        GameStateClient.updatePosition(playerId, jailPos)
+//
+//        val message = "$playerId wurde ins Gefängnis geschickt! 🚔"
+//        Log.i(TAG, message)
+//        activity.showResponse(message)
+//        activity.showJailDialog(playerId)
+//    }
 
     private fun handleError(errorMessage: String) {
         Log.e(TAG, "Fehler vom Server: $errorMessage")
