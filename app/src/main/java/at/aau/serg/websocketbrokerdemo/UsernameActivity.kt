@@ -35,6 +35,7 @@ class UsernameActivity : AppCompatActivity() {
             val username = usernameEditText.text.toString().trim()
             if (username.isNotEmpty()) {
                 LobbyClient.username = username
+                lobbyStomp.sendInit(username)
                 lobbyStomp.sendJoinLobby(username)
                 Log.i("UsernameActivity", "Username sent to server: $username")
             } else {

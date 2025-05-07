@@ -4,5 +4,6 @@ enum class LobbyMessageType {
     JOIN_LOBBY,
     LOBBY_UPDATE,
     START_GAME,
+    PLAYER_INIT,
     ERROR
 }

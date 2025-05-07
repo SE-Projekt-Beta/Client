@@ -4,6 +4,7 @@ import WEBSOCKET_URI
 import android.util.Log
 import at.aau.serg.websocketbrokerdemo.lobby.LobbyClient
 import at.aau.serg.websocketbrokerdemo.network.dto.GameStartedPayload
+import at.aau.serg.websocketbrokerdemo.network.dto.InitPlayerPayload
 import at.aau.serg.websocketbrokerdemo.network.dto.JoinLobbyPayload
 import at.aau.serg.websocketbrokerdemo.network.dto.LobbyMessage
 import at.aau.serg.websocketbrokerdemo.network.dto.LobbyMessageType
@@ -47,9 +48,18 @@ class LobbyStomp(private val listener: LobbyMessageListener) {
         }
     }
 
+    fun sendInit(username: String) {
+        // use the JoinLobbyPayload class instead of thhe below code
+        val payload = InitPlayerPayload(0, username)
+        val initMessage = LobbyMessage(LobbyMessageType.PLAYER_INIT, payload)
+        scope.launch {
+            val json = Gson().toJson(initMessage)
+            session.sendText("/app/lobby", json)
+            Log.i("LobbyStomp", "Sent JOIN_LOBBY for $username")
+        }
+    }
 
     fun sendJoinLobby(username: String) {
-
         // use the JoinLobbyPayload class instead of thhe below code
         val payload = JoinLobbyPayload(username)
         val joinMessage = LobbyMessage(LobbyMessageType.JOIN_LOBBY, payload)
@@ -67,6 +77,7 @@ class LobbyStomp(private val listener: LobbyMessageListener) {
         }
     }
     private fun handleLobbyMessage(message: LobbyMessage) {
+        Log.i("LobbyStomp", "Received message: $message")
         when (message.type) {
             LobbyMessageType.LOBBY_UPDATE -> {
                 val payload = message.payload as? LobbyUpdatePayload?: return;
