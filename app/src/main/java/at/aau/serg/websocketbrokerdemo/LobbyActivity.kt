@@ -21,14 +21,20 @@ class LobbyActivity : AppCompatActivity() {
     private lateinit var lobbyStomp: LobbyStomp
     private lateinit var lobbyHandler: LobbyHandler
     private lateinit var playersTextView: TextView
+    private lateinit var titleLobby: TextView
     private lateinit var startButton: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_lobby)
 
+        titleLobby = findViewById(R.id.titleLobby)
         playersTextView = findViewById(R.id.playerListView)
         startButton = findViewById(R.id.buttonStart)
+
+        // set the title to the current lobby name
+        val lobbyName = LobbyClient.lobbyId
+        titleLobby.text = "Lobby: $lobbyName"
 
         lobbyHandler = LobbyHandler(this)
         lobbyStomp = LobbyStomp(lobbyHandler)

@@ -6,7 +6,7 @@ import com.google.gson.JsonElement
  * Now carries an optional lobbyId (null for global ops).
  */
 data class LobbyMessage(
-    val lobbyId: String ?= null,
+    val lobbyId: Int ?= null,
     val type: LobbyMessageType,
     val payload: JsonElement
 )
