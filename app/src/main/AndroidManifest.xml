@@ -3,7 +3,6 @@
     package="at.aau.serg.websocketbrokerdemo"
     xmlns:tools="http://schemas.android.com/tools">
 
-
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -35,11 +34,12 @@
             android:exported="false"
             android:theme="@style/Theme.MaterialComponents.DayNight.DarkActionBar" />
 
-        <!-- MainActivity: Spiel -->
+        <!-- ListLobbyActivity: Auswahl vorhandener Lobbies -->
         <activity
             android:name="at.aau.serg.websocketbrokerdemo.ListLobbyActivity"
             android:exported="false"
             android:theme="@style/Theme.MaterialComponents.DayNight.DarkActionBar" />
+
 
         <!-- LobbyActivity: Lobby List Screen -->
         <activity
@@ -47,12 +47,11 @@
             android:exported="false"
             android:theme="@style/Theme.MaterialComponents.DayNight.DarkActionBar" />
 
-         MainActivity: Spiel
+        <!-- GameBoardActivity: Das eigentliche Spielbrett -->
         <activity
             android:name="at.aau.serg.websocketbrokerdemo.GameBoardActivity"
             android:exported="false"
             android:theme="@style/Theme.MaterialComponents.DayNight.DarkActionBar" />
 
     </application>
-
 </manifest>

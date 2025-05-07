@@ -41,6 +41,7 @@ class ListLobbyActivity : ComponentActivity() {
                     }
                 }
             }
+
             override fun onLobbyUpdate(players: List<PlayerDTO>) {
                 Log.i("ListLobby", "Lobby update received: $players")
                 // Handle lobby update

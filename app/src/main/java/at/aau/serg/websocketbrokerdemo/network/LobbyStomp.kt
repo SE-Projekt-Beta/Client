@@ -1,4 +1,3 @@
-// src/main/java/at/aau/serg/websocketbrokerdemo/network/LobbyStomp.kt
 package at.aau.serg.websocketbrokerdemo.network
 
 import WEBSOCKET_URI
