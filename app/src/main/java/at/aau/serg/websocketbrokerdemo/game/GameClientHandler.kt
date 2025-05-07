@@ -66,10 +66,11 @@ class GameClientHandler(
     private fun handlePropertyBought(payload: JsonObject) {
         val playerId = payload.get("playerId").asString
         val tileName = payload.get("tileName").asString
+        val tilePos = payload.get("tilePos").asInt
 
         Log.i(TAG, "Kauf abgeschlossen: $tileName von $playerId")
-        OwnershipClient.addProperty(playerId, tileName)
-        activity.showOwnership()
+        GameStateClient.addProperty(playerId, tilePos)
+        activity.showCurrentPlayerOwnership()
         activity.showResponse("Kauf abgeschlossen: $tileName für $playerId")
     }
 
