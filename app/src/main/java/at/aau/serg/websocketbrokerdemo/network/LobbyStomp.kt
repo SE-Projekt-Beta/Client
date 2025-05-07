@@ -63,7 +63,7 @@ class LobbyStomp(private val listener: LobbyMessageListener) {
         scope.launch { session.sendText("/app/lobby", Gson().toJson(msg)) }
     }
 
-    fun sendJoinLobby(lobbyId: String, username: String) {
+    fun sendJoinLobby(username: String, lobbyId: Int) {
         val payload = JsonObject().apply {
             addProperty("username", username)
             addProperty("lobbyId", lobbyId)
@@ -86,6 +86,13 @@ class LobbyStomp(private val listener: LobbyMessageListener) {
         Gson().fromJson(json, LobbyMessage::class.java)
 
     private fun handleLobbyMessage(message: LobbyMessage) {
+
+        // check lobbyid
+        if (message.lobbyId != 0 && message.lobbyId != LobbyClient.lobbyId) {
+            Log.w("LobbyStomp", "Received message for different lobby: ${message.lobbyId}")
+            return
+        }
+
         when (message.type) {
             LobbyMessageType.LOBBY_CREATED -> {
                 val lobbyid = message.lobbyId
@@ -97,7 +104,7 @@ class LobbyStomp(private val listener: LobbyMessageListener) {
                 val lobbies = arr.map { elem ->
                     val o = elem.asJsonObject
                     LobbyDTO(
-                        id = o.get("lobbyId").asString,
+                        id = o.get("lobbyId").asInt,
                         name = o.get("lobbyName").asString,
                         playerCount = o.get("playerCount").asInt
                     )

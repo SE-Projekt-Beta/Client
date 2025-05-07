@@ -1,17 +1,21 @@
 package at.aau.serg.websocketbrokerdemo.game
 
+import junit.framework.TestCase.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 
+
 class GameStateClientTest {
 
     @BeforeEach
     fun setup() {
-        // Clear state before each test
-        GameStateClient.clear()
+        // Rücksetzen des Zustands vor jedem Test
+        GameStateClient.getAllPositions().keys.forEach { player ->
+            GameStateClient.updatePosition(player, 0)
+        }
     }
 
     private fun createPlayer(
@@ -52,6 +56,7 @@ class GameStateClientTest {
 
         GameStateClient.updatePosition("1", 3)
         GameStateClient.updatePosition("2", 5)
+
 
         val all = GameStateClient.getAllPositions()
         assertEquals(3, all["1"])

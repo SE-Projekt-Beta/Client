@@ -16,18 +16,16 @@ class LobbyHandlerTest {
 
     @BeforeEach
     fun setUp() {
-        // Mock the static Log class to suppress log output
         mockkStatic(Log::class)
         every { Log.i(any(), any()) } returns 0
 
-        // Mock the LobbyActivity
         activity = mockk(relaxed = true)
         handler = LobbyHandler(activity)
     }
 
     @Test
     fun testOnStartGame_startsMainActivityWithCorrectOrder() {
-        // Arrange: Create the list of players
+        // Arrange: Baue ein passendes Payload
         val playerList = listOf(
             PlayerDTO(1, "Alice"),
             PlayerDTO(2, "Bob")
@@ -46,10 +44,10 @@ class LobbyHandlerTest {
             add("playerOrder", orderArray)
         }
 
-        // Act: Call onStartGame
+        // Act
         handler.onStartGame(payload)
 
-        // Assert: Verify that startGame was called with the correct order
+        // Assert: Überprüfe, dass startGame aufgerufen wurde
         verify {
             activity.startGame(match {
                 it.size == 2 &&
@@ -61,19 +59,16 @@ class LobbyHandlerTest {
 
     @Test
     fun testOnLobbyUpdate_updatesLobbyCorrectly() {
-        // Arrange: Create the list of players
+        // Arrange: Erstelle eine Spieler-Liste
         val players = listOf(
             PlayerDTO(1, "Thomas"),
             PlayerDTO(2, "David")
         )
 
-        // Log the players to ensure the correct list
-        println("Players before calling onLobbyUpdate: ${players.map { it.nickname }}")
+        // Act
+        handler.onLobbyListUpdate(players)
 
-        // Act: Call onLobbyUpdate (this should invoke the overridden method in LobbyActivity)
-        handler.onLobbyUpdate(players)
-
-        // Assert: Verify that updateLobby was called with the correct list of player names
+        // Assert: Überprüfe, dass updateLobby aufgerufen wurde
         verify {
             activity.updateLobby(listOf("Thomas", "David"))
         }

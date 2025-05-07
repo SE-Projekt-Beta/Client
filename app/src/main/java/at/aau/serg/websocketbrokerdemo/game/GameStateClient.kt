@@ -17,6 +17,7 @@ object GameStateClient {
     fun getAllPlayers(): Collection<Player> = players.values
 
     // Position ändern
+
     fun updatePosition(playerId: String, newPos: Int) {
         players[playerId]?.position = newPos
     }
@@ -114,4 +115,3 @@ object GameStateClient {
         currentPlayerId = null
     }
 
-}
