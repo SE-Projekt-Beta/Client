@@ -11,7 +11,6 @@ import com.google.gson.JsonObject
 
 class LoginHandler(private val activity: UsernameActivity) : LobbyMessageListener {
 
-
     override fun onLobbyListUpdate(lobbies: List<LobbyDTO>) {
         Log.i("LoginHandler", "Lobby update received: $lobbies")
 

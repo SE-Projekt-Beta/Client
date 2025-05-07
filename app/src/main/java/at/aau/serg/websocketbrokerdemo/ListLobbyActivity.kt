@@ -15,7 +15,7 @@ import at.aau.serg.websocketbrokerdemo.network.LobbyMessageListener
 import at.aau.serg.websocketbrokerdemo.network.LobbyStomp
 import at.aau.serg.websocketbrokerdemo.network.dto.LobbyDTO
 import at.aau.serg.websocketbrokerdemo.network.dto.PlayerDTO
-import at.aau.serg.websocketbrokerdemo.R
+import com.example.myapplication.R
 import com.google.gson.JsonObject
 
 class ListLobbyActivity : ComponentActivity() {
@@ -43,7 +43,7 @@ class ListLobbyActivity : ComponentActivity() {
                 }
             }
             override fun onLobbyUpdate(players: List<PlayerDTO>) {
-                Log.i("LobbyUpdate", "Lobby update received: $players")
+                Log.i("ListLobby", "Lobby update received: $players")
                 // Handle lobby update
             }
 
@@ -68,28 +68,20 @@ class ListLobbyActivity : ComponentActivity() {
 
     }
 
-    override fun onResume() {
-        super.onResume()
-        // Ensure that the lobby list is refreshed whenever the activity is resumed
-        sendLobbyListRequest()
-    }
-
-    private fun sendLobbyListRequest() {
-        // register before calling connect
-        lobbyStomp.setOnConnectedListener {
-            // this will only run once the socket is open
-            lobbyStomp.sendListLobbies()
-        }
-    }
-
     private fun joinLobby(lobby: LobbyDTO) {
+
+        username = LobbyClient.username
+
+        // send a joinlobby via lobbyStomp
+        lobbyStomp.sendJoinLobby(username, lobby.id)
 
         //set the lobbyid
         LobbyClient.lobbyId = lobby.id
 
         //log it
-        Log.i("ListLobby", "Getting Username: ${lobby.id}")
-        val intent = Intent(this, UsernameActivity::class.java)
+        Log.i("ListLobby", "Joining lobby: ${lobby.id}")
+        val intent = Intent(this, LobbyActivity::class.java)
+        intent.putExtra("lobbyId", lobby.id)
         // start the lobby activity
         startActivity(intent)
     }
