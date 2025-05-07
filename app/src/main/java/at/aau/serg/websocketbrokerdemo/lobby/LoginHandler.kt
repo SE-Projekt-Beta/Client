@@ -46,6 +46,9 @@ class LoginHandler(private val activity: UsernameActivity) : LobbyMessageListene
 
             LobbyClient.setPlayers(players)
 
+            // 🔧 Hier hinzufügen!
+            LobbyClient.playerId = players.firstOrNull { it.nickname == ownNickname }?.id ?: -1
+
             val gson = Gson()
             val playersJson = gson.toJson(players)
 
@@ -60,8 +63,11 @@ class LoginHandler(private val activity: UsernameActivity) : LobbyMessageListene
     }
 
 
+
     override fun onStartGame(payload: JsonObject) {
 
     }
 
 }
+
+

@@ -13,3 +13,5 @@ object GameStateClient {
 
     fun getAllPositions(): Map<String, Int> = playerPositions.toMap()
 }
+
+

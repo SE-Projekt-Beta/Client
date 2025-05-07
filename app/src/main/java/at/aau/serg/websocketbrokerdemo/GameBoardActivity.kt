@@ -1,23 +1,20 @@
 package at.aau.serg.websocketbrokerdemo
 
-import at.aau.serg.websocketbrokerdemo.network.GameStomp
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import androidx.activity.ComponentActivity
-import androidx.activity.enableEdgeToEdge
-import at.aau.serg.websocketbrokerdemo.game.GameClientHandler
-import at.aau.serg.websocketbrokerdemo.network.dto.GameMessage
-import at.aau.serg.websocketbrokerdemo.game.OwnershipClient
+import at.aau.serg.websocketbrokerdemo.game.*
 import at.aau.serg.websocketbrokerdemo.lobby.LobbyClient
+import at.aau.serg.websocketbrokerdemo.network.GameStomp
+import at.aau.serg.websocketbrokerdemo.network.dto.GameMessage
 import at.aau.serg.websocketbrokerdemo.network.dto.GameMessageType
 import at.aau.serg.websocketbrokerdemo.network.dto.PlayerDTO
-import at.aau.serg.websocketbrokerdemo.R
 import com.google.common.reflect.TypeToken
 import com.google.gson.Gson
 import com.google.gson.JsonObject
-import android.util.Log
 
 class GameBoardActivity : ComponentActivity() {
 
@@ -33,7 +30,6 @@ class GameBoardActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContentView(R.layout.fragment_fullscreen)
 
         myPlayerName = intent.getStringExtra("USERNAME") ?: "unknown"
@@ -41,58 +37,73 @@ class GameBoardActivity : ComponentActivity() {
         val playersJson = intent.getStringExtra("players_json")
         if (playersJson != null) {
             val type = object : TypeToken<List<PlayerDTO>>() {}.type
-            val players = Gson().fromJson<List<PlayerDTO>>(playersJson, type)
+            val players: List<PlayerDTO> = Gson().fromJson(playersJson, type)
             LobbyClient.setPlayers(players)
+            Log.i("GameBoardActivity", "Player order loaded: $players")
         }
 
         initViews()
         setupNetwork()
         setupButtons()
-        checkIfMyTurn()
     }
+
 
     private fun initViews() {
         responseView = findViewById(R.id.response_view)
         ownershipView = findViewById(R.id.ownership_view)
         rollDiceButton = findViewById(R.id.rollDiceBtn)
         buyButton = findViewById(R.id.buybtn)
+
+        // Zu Beginn sind Buttons nicht sichtbar
+        rollDiceButton.visibility = View.GONE
         buyButton.visibility = View.GONE
     }
 
     private fun setupNetwork() {
-        clientHandler = GameClientHandler(this)
-        gameStomp = GameStomp(dktHandler = clientHandler, 1)
+        clientHandler = GameClientHandler(
+            showResponse = ::showResponse,
+            enableDiceButton = { runOnUiThread { rollDiceButton.visibility = View.VISIBLE } },
+            disableDiceButton = { runOnUiThread { rollDiceButton.visibility = View.GONE } },
+            showBuyButton = ::showBuyButton,
+            showOwnership = ::showOwnership
+        )
+        gameStomp = GameStomp(dktHandler = clientHandler, lobbyId = LobbyClient.lobbyId)
         gameStomp.connect()
     }
 
     private fun setupButtons() {
         rollDiceButton.setOnClickListener {
             val payload = JsonObject().apply {
-                addProperty("playerId", myPlayerName)
+                addProperty("playerId", LobbyClient.playerId) // wichtig: INT!
             }
-            // log the payload
-            Log.i("MainActivity", "Sending roll dice payload: $payload")
-            gameStomp.sendGameMessage(GameMessage(1, GameMessageType.ROLL_DICE, payload))
+            gameStomp.sendGameMessage(GameMessage(LobbyClient.lobbyId, GameMessageType.ROLL_DICE, payload))
         }
     }
 
-    private fun checkIfMyTurn() {
-        val order = LobbyClient.allPlayers()
-        val myIndex = order.indexOfFirst { it.nickname == myPlayerName }
-
-        val isMyTurn = myIndex == 0
-        runOnUiThread {
-            rollDiceButton.visibility = if (isMyTurn) View.VISIBLE else View.GONE
-        }
-    }
-
-    fun showResponse(msg: String) {
+    private fun showResponse(msg: String) {
         runOnUiThread {
             responseView.text = msg
         }
     }
 
-    fun showOwnership() {
+    private fun showBuyButton(tileName: String, tilePos: Int, playerId: Int) {
+        runOnUiThread {
+            buyButton.apply {
+                text = "Kaufen: $tileName"
+                visibility = View.VISIBLE
+                setOnClickListener {
+                    val payload = JsonObject().apply {
+                        addProperty("playerId", playerId)
+                        addProperty("tilePos", tilePos)
+                    }
+                    gameStomp.sendGameMessage(GameMessage(LobbyClient.lobbyId, GameMessageType.BUY_PROPERTY, payload))
+                    visibility = View.GONE
+                }
+            }
+        }
+    }
+
+    private fun showOwnership() {
         runOnUiThread {
             val text = OwnershipClient.all().entries.joinToString("\n\n") { (player, props) ->
                 "$player besitzt:\n  - ${props.joinToString("\n  - ")}"
@@ -100,63 +111,4 @@ class GameBoardActivity : ComponentActivity() {
             ownershipView.text = text
         }
     }
-
-    fun showBuyButton(tileName: String, tilePos: Int, playerId: String) {
-        runOnUiThread {
-            buyButton.apply {
-                text = "Kaufen: $tileName"
-                visibility = View.VISIBLE
-                setOnClickListener {
-                    val payload = JsonObject().apply {
-                        addProperty("playerId", myPlayerName)
-                        addProperty("tilePos", tilePos)
-                    }
-                    gameStomp.sendGameMessage(GameMessage(1, GameMessageType.BUY_PROPERTY, payload))
-                    visibility = View.GONE
-                }
-            }
-        }
-    }
-
-    fun showEventCard(text: String, description: String) {
-        runOnUiThread {
-            val title = when {
-                text.contains("Risiko", ignoreCase = true) -> "⚠️ Risiko-Karte"
-                text.contains("Bank", ignoreCase = true) -> "🏦 Bank-Karte"
-                else -> "📦 Ereigniskarte"
-            }
-            android.app.AlertDialog.Builder(this)
-                .setTitle(title)
-                .setMessage(text)
-                .setPositiveButton("OK", null)
-                .show()
-        }
-    }
-
-    fun showJailDialog(playerId: String) {
-        runOnUiThread {
-            android.app.AlertDialog.Builder(this)
-                .setTitle("🚔 Ins Gefängnis!")
-                .setMessage("$playerId wurde ins Gefängnis geschickt.")
-                .setPositiveButton("OK", null)
-                .show()
-        }
-    }
-    fun enableDiceButton() {
-        runOnUiThread {
-            rollDiceButton.visibility = View.VISIBLE
-        }
-    }
-
-    fun disableDiceButton() {
-        runOnUiThread {
-            rollDiceButton.visibility = View.GONE
-        }
-    }
-
-    fun getMyPlayerName(): String {
-        return myPlayerName
-    }
-
-
 }

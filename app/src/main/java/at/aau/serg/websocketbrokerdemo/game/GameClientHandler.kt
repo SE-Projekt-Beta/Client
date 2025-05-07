@@ -1,14 +1,17 @@
 package at.aau.serg.websocketbrokerdemo.game
 
 import android.util.Log
-import at.aau.serg.websocketbrokerdemo.GameBoardActivity
-import at.aau.serg.websocketbrokerdemo.ListLobbyActivity
+import at.aau.serg.websocketbrokerdemo.lobby.LobbyClient
 import at.aau.serg.websocketbrokerdemo.network.dto.GameMessage
 import at.aau.serg.websocketbrokerdemo.network.dto.GameMessageType
 import com.google.gson.JsonObject
 
 class GameClientHandler(
-    private val activity: GameBoardActivity
+    private val showResponse: (String) -> Unit,
+    private val enableDiceButton: () -> Unit,
+    private val disableDiceButton: () -> Unit,
+    private val showBuyButton: (tileName: String, tilePos: Int, playerId: Int) -> Unit,
+    private val showOwnership: () -> Unit
 ) {
 
     fun handle(message: GameMessage) {
@@ -18,112 +21,76 @@ class GameClientHandler(
             GameMessageType.CAN_BUY_PROPERTY -> handleCanBuyProperty(message.payload.asJsonObject)
             GameMessageType.PROPERTY_BOUGHT -> handlePropertyBought(message.payload.asJsonObject)
             GameMessageType.MUST_PAY_RENT -> handleMustPayRent(message.payload.asJsonObject)
-//            GameMessageType.DRAW_EVENT_BANK_CARD -> handleDrawEventBankCard(message.payload.asString)
-//            GameMessageType.DRAW_EVENT_RISIKO_CARD -> handleDrawEventRisikoCard(message.payload.asString)
-//            GameMessageType.GO_TO_JAIL -> handleGoToJail(message.payload.asString)
+            GameMessageType.EVENT_CARD_DRAWN,
+            GameMessageType.RISK_CARD_DRAWN -> handleCardDrawn(message.payload.asJsonObject)
+            GameMessageType.SKIPPED -> handleSkipped(message.payload.asJsonObject)
             GameMessageType.ERROR -> handleError(message.payload.asString)
             else -> Log.w(TAG, "Unbekannter Typ: ${message.type}")
         }
     }
 
     private fun handleCurrentPlayer(payload: JsonObject) {
-        val currentPlayerId = payload.get("playerId").asString
-        val myId = activity.getMyPlayerName()
-
-        if (currentPlayerId == myId) {
-            activity.enableDiceButton()
+        val currentPlayerId = payload.get("playerId").asInt
+        if (currentPlayerId == LobbyClient.playerId) {
+            enableDiceButton()
         } else {
-            activity.disableDiceButton()
+            disableDiceButton()
         }
     }
 
     private fun handlePlayerMoved(payload: JsonObject) {
-        val playerId = payload.get("playerId").asString
+        val playerId = payload.get("playerId").asInt
         val pos = payload.get("pos").asInt
         val dice = payload.get("dice").asInt
         val tileName = payload.get("tileName").asString
         val tileType = payload.get("tileType").asString
 
         Log.i(TAG, "$playerId hat $dice gewürfelt auf $tileName ($tileType)")
-        activity.showResponse("$playerId → $tileName ($tileType), gewürfelt: $dice")
-
-        GameStateClient.updatePosition(playerId, pos)
+        showResponse("Spieler $playerId → $tileName ($tileType), Würfel: $dice")
+        GameStateClient.updatePosition(playerId.toString(), pos)
     }
 
     private fun handleCanBuyProperty(payload: JsonObject) {
         val tileName = payload.get("tileName").asString
         val tilePos = payload.get("tilePos").asInt
-        val playerId = payload.get("playerId").asString
+        val playerId = payload.get("playerId").asInt
 
-        Log.i(TAG, "$playerId darf $tileName kaufen!")
-        activity.showBuyButton(tileName, tilePos, playerId)
-        activity.showResponse("$playerId darf $tileName kaufen")
+        showBuyButton(tileName, tilePos, playerId)
+        showResponse("Spieler $playerId darf $tileName kaufen")
     }
 
     private fun handlePropertyBought(payload: JsonObject) {
-        val playerId = payload.get("playerId").asString
+        val playerId = payload.get("playerId").asInt
         val tileName = payload.get("tileName").asString
 
-        Log.i(TAG, "Kauf abgeschlossen: $tileName von $playerId")
-        OwnershipClient.addProperty(playerId, tileName)
-        activity.showOwnership()
-        activity.showResponse("Kauf abgeschlossen: $tileName für $playerId")
+        OwnershipClient.addProperty(playerId.toString(), tileName)
+        showOwnership()
+        showResponse("Kauf abgeschlossen: $tileName für Spieler $playerId")
     }
 
     private fun handleMustPayRent(payload: JsonObject) {
-        val playerId = payload.get("playerId").asString
-        val ownerId = payload.get("ownerId").asString
+        val playerId = payload.get("playerId").asInt
+        val ownerId = payload.get("ownerId").asInt
         val tileName = payload.get("tileName").asString
 
-        Log.i(TAG, "$playerId muss Miete an $ownerId zahlen für $tileName")
-        activity.showResponse("$playerId muss Miete an $ownerId zahlen für $tileName")
+        showResponse("Spieler $playerId zahlt Miete an Spieler $ownerId für $tileName")
     }
 
-//    private fun handleDrawEventRisikoCard(payload: String) {
-//        try {
-//            val json = JSONObject(payload)
-//            val title = json.optString("eventTitle", "Unbekannter Titel")
-//            val description = json.optString("eventDescription", "Keine Beschreibung")
-//            val amount = json.optInt("eventAmount", 0)
-//
-//            Log.i(TAG, "Risikokarte: $title – $description (${amount}€)")
-//            activity.showEventCard(title, "$description\nBetrag: $amount€")
-//        } catch (e: Exception) {
-//            Log.e(TAG, "Fehler beim Parsen der Risikokarte: ${e.message}")
-//            activity.showResponse("⚠️ Fehler beim Anzeigen der Risikokarte")
-//        }
-//    }
-//
-//    private fun handleDrawEventBankCard(payload: String) {
-//        try {
-//            val json = JSONObject(payload)
-//            val title = json.optString("eventTitle", "Unbekannter Titel")
-//            val description = json.optString("eventDescription", "Keine Beschreibung")
-//            val amount = json.optInt("eventAmount", 0)
-//
-//            Log.i(TAG, "Bankkarte: $title – $description (${amount}€)")
-//            activity.showEventCard(title, "$description\nBetrag: $amount€")
-//        } catch (e: Exception) {
-//            Log.e(TAG, "Fehler beim Parsen der Bankkarte: ${e.message}")
-//            activity.showResponse("⚠️ Fehler beim Anzeigen der Bankkarte")
-//        }
-//    }
-//
-//    private fun handleGoToJail(payload: String) {
-//        val json = JSONObject(payload)
-//        val playerId = json.getString("playerId")
-//        val jailPos = 10 // Position des Gefängnisses
-//
-//        GameStateClient.updatePosition(playerId, jailPos)
-//
-//        val message = "$playerId wurde ins Gefängnis geschickt! 🚔"
-//        Log.i(TAG, message)
-//        activity.showResponse(message)
-//        activity.showJailDialog(playerId)
-//    }
+    private fun handleCardDrawn(payload: JsonObject) {
+        val title = payload.get("title").asString
+        val description = payload.get("description").asString
+        showResponse("Karte gezogen: $title\n$description")
+    }
 
-    private fun handleError(errorMessage: String) {
-        Log.e(TAG, "Fehler vom Server: $errorMessage")
+    private fun handleSkipped(payload: JsonObject) {
+        val playerId = payload.get("playerId").asInt
+        val tileName = payload.get("tileName").asString
+        showResponse("Spieler $playerId hat Feld übersprungen: $tileName")
+    }
+
+    private fun handleError(msg: String) {
+        Log.e(TAG, "Fehler vom Server: $msg")
+        showResponse("⚠️ Fehler: $msg")
     }
 
     companion object {

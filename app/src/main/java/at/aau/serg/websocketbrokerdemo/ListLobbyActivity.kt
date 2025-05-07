@@ -15,7 +15,6 @@ import at.aau.serg.websocketbrokerdemo.network.LobbyMessageListener
 import at.aau.serg.websocketbrokerdemo.network.LobbyStomp
 import at.aau.serg.websocketbrokerdemo.network.dto.LobbyDTO
 import at.aau.serg.websocketbrokerdemo.network.dto.PlayerDTO
-import at.aau.serg.websocketbrokerdemo.R
 import com.google.gson.JsonObject
 
 class ListLobbyActivity : ComponentActivity() {
@@ -42,6 +41,7 @@ class ListLobbyActivity : ComponentActivity() {
                     }
                 }
             }
+
             override fun onLobbyUpdate(players: List<PlayerDTO>) {
                 Log.i("ListLobby", "Lobby update received: $players")
                 // Handle lobby update
