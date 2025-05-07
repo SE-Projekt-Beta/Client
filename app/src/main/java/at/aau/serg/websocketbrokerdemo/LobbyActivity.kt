@@ -78,7 +78,7 @@ class LobbyActivity : AppCompatActivity() {
     }
 
     fun startGame(order: List<PlayerDTO>) {
-        val intent = Intent(this, MainActivity::class.java).apply {
+        val intent = Intent(this, GameBoardActivity::class.java).apply {
             putExtra("USERNAME", LobbyClient.username)
             putExtra("ORDER", Gson().toJson(order))
         }

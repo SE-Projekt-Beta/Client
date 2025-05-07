@@ -8,7 +8,7 @@ import androidx.activity.ComponentActivity
 import at.aau.serg.websocketbrokerdemo.lobby.LobbyHandler
 import at.aau.serg.websocketbrokerdemo.network.LobbyStomp
 import at.aau.serg.websocketbrokerdemo.network.dto.LobbyDTO
-import com.example.myapplication.R
+import at.aau.serg.websocketbrokerdemo.R
 
 class CreateLobbyActivity : ComponentActivity() {
 
