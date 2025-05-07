@@ -13,5 +13,6 @@ enum class GameMessageType {
     SKIPPED,
     MUST_PAY_RENT,
     ERROR,
-    CURRENT_PLAYER
+    CURRENT_PLAYER,
+    PLAYER_UPDATE
 }

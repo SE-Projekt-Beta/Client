@@ -43,4 +43,16 @@ object BoardMap {
         Tile(38, "Strafsteuer", TileType.TAX),
         Tile(39, "Stephansplatz", TileType.STREET)
     )
+
+    fun getTile(id: Int): Tile {
+        return tiles[id]
+    }
+
+    fun getTileType(id: Int): TileType {
+        return tiles[id].type
+    }
+
+    fun getTileName(id: Int): String {
+        return tiles[id].name
+    }
 }
