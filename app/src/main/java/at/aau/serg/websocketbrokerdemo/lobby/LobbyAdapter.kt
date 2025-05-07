@@ -5,7 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.myapplication.R
+import at.aau.serg.websocketbrokerdemo.R
 import at.aau.serg.websocketbrokerdemo.network.dto.LobbyDTO
 
 class LobbyAdapter(
