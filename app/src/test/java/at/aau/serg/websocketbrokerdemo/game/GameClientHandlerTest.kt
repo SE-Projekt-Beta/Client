@@ -1,7 +1,7 @@
 // File: GameClientHandlerTest.kt
 package at.aau.serg.websocketbrokerdemo.game
 
-import GameStateClient
+
 import android.util.Log
 import at.aau.serg.websocketbrokerdemo.MainActivity
 import at.aau.serg.websocketbrokerdemo.network.dto.GameMessage
@@ -102,11 +102,12 @@ class GameClientHandlerTest {
         val payload = JsonObject().apply {
             addProperty("tileName", "Opernring")
             addProperty("playerId", "p1")
+            addProperty("tilePos", 5)
         }
         handler.handle(GameMessage(GameMessageType.PROPERTY_BOUGHT, payload))
 
-        verify { OwnershipClient.addProperty("p1", "Opernring") }
-        verify { mockActivity.showOwnership() }
+        verify { GameStateClient.addProperty("p1", 5) }
+        verify { mockActivity.showCurrentPlayerOwnership() }
         verify { mockActivity.showResponse("Kauf abgeschlossen: Opernring für p1") }
     }
 

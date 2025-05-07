@@ -10,7 +10,6 @@ import androidx.activity.enableEdgeToEdge
 import at.aau.serg.websocketbrokerdemo.game.GameClientHandler
 import at.aau.serg.websocketbrokerdemo.game.GameStateClient
 import at.aau.serg.websocketbrokerdemo.network.dto.GameMessage
-import at.aau.serg.websocketbrokerdemo.game.OwnershipClient
 import at.aau.serg.websocketbrokerdemo.lobby.LobbyClient
 import at.aau.serg.websocketbrokerdemo.model.BoardMap
 import at.aau.serg.websocketbrokerdemo.network.dto.GameMessageType
@@ -98,7 +97,7 @@ class MainActivity : ComponentActivity() {
 
             val text = if (player != null) {
                 val propertyNames = player.properties
-                    ?.joinToString(", ") { tileId -> BoardMap.getTile(tileId).name }
+                    .joinToString(", ") { tileId -> BoardMap.getTile(tileId).name }
                     ?: "keine"
 
                 "${player.nickname} -> Feld: ${player.position}, Besitz: $propertyNames, Geld: ${player.cash}€"

@@ -1,7 +1,7 @@
 package at.aau.serg.websocketbrokerdemo.game
 
 data class Player(
-    val id: Int,
+    val id: String,
     val nickname: String,
     var position: Int = 0,
     var cash: Int = 1500,
