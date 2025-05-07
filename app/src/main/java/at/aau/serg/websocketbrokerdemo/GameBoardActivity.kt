@@ -18,6 +18,8 @@ import com.google.common.reflect.TypeToken
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import android.util.Log
+import at.aau.serg.websocketbrokerdemo.game.GameStateClient
+import at.aau.serg.websocketbrokerdemo.model.BoardMap
 
 class GameBoardActivity : ComponentActivity() {
 
@@ -92,10 +94,19 @@ class GameBoardActivity : ComponentActivity() {
         }
     }
 
-    fun showOwnership() {
+    fun showCurrentPlayerOwnership() {
         runOnUiThread {
-            val text = OwnershipClient.all().entries.joinToString("\n\n") { (player, props) ->
-                "$player besitzt:\n  - ${props?.joinToString("\n  - ")}"
+            val currentId = GameStateClient.currentPlayerId?.toString()
+            val player = currentId?.let { GameStateClient.getPlayer(it) }
+
+            val text = if (player != null) {
+                val propertyNames = player.properties
+                    .joinToString(", ") { tileId -> BoardMap.getTile(tileId).name }
+                    ?: "keine"
+
+                "${player.nickname} -> Feld: ${player.position}, Besitz: $propertyNames, Geld: ${player.cash}€"
+            } else {
+                "Kein aktueller Spieler ausgewählt."
             }
             ownershipView.text = text
         }

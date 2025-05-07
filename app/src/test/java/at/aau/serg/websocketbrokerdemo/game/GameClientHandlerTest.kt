@@ -79,10 +79,10 @@ class GameClientHandlerTest {
             addProperty("playerId", "p1")
             addProperty("tilePos", 5)
         }
-        handler.handle(GameMessage(0, GameMessageType.PROPERTY_BOUGHT, payload))
-        
+        handler.handle(GameMessage(1, GameMessageType.PROPERTY_BOUGHT, payload))
+
         verify { GameStateClient.addProperty("p1", 5) }
-        verify { mockActivity.showOwnership() }
+        verify { mockActivity.showCurrentPlayerOwnership() }
         verify { mockActivity.showResponse("Kauf abgeschlossen: Opernring für p1") }
     }
 

@@ -2,11 +2,8 @@ package at.aau.serg.websocketbrokerdemo.game
 
 import android.util.Log
 import at.aau.serg.websocketbrokerdemo.GameBoardActivity
-import at.aau.serg.websocketbrokerdemo.ListLobbyActivity
 import at.aau.serg.websocketbrokerdemo.network.dto.GameMessage
 import at.aau.serg.websocketbrokerdemo.network.dto.GameMessageType
-import at.aau.serg.websocketbrokerdemo.network.dto.PlayerDTO
-import com.google.gson.Gson
 import com.google.gson.JsonObject
 
 class GameClientHandler(
@@ -70,7 +67,7 @@ class GameClientHandler(
 
         Log.i(TAG, "Kauf abgeschlossen: $tileName von $playerId")
         GameStateClient.addProperty(playerId, tilePos)
-        activity.showOwnership()
+        activity.showCurrentPlayerOwnership()
         activity.showResponse("Kauf abgeschlossen: $tileName für $playerId")
     }
 

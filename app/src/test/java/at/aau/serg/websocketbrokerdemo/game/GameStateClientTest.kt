@@ -6,15 +6,12 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 
-
 class GameStateClientTest {
 
     @BeforeEach
     fun setup() {
-        // Rücksetzen des Zustands vor jedem Test
-        GameStateClient.getAllPositions().keys.forEach { player ->
-            GameStateClient.updatePosition(player, 0)
-        }
+        // Clear state before each test
+        GameStateClient.clear()
     }
 
     private fun createPlayer(
