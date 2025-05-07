@@ -25,11 +25,9 @@ object GameStateClient {
         return players[playerId]?.position ?: 0
     }
 
-    /*fun getAllPositions(): Map<String, Int> {
+    fun getAllPositions(): Map<String, Int> {
         return players.mapValues { it.value.position }
     }
-
-     */
 
     // Geld
     fun updateMoney(playerId: String, newAmount: Int) {

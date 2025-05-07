@@ -12,6 +12,7 @@ import at.aau.serg.websocketbrokerdemo.game.GameStateClient
 import at.aau.serg.websocketbrokerdemo.network.dto.GameMessage
 import at.aau.serg.websocketbrokerdemo.game.OwnershipClient
 import at.aau.serg.websocketbrokerdemo.lobby.LobbyClient
+import at.aau.serg.websocketbrokerdemo.model.BoardMap
 import at.aau.serg.websocketbrokerdemo.network.dto.GameMessageType
 import at.aau.serg.websocketbrokerdemo.network.dto.PlayerDTO
 import com.example.myapplication.R
@@ -90,18 +91,22 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    fun showOwnership() {
+    fun showCurrentPlayerOwnership() {
         runOnUiThread {
-            /*
-            val text = GameStateClient.getAllPositions().entries.joinToString("\n\n") { (id, pos) ->
-                val state = GameStateClient.getPlayerState(id)
-                val props = state?.properties?.joinToString(", ") ?: "keine"
-                "$id -> Feld: $pos, Besitz: $props, Geld: ${state?.money}€"
-        }
+            val currentId = GameStateClient.currentPlayerId?.toString()
+            val player = currentId?.let { GameStateClient.getPlayer(it) }
+
+            val text = if (player != null) {
+                val propertyNames = player.properties
+                    ?.joinToString(", ") { tileId -> BoardMap.getTile(tileId).name }
+                    ?: "keine"
+
+                "${player.nickname} -> Feld: ${player.position}, Besitz: $propertyNames, Geld: ${player.cash}€"
+            } else {
+                "Kein aktueller Spieler ausgewählt."
+            }
 
             ownershipView.text = text
-
-             */
         }
     }
 
