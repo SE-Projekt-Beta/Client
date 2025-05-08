@@ -18,8 +18,13 @@ import com.google.gson.GsonBuilder
 class GameStomp(
     private val dktHandler: GameClientHandler,
     private val lobbyId: Int,
-    private val onConnected: (() -> Unit)? = null
+    private var onConnected: (() -> Unit)? = null
 ) {
+
+    fun setOnConnectedListener(cb: () -> Unit) {
+        onConnected = cb
+    }
+
     private lateinit var session: StompSession
     private val scope = CoroutineScope(Dispatchers.IO)
     private val gson = GsonBuilder().create()
