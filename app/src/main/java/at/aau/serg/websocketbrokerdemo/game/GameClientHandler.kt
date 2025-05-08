@@ -11,7 +11,8 @@ class GameClientHandler(
     private val enableDiceButton: () -> Unit,
     private val disableDiceButton: () -> Unit,
     private val showBuyButton: (tileName: String, tilePos: Int, playerId: Int) -> Unit,
-    private val showOwnership: () -> Unit
+    private val showOwnership: () -> Unit,
+    private val updateCurrentPlayerHighlight: (Int) -> Unit // ⬅️ UI-Markierung
 ) {
 
     fun handle(message: GameMessage) {
@@ -31,11 +32,18 @@ class GameClientHandler(
 
     private fun handleCurrentPlayer(payload: JsonObject) {
         val currentPlayerId = payload.get("playerId").asInt
-        if (currentPlayerId == LobbyClient.playerId) {
+        val myId = LobbyClient.playerId
+
+        GameStateClient.setCurrentPlayerId(currentPlayerId)
+        updateCurrentPlayerHighlight(currentPlayerId)
+
+        if (currentPlayerId == myId) {
             enableDiceButton()
         } else {
             disableDiceButton()
         }
+
+        showResponse("🎯 Spieler $currentPlayerId ist am Zug.")
     }
 
     private fun handlePlayerMoved(payload: JsonObject) {
@@ -45,9 +53,8 @@ class GameClientHandler(
         val tileName = payload.get("tileName").asString
         val tileType = payload.get("tileType").asString
 
-        Log.i(TAG, "$playerId hat $dice gewürfelt auf $tileName ($tileType)")
-        showResponse("Spieler $playerId → $tileName ($tileType), Würfel: $dice")
         GameStateClient.updatePosition(playerId.toString(), pos)
+        showResponse("🎲 Spieler $playerId würfelt $dice und landet auf $tileName ($tileType)")
     }
 
     private fun handleCanBuyProperty(payload: JsonObject) {
@@ -55,8 +62,11 @@ class GameClientHandler(
         val tilePos = payload.get("tilePos").asInt
         val playerId = payload.get("playerId").asInt
 
-        showBuyButton(tileName, tilePos, playerId)
-        showResponse("Spieler $playerId darf $tileName kaufen")
+        if (playerId == LobbyClient.playerId) {
+            showBuyButton(tileName, tilePos, playerId)
+        }
+
+        showResponse("💰 Spieler $playerId darf $tileName kaufen")
     }
 
     private fun handlePropertyBought(payload: JsonObject) {
@@ -65,7 +75,7 @@ class GameClientHandler(
 
         OwnershipClient.addProperty(playerId.toString(), tileName)
         showOwnership()
-        showResponse("Kauf abgeschlossen: $tileName für Spieler $playerId")
+        showResponse("✅ Spieler $playerId hat $tileName gekauft")
     }
 
     private fun handleMustPayRent(payload: JsonObject) {
@@ -73,27 +83,27 @@ class GameClientHandler(
         val ownerId = payload.get("ownerId").asInt
         val tileName = payload.get("tileName").asString
 
-        showResponse("Spieler $playerId zahlt Miete an Spieler $ownerId für $tileName")
+        showResponse("💸 Spieler $playerId zahlt Miete an $ownerId für $tileName")
     }
 
     private fun handleCardDrawn(payload: JsonObject) {
         val title = payload.get("title").asString
         val description = payload.get("description").asString
-        showResponse("Karte gezogen: $title\n$description")
+        showResponse("🃏 Karte gezogen: $title\n$description")
     }
 
     private fun handleSkipped(payload: JsonObject) {
         val playerId = payload.get("playerId").asInt
         val tileName = payload.get("tileName").asString
-        showResponse("Spieler $playerId hat Feld übersprungen: $tileName")
+        showResponse("⏭️ Spieler $playerId überspringt $tileName")
     }
 
     private fun handleError(msg: String) {
-        Log.e(TAG, "Fehler vom Server: $msg")
+        Log.e(TAG, "❌ Fehler vom Server: $msg")
         showResponse("⚠️ Fehler: $msg")
     }
 
     companion object {
-        private const val TAG = "DktClientHandler"
+        private const val TAG = "GameClientHandler"
     }
 }

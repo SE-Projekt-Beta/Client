@@ -1,7 +1,7 @@
 package at.aau.serg.websocketbrokerdemo
 
+import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
@@ -12,9 +12,9 @@ import at.aau.serg.websocketbrokerdemo.network.GameStomp
 import at.aau.serg.websocketbrokerdemo.network.dto.GameMessage
 import at.aau.serg.websocketbrokerdemo.network.dto.GameMessageType
 import at.aau.serg.websocketbrokerdemo.network.dto.PlayerDTO
-import com.google.common.reflect.TypeToken
 import com.google.gson.Gson
 import com.google.gson.JsonObject
+import com.google.gson.reflect.TypeToken
 
 class GameBoardActivity : ComponentActivity() {
 
@@ -25,38 +25,45 @@ class GameBoardActivity : ComponentActivity() {
     private lateinit var ownershipView: TextView
     private lateinit var rollDiceButton: Button
     private lateinit var buyButton: Button
+    private lateinit var orderView: TextView
 
-    private lateinit var myPlayerName: String
+    private var playerOrder: List<PlayerDTO> = emptyList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.fragment_fullscreen)
 
-        myPlayerName = intent.getStringExtra("USERNAME") ?: "unknown"
-
         val playersJson = intent.getStringExtra("players_json")
         if (playersJson != null) {
             val type = object : TypeToken<List<PlayerDTO>>() {}.type
-            val players: List<PlayerDTO> = Gson().fromJson(playersJson, type)
-            LobbyClient.setPlayers(players)
-            Log.i("GameBoardActivity", "Player order loaded: $players")
+            playerOrder = Gson().fromJson(playersJson, type)
         }
 
         initViews()
+        displayPlayerOrder(currentId = -1)  // Initialanzeige, noch kein Spieler dran
         setupNetwork()
         setupButtons()
     }
-
 
     private fun initViews() {
         responseView = findViewById(R.id.response_view)
         ownershipView = findViewById(R.id.ownership_view)
         rollDiceButton = findViewById(R.id.rollDiceBtn)
         buyButton = findViewById(R.id.buybtn)
+        orderView = findViewById(R.id.order_view)
 
-        // Zu Beginn sind Buttons nicht sichtbar
         rollDiceButton.visibility = View.GONE
         buyButton.visibility = View.GONE
+    }
+
+    private fun displayPlayerOrder(currentId: Int) {
+        val text = playerOrder.joinToString("\n") { player ->
+            if (player.id == currentId) "➡️ **${player.nickname}**"
+            else "   ${player.nickname}"
+        }
+        runOnUiThread {
+            orderView.text = "Spielreihenfolge:\n$text"
+        }
     }
 
     private fun setupNetwork() {
@@ -65,7 +72,8 @@ class GameBoardActivity : ComponentActivity() {
             enableDiceButton = { runOnUiThread { rollDiceButton.visibility = View.VISIBLE } },
             disableDiceButton = { runOnUiThread { rollDiceButton.visibility = View.GONE } },
             showBuyButton = ::showBuyButton,
-            showOwnership = ::showOwnership
+            showOwnership = ::showOwnership,
+            updateCurrentPlayerHighlight = { currentId -> displayPlayerOrder(currentId) }
         )
         gameStomp = GameStomp(dktHandler = clientHandler, lobbyId = LobbyClient.lobbyId)
         gameStomp.connect()
@@ -74,9 +82,10 @@ class GameBoardActivity : ComponentActivity() {
     private fun setupButtons() {
         rollDiceButton.setOnClickListener {
             val payload = JsonObject().apply {
-                addProperty("playerId", LobbyClient.playerId) // wichtig: INT!
+                addProperty("playerId", LobbyClient.playerId)
             }
             gameStomp.sendGameMessage(GameMessage(LobbyClient.lobbyId, GameMessageType.ROLL_DICE, payload))
+            rollDiceButton.visibility = View.GONE
         }
     }
 
