@@ -15,6 +15,6 @@ enum class GameMessageType {
     MUST_PAY_RENT,
     ERROR,
     CURRENT_PLAYER,
-    CURRENT_PLAYER_REQUEST,
+    REQUEST_GAME_STATE,
     GAME_STARTED
 }
