@@ -79,6 +79,10 @@ class GameBoardActivity : ComponentActivity() {
             updateGameState = ::updateGameState,
         )
         gameStomp = GameStomp(dktHandler = clientHandler, lobbyId = LobbyClient.lobbyId)
+        gameStomp.setOnConnectedListener {
+            // Request the current game state once connected
+            gameStomp.requestGameState()
+        }
         gameStomp.connect()
     }
 
