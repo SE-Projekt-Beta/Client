@@ -2,6 +2,7 @@ package at.aau.serg.websocketbrokerdemo
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
@@ -13,6 +14,7 @@ import at.aau.serg.websocketbrokerdemo.network.dto.GameMessage
 import at.aau.serg.websocketbrokerdemo.network.dto.GameMessageType
 import at.aau.serg.websocketbrokerdemo.network.dto.PlayerDTO
 import com.google.gson.Gson
+import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.google.gson.reflect.TypeToken
 
@@ -92,6 +94,19 @@ class GameBoardActivity : ComponentActivity() {
     private fun showResponse(msg: String) {
         runOnUiThread {
             responseView.text = msg
+        }
+    }
+
+    fun updateGameState(currentPlayerId: String, currentRound: Int, players: JsonArray, board: JsonArray) {
+        runOnUiThread {
+            // print it on screen
+            Log.i("GameActivity", "Current Player ID: $currentPlayerId")
+            Log.i("GameActivity", "Current Round: $currentRound")
+            Log.i("GameActivity", "Players: $players")
+            Log.i("GameActivity", "Board: $board")
+
+            // Update the UI with the current game state
+            showOwnership()
         }
     }
 
