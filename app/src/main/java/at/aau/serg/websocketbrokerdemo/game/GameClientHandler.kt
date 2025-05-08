@@ -11,7 +11,9 @@ class GameClientHandler(
 ) {
 
     fun handle(message: GameMessage) {
+        Log.i(TAG, "Nachricht empfangen: $message")
         when (message.type) {
+            GameMessageType.GAME_STATE -> handleGameState(message.payload.asJsonObject)
             GameMessageType.CURRENT_PLAYER -> handleCurrentPlayer(message.payload.asJsonObject)
             GameMessageType.PLAYER_MOVED -> handlePlayerMoved(message.payload.asJsonObject)
             GameMessageType.CAN_BUY_PROPERTY -> handleCanBuyProperty(message.payload.asJsonObject)
@@ -23,6 +25,16 @@ class GameClientHandler(
             GameMessageType.ERROR -> handleError(message.payload.asString)
             else -> Log.w(TAG, "Unbekannter Typ: ${message.type}")
         }
+    }
+
+    private fun handleGameState(payload: JsonObject) {
+        val currentPlayerId = payload.get("currentPlayerId").asString
+        val currentRound = payload.get("currentRound").asInt
+        val players = payload.get("players").asJsonArray
+        val board = payload.get("board").asJsonArray
+
+        Log.i(TAG, "Aktueller Spieler: $currentPlayerId")
+        activity.updateGameState(currentPlayerId, currentRound, players, board)
     }
 
     private fun handleCurrentPlayer(payload: JsonObject) {

@@ -20,6 +20,7 @@ import com.google.gson.JsonObject
 import android.util.Log
 import at.aau.serg.websocketbrokerdemo.game.GameStateClient
 import at.aau.serg.websocketbrokerdemo.model.BoardMap
+import com.google.gson.JsonArray
 
 class GameBoardActivity : ComponentActivity() {
 
@@ -64,7 +65,24 @@ class GameBoardActivity : ComponentActivity() {
     private fun setupNetwork() {
         clientHandler = GameClientHandler(this)
         gameStomp = GameStomp(dktHandler = clientHandler, 1)
+        gameStomp.setOnConnectedListener {
+            // Request the current game state once connected
+            gameStomp.requestGameState()
+        }
         gameStomp.connect()
+    }
+
+    fun updateGameState(currentPlayerId: String, currentRound: Int, players: JsonArray, board: JsonArray) {
+        runOnUiThread {
+            // print it on screen
+            Log.i("GameActivity", "Current Player ID: $currentPlayerId")
+            Log.i("GameActivity", "Current Round: $currentRound")
+            Log.i("GameActivity", "Players: $players")
+            Log.i("GameActivity", "Board: $board")
+
+            // Update the UI with the current game state
+            showCurrentPlayerOwnership()
+        }
     }
 
     private fun setupButtons() {

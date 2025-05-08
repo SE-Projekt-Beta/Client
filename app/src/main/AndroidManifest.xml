@@ -47,11 +47,11 @@
             android:exported="false"
             android:theme="@style/Theme.MaterialComponents.DayNight.DarkActionBar" />
 
-        <!-- MainActivity: Spiel -->
-<!--        <activity-->
-<!--            android:name="at.aau.serg.websocketbrokerdemo.MainActivity"-->
-<!--            android:exported="false"-->
-<!--            android:theme="@style/Theme.MaterialComponents.DayNight.DarkActionBar" />-->
+         MainActivity: Spiel
+        <activity
+            android:name="at.aau.serg.websocketbrokerdemo.GameBoardActivity"
+            android:exported="false"
+            android:theme="@style/Theme.MaterialComponents.DayNight.DarkActionBar" />
 
     </application>
 
