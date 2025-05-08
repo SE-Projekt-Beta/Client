@@ -169,5 +169,9 @@ class GameBoardActivity : ComponentActivity() {
         return myPlayerName
     }
 
+    override fun onResume() {
+        super.onResume()
+        showCurrentPlayerOwnership()
+    }
 
 }
