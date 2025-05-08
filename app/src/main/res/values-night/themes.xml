@@ -1,7 +1,8 @@
 <resources>
 
     <style name="ThemeOverlay.MyApplication.FullscreenContainer" parent="">
-        <item name="fullscreenBackgroundColor">@color/light_blue_900</item>
+        <item name="fullscreenBackgroundColor">@color/vanilla_background</item>
         <item name="fullscreenTextColor">@color/light_blue_A400</item>
+        <item name="android:windowBackground">@color/vanilla_background</item>
     </style>
 </resources>

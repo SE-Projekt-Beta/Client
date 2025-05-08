@@ -5,7 +5,8 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:background="#FFF8E1">
 
     <TextView
         android:id="@+id/lobbyTitle"
@@ -18,7 +19,7 @@
     <EditText
         android:id="@+id/lobbyNameInput"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:hint="Enter lobby name"
         android:layout_marginBottom="24dp"/>
 
@@ -26,6 +27,8 @@
         android:id="@+id/createLobbyButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Create"/>
+        android:text="Create"
+        android:background="@drawable/button_yellow_with_border"
+        android:textColor="#000000"/>
 
 </LinearLayout>
