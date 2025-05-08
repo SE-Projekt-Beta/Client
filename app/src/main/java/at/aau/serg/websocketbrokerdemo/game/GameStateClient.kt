@@ -2,6 +2,7 @@ package at.aau.serg.websocketbrokerdemo.game
 
 object GameStateClient {
     private val playerPositions = mutableMapOf<String, Int>()
+    private var currentPlayerId: Int = -1
 
     fun updatePosition(playerId: String, newPos: Int) {
         playerPositions[playerId] = newPos
@@ -12,6 +13,11 @@ object GameStateClient {
     }
 
     fun getAllPositions(): Map<String, Int> = playerPositions.toMap()
+
+    // 🔁 Für Rundensystem
+    fun setCurrentPlayerId(id: Int) {
+        currentPlayerId = id
+    }
+
+    fun getCurrentPlayerId(): Int = currentPlayerId
 }
-
-
