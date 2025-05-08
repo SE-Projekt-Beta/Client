@@ -4,6 +4,7 @@ import android.util.Log
 import at.aau.serg.websocketbrokerdemo.lobby.LobbyClient
 import at.aau.serg.websocketbrokerdemo.network.dto.GameMessage
 import at.aau.serg.websocketbrokerdemo.network.dto.GameMessageType
+import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 
 class GameClientHandler(
@@ -12,11 +13,13 @@ class GameClientHandler(
     private val disableDiceButton: () -> Unit,
     private val showBuyButton: (tileName: String, tilePos: Int, playerId: Int) -> Unit,
     private val showOwnership: () -> Unit,
+    private val updateGameState: (String, Int, JsonArray, JsonArray) -> Unit,
     private val updateCurrentPlayerHighlight: (Int) -> Unit // ⬅️ UI-Markierung
 ) {
 
     fun handle(message: GameMessage) {
         when (message.type) {
+            GameMessageType.GAME_STATE -> handleGameState(message.payload.asJsonObject)
             GameMessageType.CURRENT_PLAYER -> handleCurrentPlayer(message.payload.asJsonObject)
             GameMessageType.PLAYER_MOVED -> handlePlayerMoved(message.payload.asJsonObject)
             GameMessageType.CAN_BUY_PROPERTY -> handleCanBuyProperty(message.payload.asJsonObject)
@@ -28,6 +31,16 @@ class GameClientHandler(
             GameMessageType.ERROR -> handleError(message.payload.asString)
             else -> Log.w(TAG, "Unbekannter Typ: ${message.type}")
         }
+    }
+
+    private fun handleGameState(payload: JsonObject) {
+        val currentPlayerId = payload.get("currentPlayerId").asString
+        val currentRound = payload.get("currentRound").asInt
+        val players = payload.get("players").asJsonArray
+        val board = payload.get("board").asJsonArray
+
+        Log.i(TAG, "Aktueller Spieler: $currentPlayerId")
+        updateGameState(currentPlayerId, currentRound, players, board)
     }
 
     private fun handleCurrentPlayer(payload: JsonObject) {

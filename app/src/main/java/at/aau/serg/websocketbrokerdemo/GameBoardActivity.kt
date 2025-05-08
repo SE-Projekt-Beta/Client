@@ -75,7 +75,8 @@ class GameBoardActivity : ComponentActivity() {
             disableDiceButton = { runOnUiThread { rollDiceButton.visibility = View.GONE } },
             showBuyButton = ::showBuyButton,
             showOwnership = ::showOwnership,
-            updateCurrentPlayerHighlight = { currentId -> displayPlayerOrder(currentId) }
+            updateCurrentPlayerHighlight = { currentId -> displayPlayerOrder(currentId) },
+            updateGameState = ::updateGameState,
         )
         gameStomp = GameStomp(dktHandler = clientHandler, lobbyId = LobbyClient.lobbyId)
         gameStomp.connect()
