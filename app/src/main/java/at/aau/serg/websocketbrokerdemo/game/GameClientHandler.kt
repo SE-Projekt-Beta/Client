@@ -1,119 +1,72 @@
 package at.aau.serg.websocketbrokerdemo.game
 
 import android.util.Log
+import at.aau.serg.websocketbrokerdemo.GameBoardActivity
 import at.aau.serg.websocketbrokerdemo.lobby.LobbyClient
 import at.aau.serg.websocketbrokerdemo.network.dto.GameMessage
 import at.aau.serg.websocketbrokerdemo.network.dto.GameMessageType
-import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 
 class GameClientHandler(
-    private val showResponse: (String) -> Unit,
-    private val enableDiceButton: () -> Unit,
-    private val disableDiceButton: () -> Unit,
-    private val showBuyButton: (tileName: String, tilePos: Int, playerId: Int) -> Unit,
-    private val showOwnership: () -> Unit,
-    private val updateGameState: (String, Int, JsonArray, JsonArray) -> Unit,
-    private val updateCurrentPlayerHighlight: (Int) -> Unit // ⬅️ UI-Markierung
+    private val activity: GameBoardActivity
 ) {
-
     fun handle(message: GameMessage) {
         when (message.type) {
             GameMessageType.GAME_STATE -> handleGameState(message.payload.asJsonObject)
-            GameMessageType.CURRENT_PLAYER -> handleCurrentPlayer(message.payload.asJsonObject)
-            GameMessageType.PLAYER_MOVED -> handlePlayerMoved(message.payload.asJsonObject)
-            GameMessageType.CAN_BUY_PROPERTY -> handleCanBuyProperty(message.payload.asJsonObject)
-            GameMessageType.PROPERTY_BOUGHT -> handlePropertyBought(message.payload.asJsonObject)
-            GameMessageType.MUST_PAY_RENT -> handleMustPayRent(message.payload.asJsonObject)
-            GameMessageType.EVENT_CARD_DRAWN,
-            GameMessageType.RISK_CARD_DRAWN -> handleCardDrawn(message.payload.asJsonObject)
-            GameMessageType.SKIPPED -> handleSkipped(message.payload.asJsonObject)
-            GameMessageType.ERROR -> handleError(message.payload.asString)
-            else -> Log.w(TAG, "Unbekannter Typ: ${message.type}")
+            GameMessageType.EVENT_CARD_DRAWN -> handleEventCard(message.payload.asJsonObject)
+            GameMessageType.PLAYER_LOST -> handlePlayerLost(message.payload.asJsonObject)
+            GameMessageType.GAME_OVER -> handleGameOver(message.payload.asJsonObject)
+            GameMessageType.ERROR -> Log.e(TAG, "Fehler: ${message.payload}")
+            else -> Log.w(TAG, "Unbekannter Nachrichtentyp: ${message.type}")
         }
     }
 
     private fun handleGameState(payload: JsonObject) {
-        val currentPlayerId = payload.get("currentPlayerId").asString
-        val currentRound = payload.get("currentRound").asInt
-        val players = payload.get("players").asJsonArray
-        val board = payload.get("board").asJsonArray
+        // Update Clients
+        GameController.updateFromGameState(payload)
 
-        Log.i(TAG, "Aktueller Spieler: $currentPlayerId")
-        updateGameState(currentPlayerId, currentRound, players, board)
-    }
-
-    private fun handleCurrentPlayer(payload: JsonObject) {
-        val currentPlayerId = payload.get("playerId").asInt
         val myId = LobbyClient.playerId
+        val currentPlayerId = GameController.getCurrentPlayerId()
+        val currentPlayerName = GameController.getCurrentPlayerName()
+        val diceValue = payload["dice"]?.asInt ?: -1
+        val fieldIndex = GameController.getCurrentFieldIndex(currentPlayerId)
+        val tileName = GameController.getTileName(fieldIndex)
+        val cash = GameController.getCash(currentPlayerId)
 
-        GameStateClient.setCurrentPlayerId(currentPlayerId)
-        updateCurrentPlayerHighlight(currentPlayerId)
+        // Spielfeld-UI aktualisieren
+        activity.updateTurnView(currentPlayerId, currentPlayerName)
+        activity.updateDice(diceValue)
+        activity.updateTile(tileName)
+        activity.updateCashDisplay(cash)
 
-        if (currentPlayerId == myId) {
-            enableDiceButton()
+        // Buttons und Feldaktionen nur für aktuellen Spieler anzeigen
+        if (myId == currentPlayerId) {
+            activity.enableDiceButton()
+            val options = GameController.evaluateTileOptions(currentPlayerId, fieldIndex)
+            activity.showBuyOptions(fieldIndex, tileName, options.canBuy, options.canBuildHouse, options.canBuildHotel)
         } else {
-            disableDiceButton()
+            activity.disableDiceButton()
+            activity.hideActionButtons()
         }
-
-        showResponse("🎯 Spieler $currentPlayerId ist am Zug.")
     }
 
-    private fun handlePlayerMoved(payload: JsonObject) {
-        val playerId = payload.get("playerId").asInt
-        val pos = payload.get("pos").asInt
-        val dice = payload.get("dice").asInt
-        val tileName = payload.get("tileName").asString
-        val tileType = payload.get("tileType").asString
-
-        GameStateClient.updatePosition(playerId.toString(), pos)
-        showResponse("🎲 Spieler $playerId würfelt $dice und landet auf $tileName ($tileType)")
+    private fun handleEventCard(payload: JsonObject) {
+        val title = payload["title"]?.asString ?: "Ereignis"
+        val description = payload["description"]?.asString ?: ""
+        activity.showEventCard(title, description)
     }
 
-    private fun handleCanBuyProperty(payload: JsonObject) {
-        val tileName = payload.get("tileName").asString
-        val tilePos = payload.get("tilePos").asInt
-        val playerId = payload.get("playerId").asInt
-
-        if (playerId == LobbyClient.playerId) {
-            showBuyButton(tileName, tilePos, playerId)
-        }
-
-        showResponse("💰 Spieler $playerId darf $tileName kaufen")
+    private fun handlePlayerLost(payload: JsonObject) {
+        val playerId = payload["playerId"]?.asInt ?: -1
+        Log.i(TAG, "Spieler $playerId ist bankrott.")
+        // Optional: Spieler als ausgeschieden markieren oder anzeigen
     }
 
-    private fun handlePropertyBought(payload: JsonObject) {
-        val playerId = payload.get("playerId").asInt
-        val tileName = payload.get("tileName").asString
-
-        OwnershipClient.addProperty(playerId.toString(), tileName)
-        showOwnership()
-        showResponse("✅ Spieler $playerId hat $tileName gekauft")
-    }
-
-    private fun handleMustPayRent(payload: JsonObject) {
-        val playerId = payload.get("playerId").asInt
-        val ownerId = payload.get("ownerId").asInt
-        val tileName = payload.get("tileName").asString
-
-        showResponse("💸 Spieler $playerId zahlt Miete an $ownerId für $tileName")
-    }
-
-    private fun handleCardDrawn(payload: JsonObject) {
-        val title = payload.get("title").asString
-        val description = payload.get("description").asString
-        showResponse("🃏 Karte gezogen: $title\n$description")
-    }
-
-    private fun handleSkipped(payload: JsonObject) {
-        val playerId = payload.get("playerId").asInt
-        val tileName = payload.get("tileName").asString
-        showResponse("⏭️ Spieler $playerId überspringt $tileName")
-    }
-
-    private fun handleError(msg: String) {
-        Log.e(TAG, "❌ Fehler vom Server: $msg")
-        showResponse("⚠️ Fehler: $msg")
+    private fun handleGameOver(payload: JsonObject) {
+        val ranking = payload["ranking"]?.asJsonArray
+            ?.joinToString("\n") { it.asString }
+            ?: "Unbekannt"
+        activity.showGameOverDialog(ranking)
     }
 
     companion object {
