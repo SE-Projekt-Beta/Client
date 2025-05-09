@@ -21,6 +21,8 @@ class CreateLobbyActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.create_lobby)
 
+        val username = intent.getStringExtra("USERNAME") ?: "unknown"
+
         lobbyNameInput = findViewById(R.id.lobbyNameInput)
         createLobbyButton = findViewById(R.id.createLobbyButton)
 
@@ -34,6 +36,7 @@ class CreateLobbyActivity : ComponentActivity() {
                 lobbyStomp.sendCreateLobby(lobbyName)
             }
             val intent = Intent(this, ListLobbyActivity::class.java)
+            intent.putExtra("USERNAME", username)
             startActivity(intent)
             finish()
         }

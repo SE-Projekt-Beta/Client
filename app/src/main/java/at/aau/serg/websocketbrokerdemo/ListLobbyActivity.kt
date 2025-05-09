@@ -28,6 +28,8 @@ class ListLobbyActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.lobby_list)
 
+        LobbyClient.username = intent.getStringExtra("USERNAME") ?: "unknown"
+
         lobbyRecyclerView = findViewById(R.id.lobbyRecyclerView)
         newLobbyButton = findViewById(R.id.newLobbyButton)
 
