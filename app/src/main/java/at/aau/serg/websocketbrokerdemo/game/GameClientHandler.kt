@@ -13,7 +13,10 @@ class GameClientHandler(
     fun handle(message: GameMessage) {
         when (message.type) {
             GameMessageType.GAME_STATE -> handleGameState(message.payload.asJsonObject)
-            GameMessageType.EVENT_CARD_DRAWN -> handleEventCard(message.payload.asJsonObject)
+            GameMessageType.DRAW_RISK_CARD,
+            GameMessageType.DRAW_BANK_CARD -> handleEventCard(message.payload.asJsonObject)
+            GameMessageType.DICE_ROLLED -> handleDiceRolled(message.payload.asJsonObject)
+            GameMessageType.CASH_TASK -> handleCashTask(message.payload.asJsonObject)
             GameMessageType.PLAYER_LOST -> handlePlayerLost(message.payload.asJsonObject)
             GameMessageType.GAME_OVER -> handleGameOver(message.payload.asJsonObject)
             GameMessageType.ERROR -> Log.e(TAG, "Fehler: ${message.payload}")
@@ -22,7 +25,6 @@ class GameClientHandler(
     }
 
     private fun handleGameState(payload: JsonObject) {
-        // Update Clients
         GameController.updateFromGameState(payload)
 
         val myId = LobbyClient.playerId
@@ -33,13 +35,11 @@ class GameClientHandler(
         val tileName = GameController.getTileName(fieldIndex)
         val cash = GameController.getCash(currentPlayerId)
 
-        // Spielfeld-UI aktualisieren
         activity.updateTurnView(currentPlayerId, currentPlayerName)
         activity.updateDice(diceValue)
         activity.updateTile(tileName)
         activity.updateCashDisplay(cash)
 
-        // Buttons und Feldaktionen nur für aktuellen Spieler anzeigen
         if (myId == currentPlayerId) {
             activity.enableDiceButton()
             val options = GameController.evaluateTileOptions(currentPlayerId, fieldIndex)
@@ -56,11 +56,30 @@ class GameClientHandler(
         activity.showEventCard(title, description)
     }
 
-    private fun handlePlayerLost(payload: JsonObject) {
-        val playerId = payload["playerId"]?.asInt ?: -1
-        Log.i(TAG, "Spieler $playerId ist bankrott.")
-        // Optional: Spieler als ausgeschieden markieren oder anzeigen
+    private fun handleDiceRolled(payload: JsonObject) {
+        val steps = payload["steps"]?.asInt ?: return
+        activity.updateDice(steps)
     }
+
+    private fun handleCashTask(payload: JsonObject) {
+        val playerId = payload["playerId"]?.asInt ?: return
+        val amount = payload["amount"]?.asInt ?: 0
+        val newCash = payload["newCash"]?.asInt ?: return
+
+        if (playerId == LobbyClient.playerId) {
+            activity.updateCashDisplay(newCash)
+        }
+
+        Log.i(TAG, "CashTask: Spieler $playerId: Änderung $amount €, neuer Kontostand: $newCash €")
+        // Optional: Toast, Snackbar, Overlay etc.
+    }
+
+    private fun handlePlayerLost(payload: JsonObject) {
+        val playerId = payload["playerId"]?.asInt ?: return
+        Log.i(TAG, "Spieler $playerId ist bankrott.")
+        activity.showPlayerLost(playerId)
+    }
+
 
     private fun handleGameOver(payload: JsonObject) {
         val ranking = payload["ranking"]?.asJsonArray
@@ -68,6 +87,7 @@ class GameClientHandler(
             ?: "Unbekannt"
         activity.showGameOverDialog(ranking)
     }
+
 
     companion object {
         private const val TAG = "GameClientHandler"
