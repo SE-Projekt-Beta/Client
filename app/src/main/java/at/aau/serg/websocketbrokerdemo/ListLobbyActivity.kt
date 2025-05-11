@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import at.aau.serg.websocketbrokerdemo.lobby.LobbyAdapter
 import at.aau.serg.websocketbrokerdemo.lobby.LobbyClient
+import at.aau.serg.websocketbrokerdemo.lobby.LobbyClient.playerId
 import at.aau.serg.websocketbrokerdemo.lobby.LobbyClient.username
 import at.aau.serg.websocketbrokerdemo.lobby.LobbyHandler
 import at.aau.serg.websocketbrokerdemo.network.LobbyMessageListener
@@ -72,10 +73,10 @@ class ListLobbyActivity : ComponentActivity() {
 
     private fun joinLobby(lobby: LobbyDTO) {
 
-        username = LobbyClient.username
+        playerId = LobbyClient.playerId
 
         // send a joinlobby via lobbyStomp
-        lobbyStomp.sendJoinLobby(username, lobby.id)
+        lobbyStomp.sendJoinLobby(playerId, lobby.id)
 
         //set the lobbyid
         LobbyClient.lobbyId = lobby.id
