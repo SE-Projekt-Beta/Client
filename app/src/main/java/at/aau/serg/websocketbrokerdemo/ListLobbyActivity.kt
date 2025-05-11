@@ -28,6 +28,8 @@ class ListLobbyActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.lobby_list)
 
+        Log.i("ListLobbyActivity", "onCreate called")
+
         lobbyRecyclerView = findViewById(R.id.lobbyRecyclerView)
         newLobbyButton = findViewById(R.id.newLobbyButton)
 

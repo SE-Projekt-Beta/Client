@@ -3,6 +3,7 @@ package at.aau.serg.websocketbrokerdemo
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
@@ -41,6 +42,8 @@ class GameBoardActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_game)
+
+        Log.i("GameBoardActivity", "onCreate called")
 
         myNickname = intent.getStringExtra("USERNAME") ?: "Unknown"
         myId = intent.getIntExtra("PLAYER_ID", -1)

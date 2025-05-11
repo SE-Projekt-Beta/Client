@@ -36,6 +36,8 @@ class UsernameActivity : AppCompatActivity() {
                 LobbyClient.username = username
                 Log.i("UsernameActivity", "Username set: $username")
 
+                lobbyStomp.sendCreateUser(username)
+
                 // Navigate to the lobby screen
                 val intent = Intent(this, ListLobbyActivity::class.java)
                 startActivity(intent)
