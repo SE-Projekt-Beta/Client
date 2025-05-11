@@ -1,6 +1,8 @@
 package at.aau.serg.websocketbrokerdemo.network.dto
 
 enum class LobbyMessageType {
+    CREATE_USER,
+    USER_CREATED,
     CREATE_LOBBY,
     LIST_LOBBIES,
     JOIN_LOBBY,
