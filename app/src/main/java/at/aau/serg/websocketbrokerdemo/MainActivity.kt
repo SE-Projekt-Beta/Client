@@ -1,30 +1,23 @@
 import android.os.Bundle
 import android.widget.Button
-import android.content.Intent
-import android.widget.Toast
-import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import at.aau.serg.websocketbrokerdemo.R
-import at.aau.serg.websocketbrokerdemo.ListLobbyActivity
+import at.aau.serg.websocketbrokerdemo.network.GameStomp
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var gameStomp: GameStomp
+    private lateinit var gameId: String
+    private lateinit var playerName: String
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_username)
+        setContentView(R.layout.fragment_fullscreen)
 
-        val enterButton = findViewById<Button>(R.id.enterButton)
-        val usernameEditText = findViewById<EditText>(R.id.usernameEditText)
+        val rollDiceBtn = findViewById<Button>(R.id.rollDiceBtn)
 
-        enterButton.setOnClickListener {
-            val username = usernameEditText.text.toString().trim()
-
-            if (username.isNotEmpty()) {
-                val intent = Intent(this, ListLobbyActivity::class.java)
-                intent.putExtra("USERNAME", username)
-                startActivity(intent)
-            } else {
-                Toast.makeText(this, "Bitte Username eingeben", Toast.LENGTH_SHORT).show()
-            }
+        rollDiceBtn.setOnClickListener {
+            //TODO: implement what happens if rollDice is clicked
         }
     }
 }
