@@ -46,7 +46,7 @@ class GameBoardActivity : ComponentActivity() {
         Log.i("GameBoardActivity", "onCreate called")
 
         myNickname = intent.getStringExtra("USERNAME") ?: "Unknown"
-        myId = intent.getIntExtra("PLAYER_ID", -1)
+        myId = LobbyClient.playerId;
 
         val playersJson = intent.getStringExtra("players_json")
         if (playersJson != null) {
