@@ -22,5 +22,6 @@ enum class GameMessageType {
     GO_TO_JAIL,
     PASS_START,
     BUILD_HOUSE,
-    BUILD_HOTEL
+    BUILD_HOTEL,
+    DICE_ROLLED
 }
