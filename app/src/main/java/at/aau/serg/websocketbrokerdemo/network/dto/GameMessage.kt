@@ -1,6 +1,7 @@
 package at.aau.serg.websocketbrokerdemo.network.dto
 
 import com.google.gson.JsonElement
+import com.google.gson.JsonObject
 
 /**
  * Now carries a lobbyId so we know which game scope it belongs to.
@@ -8,5 +9,5 @@ import com.google.gson.JsonElement
 data class GameMessage(
     val lobbyId: Int,
     val type: GameMessageType,
-    val payload: JsonElement
+    val payload: JsonObject
 )

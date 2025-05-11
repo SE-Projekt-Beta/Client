@@ -7,7 +7,6 @@ enum class GameMessageType {
     CAN_BUY_PROPERTY,
     BUY_PROPERTY,
     PROPERTY_BOUGHT,
-    EVENT_CARD_DRAWN,
     CASH_TASK,
     GAME_OVER,
     MUST_PAY_RENT,
@@ -23,5 +22,6 @@ enum class GameMessageType {
     PASS_START,
     BUILD_HOUSE,
     BUILD_HOTEL,
-    DICE_ROLLED
+    DICE_ROLLED,
+    PLAYER_OUT_OF_JAIL_CARD
 }

@@ -80,6 +80,7 @@ class GameBoardActivity : ComponentActivity() {
 
     private fun setupButtons() {
         btnRollDice.setOnClickListener {
+            btnRollDice.isEnabled = false
             val payload = GameController.buildPayload("playerId", myId)
             gameStomp.sendGameMessage(GameMessage(LobbyClient.lobbyId, GameMessageType.ROLL_DICE, payload))
         }
@@ -202,6 +203,7 @@ class GameBoardActivity : ComponentActivity() {
     fun enableDiceButton() {
         runOnUiThread {
             btnRollDice.visibility = View.VISIBLE
+            btnRollDice.isEnabled = true
         }
     }
 
@@ -210,6 +212,13 @@ class GameBoardActivity : ComponentActivity() {
             btnRollDice.visibility = View.GONE
         }
     }
+    fun showPlayerLost(playerId: Int) {
+        val nickname = GameStateClient.getNickname(playerId) ?: "Ein Spieler"
+        runOnUiThread {
+            showDialog("Bankrott", "$nickname ist bankrott und scheidet aus dem Spiel aus.")
+        }
+    }
+
 
     fun hideActionButtons() {
         runOnUiThread {
