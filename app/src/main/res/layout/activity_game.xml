@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#FFF8E1"
     tools:context=".GameBoardActivity">
 
     <!-- Overlay für aktuellen Spieler -->
@@ -85,21 +86,27 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Besitz anzeigen"
-            android:layout_marginTop="8dp" />
+            android:layout_marginTop="8dp"
+            android:background="@drawable/button_yellow_with_border"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
 
         <TextView
             android:id="@+id/textTile"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Gelandet auf: -"
-            android:layout_marginTop="12dp" />
+            android:layout_marginTop="12dp"/>
 
         <Button
             android:id="@+id/btnViewField"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Feld"
-            android:layout_marginTop="4dp" />
+            android:layout_marginTop="4dp"
+            android:background="@drawable/button_yellow_with_border"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
     </LinearLayout>
 
     <!-- Rechte Leiste: Aktionen -->
@@ -119,7 +126,10 @@
             android:id="@+id/rollDiceBtn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Würfeln" />
+            android:text="Würfeln"
+            android:background="@drawable/button_yellow_with_border"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
 
         <Button
             android:id="@+id/buybtn"
@@ -127,7 +137,10 @@
             android:layout_height="wrap_content"
             android:text="Kaufen"
             android:layout_marginTop="12dp"
-            android:visibility="gone" />
+            android:visibility="gone"
+            android:background="@drawable/button_yellow_with_border"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
 
         <Button
             android:id="@+id/buildHouseBtn"
@@ -135,7 +148,10 @@
             android:layout_height="wrap_content"
             android:text="Haus bauen"
             android:layout_marginTop="12dp"
-            android:visibility="gone" />
+            android:visibility="gone"
+            android:background="@drawable/button_yellow_with_border"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
 
         <Button
             android:id="@+id/buildHotelBtn"
@@ -143,6 +159,9 @@
             android:layout_height="wrap_content"
             android:text="Hotel bauen"
             android:layout_marginTop="12dp"
-            android:visibility="gone" />
+            android:visibility="gone"
+            android:background="@drawable/button_yellow_with_border"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

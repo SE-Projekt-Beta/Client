@@ -20,8 +20,7 @@
         <!-- UsernameActivity: Login Screen -->
         <activity
             android:name="at.aau.serg.websocketbrokerdemo.UsernameActivity"
-            android:exported="true"
-            android:theme="@style/Theme.MaterialComponents.DayNight.DarkActionBar">
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -31,27 +30,23 @@
         <!-- LobbyActivity: Lobby Screen -->
         <activity
             android:name="at.aau.serg.websocketbrokerdemo.LobbyActivity"
-            android:exported="false"
-            android:theme="@style/Theme.MaterialComponents.DayNight.DarkActionBar" />
+            android:exported="false"/>
 
         <!-- ListLobbyActivity: Auswahl vorhandener Lobbies -->
         <activity
             android:name="at.aau.serg.websocketbrokerdemo.ListLobbyActivity"
-            android:exported="false"
-            android:theme="@style/Theme.MaterialComponents.DayNight.DarkActionBar" />
+            android:exported="false"/>
 
 
         <!-- LobbyActivity: Lobby List Screen -->
         <activity
             android:name="at.aau.serg.websocketbrokerdemo.CreateLobbyActivity"
-            android:exported="false"
-            android:theme="@style/Theme.MaterialComponents.DayNight.DarkActionBar" />
+            android:exported="false"/>
 
         <!-- GameBoardActivity: Das eigentliche Spielbrett -->
         <activity
             android:name="at.aau.serg.websocketbrokerdemo.GameBoardActivity"
-            android:exported="false"
-            android:theme="@style/Theme.MaterialComponents.DayNight.DarkActionBar" />
+            android:exported="false"/>
 
     </application>
 </manifest>
