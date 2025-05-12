@@ -15,6 +15,9 @@ class GameClientHandler(
             GameMessageType.GAME_STATE -> handleGameState(message.payload.asJsonObject)
             GameMessageType.DRAW_RISK_CARD,
             GameMessageType.DRAW_BANK_CARD -> handleEventCard(message.payload.asJsonObject)
+            GameMessageType.PASS_START -> handlePassStart()
+            GameMessageType.PAY_TAX -> handleTax()
+            GameMessageType.GO_TO_JAIL -> handleGoToJail()
             GameMessageType.DICE_ROLLED -> handleDiceRolled(message.payload.asJsonObject)
             GameMessageType.CASH_TASK -> handleCashTask(message.payload.asJsonObject)
             GameMessageType.PLAYER_LOST -> handlePlayerLost(message.payload.asJsonObject)
@@ -56,6 +59,27 @@ class GameClientHandler(
         activity.showEventCard(title, description)
     }
 
+    private fun handlePassStart() {
+        activity.runOnUiThread {
+            StartBonusDialog(activity, "Du bekommst dein Startgeld!").show()
+        }
+    }
+
+    private fun handleTax() {
+        activity.runOnUiThread {
+            TaxDialog(activity, "Du musst Steuern zahlen!").show()
+        }
+    }
+
+    private fun handleGoToJail() {
+        activity.runOnUiThread {
+            RiskCardDialog(activity,
+                "Gefängnis",
+                "Du wirst ins Gefängnis geschickt. 3 Runden Pause!"
+            ).show()
+        }
+    }
+
     private fun handleDiceRolled(payload: JsonObject) {
         val steps = payload["steps"]?.asInt ?: return
         activity.updateDice(steps)
@@ -71,7 +95,6 @@ class GameClientHandler(
         }
 
         Log.i(TAG, "CashTask: Spieler $playerId: Änderung $amount €, neuer Kontostand: $newCash €")
-        // Optional: Toast, Snackbar, Overlay etc.
     }
 
     private fun handlePlayerLost(payload: JsonObject) {
@@ -80,14 +103,12 @@ class GameClientHandler(
         activity.showPlayerLost(playerId)
     }
 
-
     private fun handleGameOver(payload: JsonObject) {
         val ranking = payload["ranking"]?.asJsonArray
             ?.joinToString("\n") { it.asString }
             ?: "Unbekannt"
         activity.showGameOverDialog(ranking)
     }
-
 
     companion object {
         private const val TAG = "GameClientHandler"
