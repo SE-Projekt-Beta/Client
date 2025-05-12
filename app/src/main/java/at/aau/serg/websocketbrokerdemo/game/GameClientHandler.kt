@@ -38,7 +38,7 @@ class GameClientHandler(
         val tileName = GameController.getTileName(fieldIndex)
         val cash = GameController.getCash(currentPlayerId)
 
-        activity.updateTurnView(currentPlayerId, currentPlayerName)
+        activity.updateTurnView(currentPlayerId)
         activity.updateDice(diceValue)
         activity.updateTile(tileName)
         activity.updateCashDisplay(cash)

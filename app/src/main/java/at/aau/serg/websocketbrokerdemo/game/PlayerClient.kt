@@ -9,6 +9,7 @@ data class PlayerClient(
     var suspended: Boolean,
     var hasEscapeCard: Boolean,
     var houseCounts: MutableMap<Int, Int> = mutableMapOf(),
-    var properties: MutableList<Int> = mutableListOf()
+    var properties: MutableList<Int> = mutableListOf(),
+    var visitedOwnedTiles: MutableSet<Int> = mutableSetOf()
 )
 

@@ -52,15 +52,30 @@ class GameBoardActivity : ComponentActivity() {
 
         val playersJson = intent.getStringExtra("players_json")
         if (playersJson != null) {
-            val type = object : TypeToken<List<PlayerClient>>() {}.type
-            val players = Gson().fromJson<List<PlayerClient>>(playersJson, type)
-            players.forEach { GameStateClient.players[it.id] = it }
+            val type = object : TypeToken<List<Map<String, Any>>>() {}.type
+            val parsedList = Gson().fromJson<List<Map<String, Any>>>(playersJson, type)
+            parsedList.forEach {
+                val id = (it["id"] as Double).toInt() // Achtung: Gson liest Zahlen oft als Double
+                val nickname = it["nickname"] as String
+                val player = PlayerClient(
+                    id = id,
+                    nickname = nickname,
+                    cash = 0,
+                    position = 0,
+                    alive = true,
+                    suspended = false,
+                    hasEscapeCard = false
+                )
+                GameStateClient.players[id] = player
+            }
         }
 
         initViews()
         setupButtons()
         setupNetwork()
+        updateTurnView(GameStateClient.currentPlayerId)
     }
+
 
     private fun initViews() {
         textCurrentTurn = findViewById(R.id.response_view)
@@ -110,8 +125,9 @@ class GameBoardActivity : ComponentActivity() {
         gameStomp.connect()
     }
 
-    fun updateTurnView(currentPlayerId: Int, nickname: String) {
+    fun updateTurnView(currentPlayerId: Int) {
         runOnUiThread {
+            val nickname = GameStateClient.getNickname(currentPlayerId) ?: "Spieler X"
             textCurrentTurn.text = "$nickname ist am Zug"
 
             if (currentPlayerId != lastShownTurnPlayerId) {
@@ -130,33 +146,32 @@ class GameBoardActivity : ComponentActivity() {
                 hideActionButtons()
             }
 
-            // ▶ Automatisch Bank- oder Risikokarte ziehen, wenn auf entsprechendem Feld
             val fieldIndex = GameController.getCurrentFieldIndex(currentPlayerId)
-            val tileType = ClientBoardMap.getTile(fieldIndex)?.type
+            val tile = ClientBoardMap.getTile(fieldIndex)
+            val tileType = tile?.type
 
+            val ownsThisTile = GameStateClient.players[myId]?.properties?.contains(fieldIndex) == true
+            if (currentPlayerId == myId && ownsThisTile) {
+                GameStateClient.players[myId]?.visitedOwnedTiles?.add(fieldIndex)
+            }
+
+            // Aktion auslösen
             if (currentPlayerId == myId) {
                 val payload = GameController.buildPayload("playerId", myId)
                 when (tileType) {
-                    TileType.BANK -> gameStomp.sendGameMessage(
-                        GameMessage(LobbyClient.lobbyId, GameMessageType.DRAW_BANK_CARD, payload)
-                    )
-                    TileType.RISK -> gameStomp.sendGameMessage(
-                        GameMessage(LobbyClient.lobbyId, GameMessageType.DRAW_RISK_CARD, payload)
-                    )
+                    TileType.BANK -> gameStomp.sendGameMessage(GameMessage(LobbyClient.lobbyId, GameMessageType.DRAW_BANK_CARD, payload))
+                    TileType.RISK -> gameStomp.sendGameMessage(GameMessage(LobbyClient.lobbyId, GameMessageType.DRAW_RISK_CARD, payload))
                     TileType.START -> gameStomp.sendGameMessage(GameMessage(LobbyClient.lobbyId, GameMessageType.PASS_START, payload))
                     TileType.TAX -> gameStomp.sendGameMessage(GameMessage(LobbyClient.lobbyId, GameMessageType.PAY_TAX, payload))
                     TileType.GOTO_JAIL -> gameStomp.sendGameMessage(GameMessage(LobbyClient.lobbyId, GameMessageType.GO_TO_JAIL, payload))
-
-                    TileType.STREET, TileType.PRISON -> {
-                        // Keine Aktion
-                    }
-                    null -> {
-                        Log.e("GameClientHandler", "Fehler: tileType ist null.")
-                    }
+                    TileType.STREET, TileType.PRISON -> {}
+                    null -> Log.e("GameClientHandler", "Fehler: tileType ist null.")
                 }
             }
         }
     }
+
+
 
     fun updateDice(diceValue: Int) {
         runOnUiThread {
@@ -203,9 +218,11 @@ class GameBoardActivity : ComponentActivity() {
 
     fun showBuyOptions(tilePos: Int, tileName: String, canBuy: Boolean, canBuildHouse: Boolean, canBuildHotel: Boolean) {
         runOnUiThread {
+            val hasVisitedBefore = GameStateClient.players[myId]?.visitedOwnedTiles?.contains(tilePos) == true
+
             btnBuy.visibility = if (canBuy) View.VISIBLE else View.GONE
-            btnBuildHouse.visibility = if (canBuildHouse) View.VISIBLE else View.GONE
-            btnBuildHotel.visibility = if (canBuildHotel) View.VISIBLE else View.GONE
+            btnBuildHouse.visibility = if (canBuildHouse && hasVisitedBefore) View.VISIBLE else View.GONE
+            btnBuildHotel.visibility = if (canBuildHotel && hasVisitedBefore) View.VISIBLE else View.GONE
 
             btnBuy.setOnClickListener {
                 val payload = GameController.buildPayload("playerId", myId, "tilePos", tilePos)
@@ -226,6 +243,7 @@ class GameBoardActivity : ComponentActivity() {
             }
         }
     }
+
 
     fun enableDiceButton() {
         runOnUiThread {

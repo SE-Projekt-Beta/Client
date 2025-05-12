@@ -34,7 +34,6 @@ class LobbyHandler(private val context: Context) : LobbyMessageListener {
     override fun onStartGame(payload: JsonObject) {
         Log.i("LobbyHandler", "Received START_GAME payload: $payload")
 
-        // Reihenfolge extrahieren
         val orderJson = payload.getAsJsonArray("playerOrder")
         val order = orderJson.map {
             val obj = it.asJsonObject
@@ -44,7 +43,6 @@ class LobbyHandler(private val context: Context) : LobbyMessageListener {
             )
         }
 
-        // Spielerobjekte neu registrieren
         GameStateClient.players.clear()
         order.forEach {
             val newPlayer = PlayerClient(
@@ -59,9 +57,7 @@ class LobbyHandler(private val context: Context) : LobbyMessageListener {
             GameStateClient.players[it.id] = newPlayer
         }
 
-        // Current Player setzen
-        val firstId = order.first().id
-        GameStateClient.currentPlayerId = firstId
+        GameStateClient.currentPlayerId = order.first().id
 
         if (context is LobbyActivity) {
             context.startGame(order)
