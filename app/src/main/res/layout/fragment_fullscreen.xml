@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:layout_gravity="center">
 
-    <!-- Das Spielfeld-Bild -->
+    <!-- Spielfeld (dktmap) -->
     <ImageView
         android:id="@+id/dktmap"
         android:layout_width="wrap_content"
@@ -19,18 +19,52 @@
         android:id="@+id/boardGridLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:rowCount="11"
-        android:columnCount="11"
+        android:rowCount="10"
+        android:columnCount="10"
         android:orientation="horizontal">
 
-        <!-- Beispiel Spielfeld (transparent) -->
-        <ImageView
-            android:id="@+id/field_0"
-            android:layout_width="58dp"
-            android:layout_height="50dp"
-            android:background="#33FF0000" /> <!-- Transparenter roter Hintergrund fürs Debuggen -->
+        <!-- transparente Spielfelder; benannt wie in BoardMap -->
+        <ImageView android:id="@+id/field_los" android:layout_width="40dp" android:layout_height="40dp" android:contentDescription="Los" />
+        <ImageView android:id="@+id/field_kaerntner_strasse" android:layout_width="40dp" android:layout_height="40dp" android:contentDescription="Kärntner Straße" />
+        <ImageView android:id="@+id/field_risiko_ereignis_1" android:layout_width="40dp" android:layout_height="40dp" android:contentDescription="Risiko Ereignis" />
+        <ImageView android:id="@+id/field_bahnhof_west" android:layout_width="40dp" android:layout_height="40dp" android:contentDescription="Bahnhof West" />
+        <ImageView android:id="@+id/field_einkommenssteuer_1" android:layout_width="40dp" android:layout_height="40dp" android:contentDescription="Einkommenssteuer" />
+        <ImageView android:id="@+id/field_opernring" android:layout_width="40dp" android:layout_height="40dp" android:contentDescription="Opernring" />
+        <ImageView android:id="@+id/field_bank_ereignis_1" android:layout_width="40dp" android:layout_height="40dp" android:contentDescription="Bank Ereignis" />
+        <ImageView android:id="@+id/field_bahnhof_sued" android:layout_width="40dp" android:layout_height="40dp" android:contentDescription="Bahnhof Süd" />
+        <ImageView android:id="@+id/field_mariahilfer_strasse" android:layout_width="40dp" android:layout_height="40dp" android:contentDescription="Mariahilfer Straße" />
+        <ImageView android:id="@+id/field_strafsteuer_1" android:layout_width="40dp" android:layout_height="40dp" android:contentDescription="Strafsteuer" />
+        <ImageView android:id="@+id/field_gefaengnis" android:layout_width="40dp" android:layout_height="40dp" android:contentDescription="Gefängnis" />
+        <ImageView android:id="@+id/field_schoenbrunner_strasse" android:layout_width="40dp" android:layout_height="40dp" android:contentDescription="Schönbrunner Straße" />
+        <ImageView android:id="@+id/field_risiko_ereignis_2" android:layout_width="40dp" android:layout_height="40dp" android:contentDescription="Risiko Ereignis" />
+        <ImageView android:id="@+id/field_bahnhof_ost" android:layout_width="40dp" android:layout_height="40dp" android:contentDescription="Bahnhof Ost" />
+        <ImageView android:id="@+id/field_technologieabgabe" android:layout_width="40dp" android:layout_height="40dp" android:contentDescription="Technologieabgabe" />
+        <ImageView android:id="@+id/field_landstrasser_hauptstrasse" android:layout_width="40dp" android:layout_height="40dp" android:contentDescription="Landstraßer Hauptstraße" />
+        <ImageView android:id="@+id/field_bank_ereignis_2" android:layout_width="40dp" android:layout_height="40dp" android:contentDescription="Bank Ereignis" />
+        <ImageView android:id="@+id/field_bahnhof_nord" android:layout_width="40dp" android:layout_height="40dp" android:contentDescription="Bahnhof Nord" />
+        <ImageView android:id="@+id/field_favoritenstrasse" android:layout_width="40dp" android:layout_height="40dp" android:contentDescription="Favoritenstraße" />
+        <ImageView android:id="@+id/field_einkommenssteuer_2" android:layout_width="40dp" android:layout_height="40dp" android:contentDescription="Einkommenssteuer" />
+        <ImageView android:id="@+id/field_frei_parken" android:layout_width="40dp" android:layout_height="40dp" android:contentDescription="Frei Parken" />
+        <ImageView android:id="@+id/field_praterstrasse" android:layout_width="40dp" android:layout_height="40dp" android:contentDescription="Praterstraße" />
+        <ImageView android:id="@+id/field_risiko_ereignis_3" android:layout_width="40dp" android:layout_height="40dp" android:contentDescription="Risiko Ereignis" />
+        <ImageView android:id="@+id/field_guertel" android:layout_width="40dp" android:layout_height="40dp" android:contentDescription="Gürtel" />
+        <ImageView android:id="@+id/field_bahnhof_mitte" android:layout_width="40dp" android:layout_height="40dp" android:contentDescription="Bahnhof Mitte" />
+        <ImageView android:id="@+id/field_ringstrasse" android:layout_width="40dp" android:layout_height="40dp" android:contentDescription="Ringstraße" />
+        <ImageView android:id="@+id/field_bank_ereignis_3" android:layout_width="40dp" android:layout_height="40dp" android:contentDescription="Bank Ereignis" />
+        <ImageView android:id="@+id/field_donauuferstrasse" android:layout_width="40dp" android:layout_height="40dp" android:contentDescription="Donauuferstraße" />
+        <ImageView android:id="@+id/field_luxussteuer" android:layout_width="40dp" android:layout_height="40dp" android:contentDescription="Luxussteuer" />
+        <ImageView android:id="@+id/field_untere_donaustrasse" android:layout_width="40dp" android:layout_height="40dp" android:contentDescription="Untere Donaustraße" />
+        <ImageView android:id="@+id/field_gehe_ins_gefaengnis" android:layout_width="40dp" android:layout_height="40dp" android:contentDescription="Gehe ins Gefängnis" />
+        <ImageView android:id="@+id/field_lassallestraße" android:layout_width="40dp" android:layout_height="40dp" android:contentDescription="Lassallestraße" />
+        <ImageView android:id="@+id/field_risiko_ereignis_4" android:layout_width="40dp" android:layout_height="40dp" android:contentDescription="Risiko Ereignis" />
+        <ImageView android:id="@+id/field_waehringer_strasse" android:layout_width="40dp" android:layout_height="40dp" android:contentDescription="Währinger Straße" />
+        <ImageView android:id="@+id/field_bahnhof_flughafen" android:layout_width="40dp" android:layout_height="40dp" android:contentDescription="Bahnhof Flughafen" />
+        <ImageView android:id="@+id/field_billrothstrasse" android:layout_width="40dp" android:layout_height="40dp" android:contentDescription="Billrothstraße" />
+        <ImageView android:id="@+id/field_bank_ereignis_4" android:layout_width="40dp" android:layout_height="40dp" android:contentDescription="Bank Ereignis" />
+        <ImageView android:id="@+id/field_heiligenstaedter_strasse" android:layout_width="40dp" android:layout_height="40dp" android:contentDescription="Heiligenstädter Straße" />
+        <ImageView android:id="@+id/field_strafsteuer_2" android:layout_width="40dp" android:layout_height="40dp" android:contentDescription="Strafsteuer" />
+        <ImageView android:id="@+id/field_stephansplatz" android:layout_width="40dp" android:layout_height="40dp" android:contentDescription="Stephansplatz" />
 
-        <!-- Weitere Felder (field_1, field_2, ...) -->
     </GridLayout>
 
 </FrameLayout>
