@@ -45,11 +45,53 @@
             android:scaleType="fitCenter"
             android:src="@drawable/dktmap" />
 
+        <ImageView
+            android:id="@+id/player_token1"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/kegel_blau"
+            android:layout_gravity="top|start" />
+
+        <ImageView
+            android:id="@+id/player_token2"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/kegel_rot"
+            android:layout_gravity="top|start" />
+
+        <ImageView
+            android:id="@+id/player_token3"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/kegel_gelb"
+            android:layout_gravity="top|start" />
+
+        <ImageView
+            android:id="@+id/player_token4"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/kegel_gruen"
+            android:layout_gravity="top|start" />
+
+        <ImageView
+            android:id="@+id/player_token5"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/kegel_lila"
+            android:layout_gravity="top|start" />
+
+        <ImageView
+            android:id="@+id/player_token6"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/kegel_tuerkis"
+            android:layout_gravity="top|start" />
+
         <!-- Feld 0: Start -->
         <TextView
             android:id="@+id/field_overlay_0"
-            android:layout_width="50dp"
-            android:layout_height="30dp"
+            android:layout_width="40px"
+            android:layout_height="40px"
             android:text="Start"
             android:textColor="@android:color/white"
             android:background="#66000000"
