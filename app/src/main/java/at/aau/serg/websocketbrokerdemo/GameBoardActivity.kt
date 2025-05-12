@@ -12,6 +12,7 @@ import at.aau.serg.websocketbrokerdemo.game.*
 import at.aau.serg.websocketbrokerdemo.lobby.LobbyClient
 import at.aau.serg.websocketbrokerdemo.model.ClientBoardMap
 import at.aau.serg.websocketbrokerdemo.model.TileInfoDialog
+import at.aau.serg.websocketbrokerdemo.model.TileType
 import at.aau.serg.websocketbrokerdemo.network.GameStomp
 import at.aau.serg.websocketbrokerdemo.network.dto.GameMessage
 import at.aau.serg.websocketbrokerdemo.network.dto.GameMessageType
@@ -38,6 +39,7 @@ class GameBoardActivity : ComponentActivity() {
 
     private var myId = -1
     private lateinit var myNickname: String
+    private var lastShownTurnPlayerId: Int = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,7 +48,7 @@ class GameBoardActivity : ComponentActivity() {
         Log.i("GameBoardActivity", "onCreate called")
 
         myNickname = intent.getStringExtra("USERNAME") ?: "Unknown"
-        myId = LobbyClient.playerId;
+        myId = LobbyClient.playerId
 
         val playersJson = intent.getStringExtra("players_json")
         if (playersJson != null) {
@@ -111,12 +113,47 @@ class GameBoardActivity : ComponentActivity() {
     fun updateTurnView(currentPlayerId: Int, nickname: String) {
         runOnUiThread {
             textCurrentTurn.text = "$nickname ist am Zug"
+
+            if (currentPlayerId != lastShownTurnPlayerId) {
+                overlay.text = "$nickname ist am Zug"
+                overlay.visibility = View.VISIBLE
+                Handler(Looper.getMainLooper()).postDelayed({
+                    overlay.visibility = View.GONE
+                }, 2000)
+                lastShownTurnPlayerId = currentPlayerId
+            }
+
             if (currentPlayerId == myId) {
-                showOverlayMessage("$nickname ist am Zug")
                 enableDiceButton()
             } else {
                 disableDiceButton()
                 hideActionButtons()
+            }
+
+            // ▶ Automatisch Bank- oder Risikokarte ziehen, wenn auf entsprechendem Feld
+            val fieldIndex = GameController.getCurrentFieldIndex(currentPlayerId)
+            val tileType = ClientBoardMap.getTile(fieldIndex)?.type
+
+            if (currentPlayerId == myId) {
+                val payload = GameController.buildPayload("playerId", myId)
+                when (tileType) {
+                    TileType.BANK -> gameStomp.sendGameMessage(
+                        GameMessage(LobbyClient.lobbyId, GameMessageType.DRAW_BANK_CARD, payload)
+                    )
+                    TileType.RISK -> gameStomp.sendGameMessage(
+                        GameMessage(LobbyClient.lobbyId, GameMessageType.DRAW_RISK_CARD, payload)
+                    )
+                    TileType.START -> gameStomp.sendGameMessage(GameMessage(LobbyClient.lobbyId, GameMessageType.PASS_START, payload))
+                    TileType.TAX -> gameStomp.sendGameMessage(GameMessage(LobbyClient.lobbyId, GameMessageType.PAY_TAX, payload))
+                    TileType.GOTO_JAIL -> gameStomp.sendGameMessage(GameMessage(LobbyClient.lobbyId, GameMessageType.GO_TO_JAIL, payload))
+
+                    TileType.STREET, TileType.PRISON -> {
+                        // Keine Aktion
+                    }
+                    null -> {
+                        Log.e("GameClientHandler", "Fehler: tileType ist null.")
+                    }
+                }
             }
         }
     }
@@ -152,16 +189,6 @@ class GameBoardActivity : ComponentActivity() {
 
     fun showGameOverDialog(ranking: String) {
         showDialog("Spiel beendet", ranking)
-    }
-
-    private fun showOverlayMessage(msg: String) {
-        runOnUiThread {
-            overlay.text = msg
-            overlay.visibility = View.VISIBLE
-            Handler(Looper.getMainLooper()).postDelayed({
-                overlay.visibility = View.GONE
-            }, 2000)
-        }
     }
 
     private fun showDialog(title: String, message: String) {
@@ -212,13 +239,13 @@ class GameBoardActivity : ComponentActivity() {
             btnRollDice.visibility = View.GONE
         }
     }
+
     fun showPlayerLost(playerId: Int) {
         val nickname = GameStateClient.getNickname(playerId) ?: "Ein Spieler"
         runOnUiThread {
             showDialog("Bankrott", "$nickname ist bankrott und scheidet aus dem Spiel aus.")
         }
     }
-
 
     fun hideActionButtons() {
         runOnUiThread {
