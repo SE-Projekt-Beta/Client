@@ -5,7 +5,6 @@ import android.util.Log
 import at.aau.serg.websocketbrokerdemo.game.OwnershipClient
 import at.aau.serg.websocketbrokerdemo.lobby.LobbyClient
 import at.aau.serg.websocketbrokerdemo.network.dto.LobbyDTO
-import at.aau.serg.websocketbrokerdemo.model.BoardMap
 import at.aau.serg.websocketbrokerdemo.network.dto.LobbyMessage
 import at.aau.serg.websocketbrokerdemo.network.dto.LobbyMessageType
 import at.aau.serg.websocketbrokerdemo.network.dto.PlayerDTO
