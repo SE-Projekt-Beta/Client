@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="300dp"
+    android:layout_height="wrap_content"
+    android:background="@android:color/white"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:layout_gravity="center"
+    android:gravity="center"
+    android:elevation="6dp">
+
+    <TextView
+        android:id="@+id/riskCardTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="RISIKO"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="#AA0000"
+        android:gravity="center"
+        android:layout_marginBottom="12dp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="#AA0000"
+        android:layout_marginBottom="12dp" />
+
+    <TextView
+        android:id="@+id/riskCardText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Gehe auf Feld 22. Passierst du den Start, erhältst du 200 €."
+        android:textSize="16sp"
+        android:textColor="#000000"
+        android:gravity="center"
+        android:layout_marginBottom="24dp" />
+
+    <Button
+        android:id="@+id/okRiskCardBtn"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:text="OK"
+        android:textStyle="bold"
+        android:backgroundTint="#AA0000"
+        android:textColor="#FFFFFF"
+        android:layout_gravity="center" />
+</LinearLayout>

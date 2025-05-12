@@ -1,5 +1,5 @@
 package at.aau.serg.websocketbrokerdemo.model
 
 enum class TileType {
-    START, STREET, EVENT_RISIKO, EVENT_BANK, STATION, TAX, JAIL, FREE, GOTO_JAIL
+    START, STREET, RISK, BANK, PRISON, GOTO_JAIL, TAX
 }

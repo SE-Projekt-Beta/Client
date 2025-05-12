@@ -18,26 +18,30 @@ import org.hildan.krossbow.websocket.okhttp.OkHttpWebSocketClient
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
 
-/**
- * Handles game‐level STOMP messaging for a specific lobby.
- */
-class GameStomp(private val dktHandler: GameClientHandler, private val lobbyId: Int) {
-    private lateinit var session: StompSession
-    private val scope = CoroutineScope(Dispatchers.IO)
-    private val gson = GsonBuilder().create()
-
+class GameStomp(
+    private val dktHandler: GameClientHandler,
+    private val lobbyId: Int,
     private var onConnected: (() -> Unit)? = null
+) {
 
     fun setOnConnectedListener(cb: () -> Unit) {
         onConnected = cb
     }
 
+    private lateinit var session: StompSession
+    private val scope = CoroutineScope(Dispatchers.IO)
+    private val gson = GsonBuilder().create()
+
     fun connect() {
         val client = StompClient(OkHttpWebSocketClient())
         scope.launch {
             session = client.connect(WEBSOCKET_URI)
+            Log.i("GameStomp", "✅ STOMP verbunden für Lobby $lobbyId")
 
-            // Only receive messages for this lobby
+            // 1️⃣: Verbindung steht – Callback an Client übergeben
+            onConnected?.invoke()
+
+            // 2️⃣: Jetzt auf Spielnachrichten lauschen
             launch {
                 session.subscribeText("/topic/dkt/$lobbyId").collect { raw ->
                     Log.i("GameStomp", "≪ /topic/dkt/$lobbyId: $raw")
@@ -45,9 +49,6 @@ class GameStomp(private val dktHandler: GameClientHandler, private val lobbyId: 
                     dktHandler.handle(gm)
                 }
             }
-
-            Log.i("GameStomp", "Connected to game lobby $lobbyId")
-            onConnected?.invoke()
         }
     }
 

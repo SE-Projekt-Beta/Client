@@ -1,20 +1,27 @@
 package at.aau.serg.websocketbrokerdemo.network.dto
 
 enum class GameMessageType {
+    GAME_STATE,
     ROLL_DICE,
     PLAYER_MOVED,
     CAN_BUY_PROPERTY,
     BUY_PROPERTY,
     PROPERTY_BOUGHT,
-    DRAW_EVENT_BANK_CARD,
-    DRAW_EVENT_RISIKO_CARD,
-    PAY_TAX,
-    GO_TO_JAIL,
-    SKIPPED,
+    CASH_TASK,
+    GAME_OVER,
     MUST_PAY_RENT,
     ERROR,
-    REQUEST_GAME_STATE,
-    GAME_STATE,
     CURRENT_PLAYER,
-    PLAYER_UPDATE
+    REQUEST_GAME_STATE,
+    PLAYER_LOST,
+    PAY_RENT,
+    DRAW_RISK_CARD,
+    DRAW_BANK_CARD,
+    PAY_TAX,
+    GO_TO_JAIL,
+    PASS_START,
+    BUILD_HOUSE,
+    BUILD_HOTEL,
+    DICE_ROLLED,
+    PLAYER_OUT_OF_JAIL_CARD
 }
