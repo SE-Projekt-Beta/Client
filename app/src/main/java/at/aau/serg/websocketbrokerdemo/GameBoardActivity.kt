@@ -6,6 +6,7 @@ import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.ComponentActivity
 import at.aau.serg.websocketbrokerdemo.game.*
@@ -29,6 +30,8 @@ class GameBoardActivity : ComponentActivity() {
     private lateinit var textCash: TextView
     private lateinit var textTile: TextView
     private lateinit var overlay: TextView
+
+    private lateinit var playerToken: ImageView
 
     private lateinit var btnRollDice: Button
     private lateinit var btnBuy: Button
@@ -225,6 +228,27 @@ class GameBoardActivity : ComponentActivity() {
                 btnBuildHotel.visibility = View.GONE
             }
         }
+    }
+
+    private fun movePlayer(currentFieldIndex: Int) {
+        // Berechne die Position auf dem Spielfeld für den Spieler basierend auf dem Feldindex
+        val fieldPosition = getPositionForField(currentFieldIndex)
+
+        // Aktualisiere die Position der Spielfigur
+        val params = playerToken.layoutParams as FrameLayout.LayoutParams
+        params.leftMargin = fieldPosition.x
+        params.topMargin = fieldPosition.y
+        playerToken.layoutParams = params
+    }
+
+    private fun getPositionForField(fieldIndex: Int): Point {
+        // Beispiel für Positionen - dies musst du mit deinen eigenen Koordinaten für jedes Feld ersetzen
+        val fieldPositions = listOf(
+            Point(50, 50), // Position für Feld 1
+            Point(100, 50), // Position für Feld 2
+            // Weitere Felder hinzufügen
+        )
+        return fieldPositions[fieldIndex]
     }
 
     fun enableDiceButton() {

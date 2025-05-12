@@ -44,6 +44,527 @@
             android:layout_height="match_parent"
             android:scaleType="fitCenter"
             android:src="@drawable/dktmap" />
+
+        <!-- Feld 0: Start -->
+        <TextView
+            android:id="@+id/field_overlay_0"
+            android:layout_width="50dp"
+            android:layout_height="30dp"
+            android:text="Start"
+            android:textColor="@android:color/white"
+            android:background="#66000000"
+            android:textSize="12sp"
+            android:gravity="center"
+            android:layout_marginLeft="800dp"
+            android:layout_marginTop="800dp" />
+
+        <!-- Feld 1 -->
+        <TextView
+            android:id="@+id/field_overlay_1"
+            android:layout_width="50dp"
+            android:layout_height="30dp"
+            android:text="Miete: 60"
+            android:textColor="@android:color/white"
+            android:background="#66000000"
+            android:textSize="12sp"
+            android:gravity="center"
+            android:layout_marginLeft="720dp"
+            android:layout_marginTop="800dp" />
+
+        <!-- Feld 2 -->
+        <TextView
+            android:id="@+id/field_overlay_2"
+            android:layout_width="50dp"
+            android:layout_height="30dp"
+            android:text="Ereignis"
+            android:textColor="@android:color/white"
+            android:background="#66000000"
+            android:textSize="12sp"
+            android:gravity="center"
+            android:layout_marginLeft="640dp"
+            android:layout_marginTop="800dp" />
+
+        <!-- Feld 3 -->
+        <TextView
+            android:id="@+id/field_overlay_3"
+            android:layout_width="50dp"
+            android:layout_height="30dp"
+            android:text="Miete: 80"
+            android:textColor="@android:color/white"
+            android:background="#66000000"
+            android:textSize="12sp"
+            android:gravity="center"
+            android:layout_marginLeft="560dp"
+            android:layout_marginTop="800dp" />
+
+        <!-- Feld 4 -->
+        <TextView
+            android:id="@+id/field_overlay_4"
+            android:layout_width="50dp"
+            android:layout_height="30dp"
+            android:text="Bahnhof"
+            android:textColor="@android:color/white"
+            android:background="#66000000"
+            android:textSize="12sp"
+            android:gravity="center"
+            android:layout_marginLeft="480dp"
+            android:layout_marginTop="800dp" />
+
+        <!-- Feld 5 -->
+        <TextView
+            android:id="@+id/field_overlay_5"
+            android:layout_width="50dp"
+            android:layout_height="30dp"
+            android:text="Miete: 100"
+            android:textColor="@android:color/white"
+            android:background="#66000000"
+            android:textSize="12sp"
+            android:gravity="center"
+            android:layout_marginLeft="400dp"
+            android:layout_marginTop="800dp" />
+
+        <!-- Feld 6 -->
+        <TextView
+            android:id="@+id/field_overlay_6"
+            android:layout_width="50dp"
+            android:layout_height="30dp"
+            android:text="Gemeinschaft"
+            android:textColor="@android:color/white"
+            android:background="#66000000"
+            android:textSize="12sp"
+            android:gravity="center"
+            android:layout_marginLeft="320dp"
+            android:layout_marginTop="800dp" />
+
+        <!-- Feld 7 -->
+        <TextView
+            android:id="@+id/field_overlay_7"
+            android:layout_width="50dp"
+            android:layout_height="30dp"
+            android:text="Miete: 120"
+            android:textColor="@android:color/white"
+            android:background="#66000000"
+            android:textSize="12sp"
+            android:gravity="center"
+            android:layout_marginLeft="240dp"
+            android:layout_marginTop="800dp" />
+
+        <!-- Feld 8 -->
+        <TextView
+            android:id="@+id/field_overlay_8"
+            android:layout_width="50dp"
+            android:layout_height="30dp"
+            android:text="Miete: 140"
+            android:textColor="@android:color/white"
+            android:background="#66000000"
+            android:textSize="12sp"
+            android:gravity="center"
+            android:layout_marginLeft="160dp"
+            android:layout_marginTop="800dp" />
+
+        <!-- Feld 9 -->
+        <TextView
+            android:id="@+id/field_overlay_9"
+            android:layout_width="50dp"
+            android:layout_height="30dp"
+            android:text="Strafsteuer"
+            android:textColor="@android:color/white"
+            android:background="#66000000"
+            android:textSize="12sp"
+            android:gravity="center"
+            android:layout_marginLeft="80dp"
+            android:layout_marginTop="800dp" />
+
+        <!-- Feld 10: Gefängnis (nur zu Besuch) -->
+        <TextView
+            android:id="@+id/field_overlay_10"
+            android:layout_width="50dp"
+            android:layout_height="30dp"
+            android:text="Gefängnis"
+            android:textColor="@android:color/white"
+            android:background="#66000000"
+            android:textSize="12sp"
+            android:gravity="center"
+            android:layout_marginLeft="0dp"
+            android:layout_marginTop="800dp" />
+
+        <!-- Feld 11 -->
+        <TextView
+            android:id="@+id/field_overlay_11"
+            android:layout_width="50dp"
+            android:layout_height="30dp"
+            android:text="Miete: 160"
+            android:textColor="@android:color/white"
+            android:background="#66000000"
+            android:textSize="12sp"
+            android:gravity="center"
+            android:layout_marginLeft="0dp"
+            android:layout_marginTop="720dp" />
+
+        <!-- Feld 12 -->
+        <TextView
+            android:id="@+id/field_overlay_12"
+            android:layout_width="50dp"
+            android:layout_height="30dp"
+            android:text="Wasserwerk"
+            android:textColor="@android:color/white"
+            android:background="#66000000"
+            android:textSize="12sp"
+            android:gravity="center"
+            android:layout_marginLeft="0dp"
+            android:layout_marginTop="640dp" />
+
+        <!-- Feld 13 -->
+        <TextView
+            android:id="@+id/field_overlay_13"
+            android:layout_width="50dp"
+            android:layout_height="30dp"
+            android:text="Miete: 180"
+            android:textColor="@android:color/white"
+            android:background="#66000000"
+            android:textSize="12sp"
+            android:gravity="center"
+            android:layout_marginLeft="0dp"
+            android:layout_marginTop="560dp" />
+
+        <!-- Feld 14 -->
+        <TextView
+            android:id="@+id/field_overlay_14"
+            android:layout_width="50dp"
+            android:layout_height="30dp"
+            android:text="Ereignis"
+            android:textColor="@android:color/white"
+            android:background="#66000000"
+            android:textSize="12sp"
+            android:gravity="center"
+            android:layout_marginLeft="0dp"
+            android:layout_marginTop="480dp" />
+
+        <!-- Feld 15 -->
+        <TextView
+            android:id="@+id/field_overlay_15"
+            android:layout_width="50dp"
+            android:layout_height="30dp"
+            android:text="Bahnhof"
+            android:textColor="@android:color/white"
+            android:background="#66000000"
+            android:textSize="12sp"
+            android:gravity="center"
+            android:layout_marginLeft="0dp"
+            android:layout_marginTop="400dp" />
+
+        <!-- Feld 16 -->
+        <TextView
+            android:id="@+id/field_overlay_16"
+            android:layout_width="50dp"
+            android:layout_height="30dp"
+            android:text="Miete: 200"
+            android:textColor="@android:color/white"
+            android:background="#66000000"
+            android:textSize="12sp"
+            android:gravity="center"
+            android:layout_marginLeft="0dp"
+            android:layout_marginTop="320dp" />
+
+        <!-- Feld 17 -->
+        <TextView
+            android:id="@+id/field_overlay_17"
+            android:layout_width="50dp"
+            android:layout_height="30dp"
+            android:text="Gemeinschaft"
+            android:textColor="@android:color/white"
+            android:background="#66000000"
+            android:textSize="12sp"
+            android:gravity="center"
+            android:layout_marginLeft="0dp"
+            android:layout_marginTop="240dp" />
+
+        <!-- Feld 18 -->
+        <TextView
+            android:id="@+id/field_overlay_18"
+            android:layout_width="50dp"
+            android:layout_height="30dp"
+            android:text="Miete: 220"
+            android:textColor="@android:color/white"
+            android:background="#66000000"
+            android:textSize="12sp"
+            android:gravity="center"
+            android:layout_marginLeft="0dp"
+            android:layout_marginTop="160dp" />
+
+        <!-- Feld 19 -->
+        <TextView
+            android:id="@+id/field_overlay_19"
+            android:layout_width="50dp"
+            android:layout_height="30dp"
+            android:text="Miete: 240"
+            android:textColor="@android:color/white"
+            android:background="#66000000"
+            android:textSize="12sp"
+            android:gravity="center"
+            android:layout_marginLeft="0dp"
+            android:layout_marginTop="80dp" />
+
+        <!-- Feld 20: Frei Parken -->
+        <TextView
+            android:id="@+id/field_overlay_20"
+            android:layout_width="50dp"
+            android:layout_height="30dp"
+            android:text="Frei Parken"
+            android:textColor="@android:color/white"
+            android:background="#66000000"
+            android:textSize="12sp"
+            android:gravity="center"
+            android:layout_marginLeft="0dp"
+            android:layout_marginTop="0dp" />
+
+        <!-- Feld 21 -->
+        <TextView
+            android:id="@+id/field_overlay_21"
+            android:layout_width="50dp"
+            android:layout_height="30dp"
+            android:text="Miete: 260"
+            android:textColor="@android:color/white"
+            android:background="#66000000"
+            android:textSize="12sp"
+            android:gravity="center"
+            android:layout_marginLeft="80dp"
+            android:layout_marginTop="0dp" />
+
+        <!-- Feld 22 -->
+        <TextView
+            android:id="@+id/field_overlay_22"
+            android:layout_width="50dp"
+            android:layout_height="30dp"
+            android:text="Ereignis"
+            android:textColor="@android:color/white"
+            android:background="#66000000"
+            android:textSize="12sp"
+            android:gravity="center"
+            android:layout_marginLeft="160dp"
+            android:layout_marginTop="0dp" />
+
+        <!-- Feld 23 -->
+        <TextView
+            android:id="@+id/field_overlay_23"
+            android:layout_width="50dp"
+            android:layout_height="30dp"
+            android:text="Miete: 280"
+            android:textColor="@android:color/white"
+            android:background="#66000000"
+            android:textSize="12sp"
+            android:gravity="center"
+            android:layout_marginLeft="240dp"
+            android:layout_marginTop="0dp" />
+
+        <!-- Feld 24 -->
+        <TextView
+            android:id="@+id/field_overlay_24"
+            android:layout_width="50dp"
+            android:layout_height="30dp"
+            android:text="Miete: 300"
+            android:textColor="@android:color/white"
+            android:background="#66000000"
+            android:textSize="12sp"
+            android:gravity="center"
+            android:layout_marginLeft="320dp"
+            android:layout_marginTop="0dp" />
+
+        <!-- Feld 25 -->
+        <TextView
+            android:id="@+id/field_overlay_25"
+            android:layout_width="50dp"
+            android:layout_height="30dp"
+            android:text="Bahnhof"
+            android:textColor="@android:color/white"
+            android:background="#66000000"
+            android:textSize="12sp"
+            android:gravity="center"
+            android:layout_marginLeft="400dp"
+            android:layout_marginTop="0dp" />
+
+        <!-- Feld 26 -->
+        <TextView
+            android:id="@+id/field_overlay_26"
+            android:layout_width="50dp"
+            android:layout_height="30dp"
+            android:text="Miete: 320"
+            android:textColor="@android:color/white"
+            android:background="#66000000"
+            android:textSize="12sp"
+            android:gravity="center"
+            android:layout_marginLeft="480dp"
+            android:layout_marginTop="0dp" />
+
+        <!-- Feld 27 -->
+        <TextView
+            android:id="@+id/field_overlay_27"
+            android:layout_width="50dp"
+            android:layout_height="30dp"
+            android:text="Miete: 340"
+            android:textColor="@android:color/white"
+            android:background="#66000000"
+            android:textSize="12sp"
+            android:gravity="center"
+            android:layout_marginLeft="560dp"
+            android:layout_marginTop="0dp" />
+
+        <!-- Feld 28 -->
+        <TextView
+            android:id="@+id/field_overlay_28"
+            android:layout_width="50dp"
+            android:layout_height="30dp"
+            android:text="Elektrizität"
+            android:textColor="@android:color/white"
+            android:background="#66000000"
+            android:textSize="12sp"
+            android:gravity="center"
+            android:layout_marginLeft="640dp"
+            android:layout_marginTop="0dp" />
+
+        <!-- Feld 29 -->
+        <TextView
+            android:id="@+id/field_overlay_29"
+            android:layout_width="50dp"
+            android:layout_height="30dp"
+            android:text="Miete: 360"
+            android:textColor="@android:color/white"
+            android:background="#66000000"
+            android:textSize="12sp"
+            android:gravity="center"
+            android:layout_marginLeft="720dp"
+            android:layout_marginTop="0dp" />
+
+        <!-- Feld 30: Gehe ins Gefängnis -->
+        <TextView
+            android:id="@+id/field_overlay_30"
+            android:layout_width="50dp"
+            android:layout_height="30dp"
+            android:text="Gefängnis"
+            android:textColor="@android:color/white"
+            android:background="#66000000"
+            android:textSize="12sp"
+            android:gravity="center"
+            android:layout_marginLeft="770dp"
+            android:layout_marginTop="0dp" />
+
+        <!-- Feld 31 -->
+        <TextView
+            android:id="@+id/field_overlay_31"
+            android:layout_width="50dp"
+            android:layout_height="30dp"
+            android:text="Miete: 380"
+            android:textColor="@android:color/white"
+            android:background="#66000000"
+            android:textSize="12sp"
+            android:gravity="center"
+            android:layout_marginLeft="770dp"
+            android:layout_marginTop="80dp" />
+
+        <!-- Feld 32 -->
+        <TextView
+            android:id="@+id/field_overlay_32"
+            android:layout_width="50dp"
+            android:layout_height="30dp"
+            android:text="Miete: 400"
+            android:textColor="@android:color/white"
+            android:background="#66000000"
+            android:textSize="12sp"
+            android:gravity="center"
+            android:layout_marginLeft="770dp"
+            android:layout_marginTop="160dp" />
+
+        <!-- Feld 33 -->
+        <TextView
+            android:id="@+id/field_overlay_33"
+            android:layout_width="50dp"
+            android:layout_height="30dp"
+            android:text="Ereignis"
+            android:textColor="@android:color/white"
+            android:background="#66000000"
+            android:textSize="12sp"
+            android:gravity="center"
+            android:layout_marginLeft="770dp"
+            android:layout_marginTop="240dp" />
+
+        <!-- Feld 34 -->
+        <TextView
+            android:id="@+id/field_overlay_34"
+            android:layout_width="50dp"
+            android:layout_height="30dp"
+            android:text="Miete: 420"
+            android:textColor="@android:color/white"
+            android:background="#66000000"
+            android:textSize="12sp"
+            android:gravity="center"
+            android:layout_marginLeft="770dp"
+            android:layout_marginTop="320dp" />
+
+        <!-- Feld 35 -->
+        <TextView
+            android:id="@+id/field_overlay_35"
+            android:layout_width="50dp"
+            android:layout_height="30dp"
+            android:text="Bahnhof"
+            android:textColor="@android:color/white"
+            android:background="#66000000"
+            android:textSize="12sp"
+            android:gravity="center"
+            android:layout_marginLeft="770dp"
+            android:layout_marginTop="400dp" />
+
+        <!-- Feld 36 -->
+        <TextView
+            android:id="@+id/field_overlay_36"
+            android:layout_width="50dp"
+            android:layout_height="30dp"
+            android:text="Ereignis"
+            android:textColor="@android:color/white"
+            android:background="#66000000"
+            android:textSize="12sp"
+            android:gravity="center"
+            android:layout_marginLeft="770dp"
+            android:layout_marginTop="480dp" />
+
+        <!-- Feld 37 -->
+        <TextView
+            android:id="@+id/field_overlay_37"
+            android:layout_width="50dp"
+            android:layout_height="30dp"
+            android:text="Miete: 450"
+            android:textColor="@android:color/white"
+            android:background="#66000000"
+            android:textSize="12sp"
+            android:gravity="center"
+            android:layout_marginLeft="770dp"
+            android:layout_marginTop="560dp" />
+
+        <!-- Feld 38 -->
+        <TextView
+            android:id="@+id/field_overlay_38"
+            android:layout_width="50dp"
+            android:layout_height="30dp"
+            android:text="Wasserwerk"
+            android:textColor="@android:color/white"
+            android:background="#66000000"
+            android:textSize="12sp"
+            android:gravity="center"
+            android:layout_marginLeft="770dp"
+            android:layout_marginTop="640dp" />
+
+        <!-- Feld 39 -->
+        <TextView
+            android:id="@+id/field_overlay_39"
+            android:layout_width="50dp"
+            android:layout_height="30dp"
+            android:text="Miete: 500"
+            android:textColor="@android:color/white"
+            android:background="#66000000"
+            android:textSize="12sp"
+            android:gravity="center"
+            android:layout_marginLeft="770dp"
+            android:layout_marginTop="720dp" />
+
     </FrameLayout>
 
     <!-- Linke Leiste: Spielerinfos -->
