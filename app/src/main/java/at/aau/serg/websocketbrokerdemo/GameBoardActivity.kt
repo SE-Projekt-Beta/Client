@@ -111,6 +111,7 @@ class GameBoardActivity : ComponentActivity() {
     }
 
     fun updateTurnView(currentPlayerId: Int, nickname: String) {
+        Log.i("GameClientHandler", "Aktueller Spieler: $nickname (ID: $currentPlayerId)")
         runOnUiThread {
             textCurrentTurn.text = "$nickname ist am Zug"
 

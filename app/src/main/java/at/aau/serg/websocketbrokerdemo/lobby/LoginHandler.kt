@@ -13,26 +13,26 @@ class LoginHandler(private val activity: UsernameActivity) : LobbyMessageListene
 
     override fun onLobbyListUpdate(lobbies: List<LobbyDTO>) {
         Log.i("LoginHandler", "Lobby update received: $lobbies")
-
-        val ownNickname = LobbyClient.username
-        val userLobby = lobbies.find { lobby ->
-            lobby.name.contains(ownNickname, ignoreCase = true)
-        }
-
-        if (userLobby != null) {
-            Log.i("LoginHandler", "User's lobby found: ${userLobby.name}, starting LobbyActivity")
-
-            val gson = Gson()
-            val lobbyJson = gson.toJson(userLobby)
-
-            val intent = Intent(activity, LobbyActivity::class.java).apply {
-                putExtra("lobby_json", lobbyJson)
-            }
-            activity.startActivity(intent)
-            activity.finish()
-        } else {
-            Log.i("LoginHandler", "User's lobby not found, ignoring update.")
-        }
+// Ich glaube nicht das wir das brauchen? Das macht nur probleme?
+//        val ownNickname = LobbyClient.username
+//        val userLobby = lobbies.find { lobby ->
+//            lobby.name.contains(ownNickname, ignoreCase = true)
+//        }
+//
+//        if (userLobby != null) {
+//            Log.i("LoginHandler", "User's lobby found: ${userLobby.name}, starting LobbyActivity")
+//
+//            val gson = Gson()
+//            val lobbyJson = gson.toJson(userLobby)
+//
+//            val intent = Intent(activity, LobbyActivity::class.java).apply {
+//                putExtra("lobby_json", lobbyJson)
+//            }
+//            activity.startActivity(intent)
+//            activity.finish()
+//        } else {
+//            Log.i("LoginHandler", "User's lobby not found, ignoring update.")
+//        }
     }
 
     override fun onLobbyUpdate(players: List<PlayerDTO>) {
