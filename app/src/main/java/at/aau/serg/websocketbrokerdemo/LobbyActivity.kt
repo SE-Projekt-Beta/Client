@@ -1,4 +1,4 @@
-
+// ✅ LobbyActivity.kt
 package at.aau.serg.websocketbrokerdemo
 
 import android.content.Intent
@@ -32,7 +32,6 @@ class LobbyActivity : AppCompatActivity() {
         playersTextView = findViewById(R.id.playerListView)
         startButton = findViewById(R.id.buttonStart)
 
-        // set the title to the current lobby name
         val lobbyName = LobbyClient.lobbyId
         titleLobby.text = "Lobby: $lobbyName"
 
@@ -40,7 +39,6 @@ class LobbyActivity : AppCompatActivity() {
         lobbyStomp = LobbyStomp(lobbyHandler)
         lobbyStomp.connect()
 
-        // Spieler direkt beim Start aus übergebenem JSON anzeigen
         val gson = Gson()
         val json = intent.getStringExtra("players_json")
 
@@ -50,13 +48,8 @@ class LobbyActivity : AppCompatActivity() {
             LobbyClient.setPlayers(players)
             updateLobby(players.map { it.nickname })
         } else {
-            // Fallback, falls keine Liste übergeben wurde
             val existingPlayers = LobbyClient.allPlayers()
-            if (existingPlayers.isNotEmpty()) {
-                updateLobby(existingPlayers.map { it.nickname })
-            } else {
-                updateLobby(emptyList())
-            }
+            updateLobby(existingPlayers.map { it.nickname })
         }
 
         startButton.setOnClickListener {
@@ -80,10 +73,9 @@ class LobbyActivity : AppCompatActivity() {
     fun startGame(order: List<PlayerDTO>) {
         val intent = Intent(this, GameBoardActivity::class.java).apply {
             putExtra("USERNAME", LobbyClient.username)
-            putExtra("ORDER", Gson().toJson(order))
+            putExtra("players_json", Gson().toJson(order)) // ✅ fixed key name
         }
         startActivity(intent)
         finish()
     }
-
 }

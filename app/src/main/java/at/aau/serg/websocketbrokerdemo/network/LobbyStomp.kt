@@ -1,4 +1,3 @@
-// src/main/java/at/aau/serg/websocketbrokerdemo/network/LobbyStomp.kt
 package at.aau.serg.websocketbrokerdemo.network
 
 import WEBSOCKET_URI
@@ -6,7 +5,6 @@ import android.util.Log
 import at.aau.serg.websocketbrokerdemo.game.OwnershipClient
 import at.aau.serg.websocketbrokerdemo.lobby.LobbyClient
 import at.aau.serg.websocketbrokerdemo.network.dto.LobbyDTO
-import at.aau.serg.websocketbrokerdemo.model.BoardMap
 import at.aau.serg.websocketbrokerdemo.network.dto.LobbyMessage
 import at.aau.serg.websocketbrokerdemo.network.dto.LobbyMessageType
 import at.aau.serg.websocketbrokerdemo.network.dto.PlayerDTO
@@ -52,6 +50,14 @@ class LobbyStomp(private val listener: LobbyMessageListener) {
         }
     }
 
+    fun sendCreateUser(username: String) {
+        val payload = JsonObject().apply {
+            addProperty("username", username);
+        }
+        val msg = LobbyMessage(null, LobbyMessageType.CREATE_USER, payload)
+        scope.launch { session.sendText("/app/lobby", Gson().toJson(msg)) }
+    }
+
     fun sendCreateLobby(lobbyName: String) {
         val payload = JsonObject().apply { addProperty("lobbyName", lobbyName) }
         val msg = LobbyMessage(null, LobbyMessageType.CREATE_LOBBY, payload)
@@ -63,15 +69,15 @@ class LobbyStomp(private val listener: LobbyMessageListener) {
         scope.launch { session.sendText("/app/lobby", Gson().toJson(msg)) }
     }
 
-    fun sendJoinLobby(username: String, lobbyId: Int) {
+    fun sendJoinLobby(playerId: Int, lobbyId: Int) {
         val payload = JsonObject().apply {
-            addProperty("username", username)
+            addProperty("playerId", playerId)
             addProperty("lobbyId", lobbyId)
         }
         val msg = LobbyMessage(lobbyId, LobbyMessageType.JOIN_LOBBY, payload)
         scope.launch {
             session.sendText("/app/lobby", Gson().toJson(msg))
-            Log.i("LobbyStomp", "Sent JOIN_LOBBY for user=$username, lobbyId=$lobbyId")
+            Log.i("LobbyStomp", "Sent JOIN_LOBBY for user=$playerId, lobbyId=$lobbyId")
         }
     }
 
@@ -94,6 +100,26 @@ class LobbyStomp(private val listener: LobbyMessageListener) {
         }
 
         when (message.type) {
+            LobbyMessageType.USER_CREATED -> {
+                // check if the playerid has already been set
+                if (LobbyClient.playerId != -1) {
+                    Log.w("LobbyStomp", "Player ID already set: ${LobbyClient.playerId}")
+                    return
+                }
+
+                val playerId = message.payload.asJsonObject.get("playerId").asInt
+                val username = message.payload.asJsonObject.get("username").asString
+
+                // check if the nickname is the same as the one in the client
+                if (username != LobbyClient.username) {
+                    Log.w("LobbyStomp", "Nickname mismatch: $username != ${LobbyClient.username}")
+                    return
+                }
+
+
+                LobbyClient.playerId = playerId
+                Log.i("LobbyStomp", "Player ID set to $playerId")
+            }
             LobbyMessageType.LOBBY_CREATED -> {
                 val lobbyid = message.lobbyId
                 LobbyClient.lobbyId = lobbyid

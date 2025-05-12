@@ -1,11 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- 1) Your one-and-only app theme -->
+    <style name="Theme.MyApplication"
+        parent="Theme.MaterialComponents.Light.NoActionBar">
 
-    <style name="Theme.MyApplication" parent="android:Theme.Material.Light.NoActionBar" />
-
-    <style name="ThemeOverlay.MyApplication.FullscreenContainer" parent="">
+        <!-- your existing fullscreen overrides -->
         <item name="fullscreenBackgroundColor">@color/vanilla_background</item>
         <item name="fullscreenTextColor">@color/light_blue_A200</item>
         <item name="android:windowBackground">@color/vanilla_background</item>
+
+        <!-- 2) HERE: hook in your yellow-button style -->
+        <item name="materialButtonStyle">
+            @style/Widget.MyApplication.YellowButton
+        </item>
+        <!-- also catch any plain AppCompat <Button> tags -->
+        <item name="buttonStyle">
+            @style/Widget.MyApplication.YellowButton
+        </item>
+    </style>
+
+    <!-- 3) Your yellow-button widget style -->
+    <style name="Widget.MyApplication.YellowButton"
+        parent="Widget.MaterialComponents.Button">
+        <item name="android:background">
+            @drawable/button_yellow_with_border
+        </item>
+        <item name="backgroundTint">@null</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textAllCaps">false</item>
     </style>
 </resources>

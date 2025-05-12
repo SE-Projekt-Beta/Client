@@ -4,30 +4,30 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
 
-class BoardMapTest {
+class ClientBoardMapTest {
 
     @Test
     fun testTileListHasCorrectSize() {
-        assertEquals(40, BoardMap.tiles.size)
+        assertEquals(40, ClientBoardMap.tiles.size)
     }
 
     @Test
     fun testFirstTileIsStart() {
-        val startTile = BoardMap.tiles[0]
+        val startTile = ClientBoardMap.tiles[0]
         assertEquals("Los", startTile.name)
         assertEquals(TileType.START, startTile.type)
     }
 
     @Test
     fun testTileAtPosition10IsJail() {
-        val jailTile = BoardMap.tiles[10]
+        val jailTile = ClientBoardMap.tiles[10]
         assertEquals("Gefängnis", jailTile.name)
         assertEquals(TileType.JAIL, jailTile.type)
     }
 
     @Test
     fun testAllTilesNotNull() {
-        BoardMap.tiles.forEach { tile ->
+        ClientBoardMap.tiles.forEach { tile ->
             assertNotNull(tile.name)
             assertNotNull(tile.type)
         }

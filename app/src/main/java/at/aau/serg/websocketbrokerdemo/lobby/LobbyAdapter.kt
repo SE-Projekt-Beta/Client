@@ -33,3 +33,5 @@ class LobbyAdapter(
 
     override fun getItemCount(): Int = lobbies.size
 }
+
+

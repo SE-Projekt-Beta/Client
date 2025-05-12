@@ -1,25 +1,24 @@
 package at.aau.serg.websocketbrokerdemo.game
 
-object OwnershipClient {
-    private val ownership = mutableMapOf<String, MutableList<String>?>() // playerId -> List of tileNames
+import org.json.JSONArray
 
-    fun addProperty(playerId: String, tileName: String) {
-        val list = ownership.getOrPut(playerId) { mutableListOf() }
-        if (!list?.contains(tileName)!!) {
-            list.add(tileName)
+object OwnershipClient {
+    val streetOwners: MutableMap<Int, Int?> = mutableMapOf()
+
+    fun updateFromBoard(boardArray: JSONArray) {
+        streetOwners.clear()
+        for (i in 0 until boardArray.length()) {
+            val tile = boardArray.getJSONObject(i)
+            val type = tile.getString("type")
+            if (type == "StreetTile" && tile.has("ownerId")) {
+                val index = tile.getInt("index")
+                val ownerId = tile.optInt("ownerId", -1)
+                streetOwners[index] = if (ownerId >= 0) ownerId else null
+            }
         }
     }
 
-    fun setProperties(playerId: String, properties: List<String>?) {
-        ownership[playerId] = properties?.toMutableList()
+    fun getOwnerId(tileIndex: Int): Int? {
+        return streetOwners[tileIndex]
     }
-
-    fun getProperties(playerId: String): List<String> {
-        return ownership[playerId] ?: emptyList()
-    }
-
-    fun all(): Map<String, List<String>?> {
-        return ownership.toMap()
-    }
-
 }
