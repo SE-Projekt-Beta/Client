@@ -1,75 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/frameLayout2"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="?attr/fullscreenBackgroundColor"
-    android:theme="@style/ThemeOverlay.MyApplication.FullscreenContainer"
-    tools:context=".FullscreenFragment">
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center">
 
-    <!-- Besitzanzeige -->
-    <ScrollView
-        android:id="@+id/ownership_scroll"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_margin="8dp"
-        android:background="#DDDDDD"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintWidth_percent="0.5">
-
-        <TextView
-            android:id="@+id/ownership_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Besitz"
-            android:textColor="#000000"
-            android:textSize="14sp" />
-    </ScrollView>
-
-    <!-- Button zum Würfeln -->
-    <Button
-        android:id="@+id/rollDiceBtn"
+    <!-- Das Spielfeld-Bild -->
+    <ImageView
+        android:id="@+id/dktmap"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="56dp"
-        android:layout_marginBottom="41dp"
-        android:text="Roll Dice"
-        android:background="@drawable/button_yellow_with_border"
-        android:textColor="#000000"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        android:src="@drawable/dktmap"
+        android:adjustViewBounds="true"
+        android:scaleType="centerInside" />
 
-    <!-- Button zum Kaufen -->
-    <Button
-        android:id="@+id/buybtn"
+    <!-- GridLayout für Felder transparent darüberlegen -->
+    <GridLayout
+        android:id="@+id/boardGridLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="89dp"
-        android:text="Kaufen"
-        android:visibility="gone"
-        android:background="@drawable/button_yellow_with_border"
-        android:textColor="#000000"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:visibility="visible" />
+        android:rowCount="11"
+        android:columnCount="11"
+        android:orientation="horizontal">
 
-    <!-- TextView für Nachrichten -->
-    <TextView
-        android:id="@+id/response_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="response"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.5" />
+        <!-- Beispiel Spielfeld (transparent) -->
+        <ImageView
+            android:id="@+id/field_0"
+            android:layout_width="58dp"
+            android:layout_height="50dp"
+            android:background="#33FF0000" /> <!-- Transparenter roter Hintergrund fürs Debuggen -->
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <!-- Weitere Felder (field_1, field_2, ...) -->
+    </GridLayout>
+
+</FrameLayout>

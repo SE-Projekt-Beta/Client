@@ -76,6 +76,15 @@ class GameBoardActivity : ComponentActivity() {
             Log.i("MainActivity", "Sending roll dice payload: $payload")
             gameStomp.sendGameMessage(GameMessage(1, GameMessageType.ROLL_DICE, payload))
         }
+        buyButton.setOnClickListener {
+            val tilePos = 1 //TODO: adapt tilePos
+            val payload = JsonObject().apply {
+                addProperty("playerId", myPlayerName)
+                addProperty("tilePos", tilePos)
+            }
+            gameStomp.sendGameMessage(GameMessage(1, GameMessageType.BUY_PROPERTY, payload))
+            buyButton.visibility = View.GONE
+        }
     }
 
     private fun checkIfMyTurn() {
