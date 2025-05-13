@@ -44,60 +44,6 @@ class GameBoardActivity : ComponentActivity() {
     private lateinit var myNickname: String
     private var lastShownTurnPlayerId: Int = -1
 
-    data class FieldPosition(val x: Int, val y: Int)
-
-    fun calculateFieldPositions(): List<FieldPosition> {
-        val positions = mutableListOf<FieldPosition>()
-        val boardSize = 2048
-        val outerMargin = 40
-        val innerSize = boardSize - 2 * outerMargin
-
-        val cornerSize = 222
-        val tileWidth = 168
-        val tileHeight = 222
-
-        // Koordinaten für die Felder 0-39 berechnen
-        for (i in 0 until 40) {
-            val pos: FieldPosition = when (i) {
-                in 0..9 -> { // Unterkante (rechts nach links)
-                    val x = boardSize - outerMargin - cornerSize - i * tileWidth + tileWidth / 2
-                    val y = boardSize - outerMargin - cornerSize / 2
-                    FieldPosition(x, y)
-                }
-                in 10..19 -> { // Linke Kante (unten nach oben)
-                    val x = outerMargin + cornerSize / 2
-                    val y = boardSize - outerMargin - cornerSize - (i - 10) * tileWidth + tileWidth / 2
-                    FieldPosition(x, y)
-                }
-                in 20..29 -> { // Oberkante (links nach rechts)
-                    val x = outerMargin + cornerSize + (i - 20) * tileWidth + tileWidth / 2
-                    val y = outerMargin + cornerSize / 2
-                    FieldPosition(x, y)
-                }
-                in 30..39 -> { // Rechte Kante (oben nach unten)
-                    val x = boardSize - outerMargin - cornerSize / 2
-                    val y = outerMargin + cornerSize + (i - 30) * tileWidth + tileWidth / 2
-                    FieldPosition(x, y)
-                }
-                else -> FieldPosition(0, 0) // Sollte nie passieren
-            }
-            positions.add(pos)
-        }
-
-        return positions
-    }
-
-    fun movePlayerToken(token: ImageView, fieldIndex: Int) {
-        val positions = calculateFieldPositions()
-        val pos = positions[fieldIndex.coerceIn(0, positions.size - 1)]
-
-        // Die Token-Größe berücksichtigen (30x30dp ≈ px berücksichtigen, Beispiel: 30dp ≈ 45px bei mdpi=1.5)
-        val tokenSizePx = token.width / 2
-
-        token.translationX = (pos.x - tokenSizePx).toFloat()
-        token.translationY = (pos.y - tokenSizePx).toFloat()
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_game)
@@ -117,6 +63,7 @@ class GameBoardActivity : ComponentActivity() {
         initViews()
         setupButtons()
         setupNetwork()
+        positionPlayerTokensOnStartTile()
     }
 
     private fun initViews() {
@@ -166,6 +113,36 @@ class GameBoardActivity : ComponentActivity() {
         gameStomp.setOnConnectedListener { gameStomp.requestGameState() }
         gameStomp.connect()
     }
+
+    private fun positionPlayerTokensOnStartTile() {
+        val startTile = ClientBoardMap.getTile(1)
+        if (startTile == null) {
+            Log.e("GameBoardActivity", "Startfeld nicht gefunden!")
+            return
+        }
+
+        val playerTokens = listOf(
+            findViewById<ImageView>(R.id.player_token1),
+            findViewById<ImageView>(R.id.player_token2),
+            findViewById<ImageView>(R.id.player_token3),
+            findViewById<ImageView>(R.id.player_token4),
+            findViewById<ImageView>(R.id.player_token5),
+            findViewById<ImageView>(R.id.player_token6)
+        )
+
+        // Positioniere jeden Spieler auf das Startfeld
+        GameStateClient.players.values.forEachIndexed { index, player ->
+            if (index < playerTokens.size) {
+                val token = playerTokens[index]
+                token.visibility = View.VISIBLE //vorher alle Tokens ausgeblendet
+
+                // Relative Positionierung im FrameLayout über Translation
+                token.translationX = startTile.position!!.x
+                token.translationY = startTile.position.y
+            }
+        }
+    }
+
 
     fun updateTurnView(currentPlayerId: Int, nickname: String) {
         runOnUiThread {

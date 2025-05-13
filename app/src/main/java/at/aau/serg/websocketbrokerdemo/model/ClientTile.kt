@@ -10,5 +10,5 @@ data class ClientTile(
     val rent: Int? = null,
     val houseCost: Int? = null,
     val hotelCost: Int? = null,
-    val position: PointF? = null
+    val position: PointF?,
 )
