@@ -17,10 +17,7 @@ class PlayerTokenManager(private val gameBoardActivity: GameBoardActivity) {
     )
 
     fun positionTokensOnStartTile() {
-        val startTile = ClientBoardMap.getTile(1)
-        if (startTile == null) {
-            return
-        }
+        val startTile = ClientBoardMap.getTile(1) ?: return
 
         gameBoardActivity.runOnUiThread {
             playerTokens.forEachIndexed { index, token ->
@@ -39,10 +36,7 @@ class PlayerTokenManager(private val gameBoardActivity: GameBoardActivity) {
         val player = GameStateClient.players[playerId] ?: return
         val newPosition = player.position + steps
 
-        val tile = ClientBoardMap.getTile(newPosition)
-        if (tile == null) {
-            return
-        }
+        val tile = ClientBoardMap.getTile(newPosition) ?: return
 
         // Hole das Token des Spielers
         val token = playerTokens.getOrNull(playerId)
@@ -53,7 +47,6 @@ class PlayerTokenManager(private val gameBoardActivity: GameBoardActivity) {
             }
         }
 
-        // Aktualisiere die Spielerposition im GameStateClient
         player.position = newPosition
     }
 }
