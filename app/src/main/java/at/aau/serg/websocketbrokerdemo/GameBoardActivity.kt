@@ -31,7 +31,7 @@ class GameBoardActivity : ComponentActivity() {
     private lateinit var textTile: TextView
     private lateinit var overlay: TextView
 
-    private lateinit var playerToken: ImageView
+    private lateinit var playerTokenManager: PlayerTokenManager
 
     private lateinit var btnRollDice: Button
     private lateinit var btnBuy: Button
@@ -60,10 +60,12 @@ class GameBoardActivity : ComponentActivity() {
             players.forEach { GameStateClient.players[it.id] = it }
         }
 
+        playerTokenManager = PlayerTokenManager(this)
+
         initViews()
         setupButtons()
         setupNetwork()
-        positionPlayerTokensOnStartTile()
+        playerTokenManager.positionTokensOnStartTile()
     }
 
     private fun initViews() {
@@ -113,36 +115,6 @@ class GameBoardActivity : ComponentActivity() {
         gameStomp.setOnConnectedListener { gameStomp.requestGameState() }
         gameStomp.connect()
     }
-
-    private fun positionPlayerTokensOnStartTile() {
-        val startTile = ClientBoardMap.getTile(1)
-        if (startTile == null) {
-            Log.e("GameBoardActivity", "Startfeld nicht gefunden!")
-            return
-        }
-
-        val playerTokens = listOf(
-            findViewById<ImageView>(R.id.player_token1),
-            findViewById<ImageView>(R.id.player_token2),
-            findViewById<ImageView>(R.id.player_token3),
-            findViewById<ImageView>(R.id.player_token4),
-            findViewById<ImageView>(R.id.player_token5),
-            findViewById<ImageView>(R.id.player_token6)
-        )
-
-        // Positioniere jeden Spieler auf das Startfeld
-        GameStateClient.players.values.forEachIndexed { index, player ->
-            if (index < playerTokens.size) {
-                val token = playerTokens[index]
-                token.visibility = View.VISIBLE //vorher alle Tokens ausgeblendet
-
-                // Relative Positionierung im FrameLayout über Translation
-                token.translationX = startTile.position!!.x
-                token.translationY = startTile.position.y
-            }
-        }
-    }
-
 
     fun updateTurnView(currentPlayerId: Int, nickname: String) {
         runOnUiThread {
@@ -202,6 +174,11 @@ class GameBoardActivity : ComponentActivity() {
         runOnUiThread {
             textTile.text = "Gelandet auf: $tileName"
         }
+    }
+
+    fun updateTokenPosition(steps: Int) {
+        val currentPlayerId = GameStateClient.currentPlayerId
+        playerTokenManager.movePlayerToken(currentPlayerId, steps)
     }
 
     fun updateCashDisplay(cash: Int) {

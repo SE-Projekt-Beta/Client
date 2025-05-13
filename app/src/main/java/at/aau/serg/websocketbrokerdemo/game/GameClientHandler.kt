@@ -42,6 +42,7 @@ class GameClientHandler(
         activity.updateDice(diceValue)
         activity.updateTile(tileName)
         activity.updateCashDisplay(cash)
+        activity.updateTokenPosition(diceValue)
 
         if (myId == currentPlayerId) {
             activity.enableDiceButton()
@@ -83,6 +84,7 @@ class GameClientHandler(
     private fun handleDiceRolled(payload: JsonObject) {
         val steps = payload["steps"]?.asInt ?: return
         activity.updateDice(steps)
+        activity.updateTokenPosition(steps)
     }
 
     private fun handleCashTask(payload: JsonObject) {
