@@ -2,9 +2,10 @@ package at.aau.serg.websocketbrokerdemo.game
 
 import android.util.Log
 import at.aau.serg.websocketbrokerdemo.GameBoardActivity
-import at.aau.serg.websocketbrokerdemo.ListLobbyActivity
+import at.aau.serg.websocketbrokerdemo.lobby.LobbyClient
 import at.aau.serg.websocketbrokerdemo.network.dto.GameMessage
 import at.aau.serg.websocketbrokerdemo.network.dto.GameMessageType
+import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import io.mockk.*
 import org.junit.jupiter.api.BeforeEach
@@ -24,83 +25,170 @@ class GameClientHandlerTest {
         every { Log.w(any(), any<String>()) } returns 0
         every { Log.e(any(), any<String>()) } returns 0
 
-        mockkObject(GameStateClient)
-        mockkObject(OwnershipClient)
-        every { GameStateClient.updatePosition(any(), any()) } just Runs
-        every { OwnershipClient.addProperty(any(), any()) } just Runs
+        mockkObject(GameController)
+        mockkObject(LobbyClient)
+
+        every { GameController.updateFromGameState(any()) } just Runs
+        every { GameController.getCurrentPlayerId() } returns 1
+        every { GameController.getCurrentPlayerName() } returns "Alice"
+        every { GameController.getCurrentFieldIndex(1) } returns 4
+        every { GameController.getTileName(4) } returns "Ringstraße"
+        every { GameController.getCash(1) } returns 1500
+        every { GameController.evaluateTileOptions(1, 4) } returns GameController.TileOptions(
+            true,
+            false,
+            false
+        )
+        every { LobbyClient.playerId } returns 1
     }
 
     @Test
-    fun testHandleCurrentPlayer_isMyTurn() {
-        every { mockActivity.getMyPlayerName() } returns "p1"
-        val payload = JsonObject().apply { addProperty("playerId", "p1") }
-        handler.handle(GameMessage(0, GameMessageType.CURRENT_PLAYER, payload))
+    fun testHandleGameState_myTurn() {
+        val payload = JsonObject().apply { addProperty("dice", 5) }
+        val message = GameMessage(0, GameMessageType.GAME_STATE, payload)
+
+        handler.handle(message)
+
+        verify { mockActivity.updateTurnView(1, "Alice") }
+        verify { mockActivity.updateDice(5) }
+        verify { mockActivity.updateTile("Ringstraße") }
+        verify { mockActivity.updateCashDisplay(1500) }
         verify { mockActivity.enableDiceButton() }
+        verify {
+            mockActivity.showBuyOptions(4, "Ringstraße", true, false, false)
+        }
     }
 
     @Test
-    fun testHandleCurrentPlayer_notMyTurn() {
-        every { mockActivity.getMyPlayerName() } returns "p2"
-        val payload = JsonObject().apply { addProperty("playerId", "p1") }
-        handler.handle(GameMessage(0, GameMessageType.CURRENT_PLAYER, payload))
+    fun testHandleGameState_otherPlayersTurn() {
+        every { LobbyClient.playerId } returns 2 // not my turn
+        val payload = JsonObject().apply { addProperty("dice", 3) }
+        val message = GameMessage(0, GameMessageType.GAME_STATE, payload)
+
+        handler.handle(message)
+
         verify { mockActivity.disableDiceButton() }
+        verify { mockActivity.hideActionButtons() }
     }
 
     @Test
-    fun testHandlePlayerMoved() {
+    fun testHandleEventCard() {
         val payload = JsonObject().apply {
-            addProperty("playerId", "p1")
-            addProperty("pos", 4)
-            addProperty("dice", 2)
-            addProperty("tileName", "Opernring")
-            addProperty("tileType", "street")
+            addProperty("title", "Risiko!")
+            addProperty("description", "Ziehe eine Karte.")
         }
-        handler.handle(GameMessage(0, GameMessageType.PLAYER_MOVED, payload))
-        verify { GameStateClient.updatePosition("p1", 4) }
-        verify { mockActivity.showResponse("p1 → Opernring (street), gewürfelt: 2") }
+
+        val message = GameMessage(0, GameMessageType.DRAW_RISK_CARD, payload)
+        handler.handle(message)
+
+        verify { mockActivity.showEventCard("Risiko!", "Ziehe eine Karte.") }
+    }
+    /*
+    @Test
+    fun testHandlePassStart() {
+        every { mockActivity.runOnUiThread(any()) } answers {
+            firstArg<Runnable>().run()
+        }
+
+        handler.handle(GameMessage(0, GameMessageType.PASS_START, JsonObject()))
+
+        verify {
+            mockActivity.runOnUiThread(any())
+            // Nicht direkt testbar: StartBonusDialog(activity, ...).show()
+        }
+    }
+
+     */
+    /*
+    @Test
+    fun testHandleTax() {
+        every { mockActivity.runOnUiThread(any()) } answers {
+            firstArg<Runnable>().run()
+        }
+
+        handler.handle(GameMessage(0, GameMessageType.PAY_TAX, JsonObject()))
+
+        verify {
+            mockActivity.runOnUiThread(any())
+            // TaxDialog(activity, ...).show() wird erwartet
+        }
+    }
+
+     */
+    /*
+    @Test
+    fun testHandleGoToJail() {
+        every { mockActivity.runOnUiThread(any()) } answers {
+            firstArg<Runnable>().run()
+        }
+
+        handler.handle(GameMessage(0, GameMessageType.GO_TO_JAIL, JsonObject()))
+
+        verify {
+            mockActivity.runOnUiThread(any())
+            // RiskCardDialog(activity, ...).show() wird erwartet
+        }
+    }
+
+     */
+
+    @Test
+    fun testHandleDiceRolled() {
+        val payload = JsonObject().apply { addProperty("steps", 6) }
+
+        handler.handle(GameMessage(0, GameMessageType.DICE_ROLLED, payload))
+
+        verify { mockActivity.updateDice(6) }
     }
 
     @Test
-    fun testHandleCanBuyProperty() {
+    fun testHandleCashTask_myId() {
+        every { LobbyClient.playerId } returns 1
+
         val payload = JsonObject().apply {
-            addProperty("tileName", "Opernring")
-            addProperty("tilePos", 4)
-            addProperty("playerId", "p1")
+            addProperty("playerId", 1)
+            addProperty("amount", -200)
+            addProperty("newCash", 1300)
         }
-        handler.handle(GameMessage(0, GameMessageType.CAN_BUY_PROPERTY, payload))
-        verify { mockActivity.showBuyButton("Opernring", 4, "p1") }
-        verify { mockActivity.showResponse("p1 darf Opernring kaufen") }
+
+        handler.handle(GameMessage(0, GameMessageType.CASH_TASK, payload))
+
+        verify { mockActivity.updateCashDisplay(1300) }
+        verify { Log.i(any(), match { it.contains("1300") }) }
     }
 
     @Test
-    fun testHandlePropertyBought() {
-        val payload = JsonObject().apply {
-            addProperty("tileName", "Opernring")
-            addProperty("playerId", "p1")
-            addProperty("tilePos", 5)
-        }
-        handler.handle(GameMessage(1, GameMessageType.PROPERTY_BOUGHT, payload))
+    fun testHandlePlayerLost() {
+        val payload = JsonObject().apply { addProperty("playerId", 3) }
 
-        verify { GameStateClient.addProperty("p1", 5) }
-        verify { mockActivity.showCurrentPlayerOwnership() }
-        verify { mockActivity.showResponse("Kauf abgeschlossen: Opernring für p1") }
+        handler.handle(GameMessage(0, GameMessageType.PLAYER_LOST, payload))
+
+        verify { mockActivity.showPlayerLost(3) }
+        verify { Log.i(any(), match { it.contains("bankrott") }) }
     }
 
     @Test
-    fun testHandleMustPayRent() {
+    fun testHandleGameOver() {
         val payload = JsonObject().apply {
-            addProperty("playerId", "p1")
-            addProperty("ownerId", "p2")
-            addProperty("tileName", "Opernring")
+            add("ranking", JsonArray().apply {
+                add("1. Alice")
+                add("2. Bob")
+            })
         }
-        handler.handle(GameMessage(0, GameMessageType.MUST_PAY_RENT, payload))
-        verify { mockActivity.showResponse("p1 muss Miete an p2 zahlen für Opernring") }
-    }
 
+        handler.handle(GameMessage(0, GameMessageType.GAME_OVER, payload))
+
+        verify { mockActivity.showGameOverDialog("1. Alice\n2. Bob") }
+    }
 
     @Test
     fun testHandleError() {
-        handler.handle(GameMessage(0, GameMessageType.ERROR, com.google.gson.JsonParser.parseString("\"Etwas ist schiefgelaufen\"")))
+        val payload = JsonObject().apply {
+            addProperty("message", "Etwas ist schiefgelaufen")
+        }
+
+        handler.handle(GameMessage(0, GameMessageType.ERROR, payload))
+
         verify { Log.e(any(), match { it.contains("Etwas ist schiefgelaufen") }) }
     }
 }

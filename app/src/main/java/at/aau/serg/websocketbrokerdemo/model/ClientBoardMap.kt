@@ -2,16 +2,19 @@ package at.aau.serg.websocketbrokerdemo.model
 
 object ClientBoardMap {
 
+    private const val RISIKO = "Risiko"
+    private const val BANK = "Bank"
+
     val tiles: List<ClientTile> = listOf(
         ClientTile(1, "Start", TileType.START),
         ClientTile(2, "Amtsplatz", TileType.STREET, 220, 80, 160, 320),
-        ClientTile(3, "Risiko", TileType.RISK),
+        ClientTile(3, RISIKO, TileType.RISK),
         ClientTile(4, "Kraft- Zentrale", TileType.STREET, 400, 100, 300, 500),
         ClientTile(5, "Murplatz", TileType.STREET, 300, 120, 200, 400),
         ClientTile(6, "Annenstraße", TileType.STREET, 250, 96, 150, 300),
         ClientTile(7, "Joanneumring", TileType.STREET, 220, 80, 130, 260),
         ClientTile(8, "Eisenbahn Wien- Graz", TileType.STREET, 180, 56, 100, 200),
-        ClientTile(9, "Bank", TileType.BANK),
+        ClientTile(9, BANK, TileType.BANK),
         ClientTile(10, "Joseph-Haydn-Gasse", TileType.STREET, 100, 24, 50, 100),
         ClientTile(11, "Polizeikontrolle", TileType.GOTO_JAIL),
         ClientTile(12, "Schlossgrund", TileType.STREET, 220, 80, 160, 320),
@@ -25,12 +28,12 @@ object ClientBoardMap {
         ClientTile(20, "Stifterstraße", TileType.STREET, 180, 56, 100, 200),
         ClientTile(21, "Sondersteuer", TileType.TAX),
         ClientTile(22, "Museumstraße", TileType.STREET, 220, 80, 160, 320),
-        ClientTile(23, "Risiko", TileType.RISK),
+        ClientTile(23, RISIKO, TileType.RISK),
         ClientTile(24, "Autobuslinie", TileType.STREET, 210, 72, 120, 240),
         ClientTile(25, "Mirabellplatz", TileType.STREET, 250, 96, 150, 300),
         ClientTile(26, "Westbahnstraße", TileType.STREET, 240, 88, 140, 280),
         ClientTile(27, "Universitätsplatz", TileType.STREET, 250, 96, 150, 300),
-        ClientTile(28, "Bank", TileType.BANK),
+        ClientTile(28, BANK, TileType.BANK),
         ClientTile(29, "Burggasse", TileType.STREET, 140, 40, 100, 200),
         ClientTile(30, "Villacherstraße", TileType.STREET, 200, 64, 110, 220),
         ClientTile(31, "Gefängnis", TileType.PRISON),
@@ -40,7 +43,7 @@ object ClientBoardMap {
         ClientTile(35, "Maria-Theresien-Straße", TileType.STREET, 300, 120, 200, 400),
         ClientTile(36, "Andreas-Hofer-Straße", TileType.STREET, 250, 96, 150, 300),
         ClientTile(37, "Boznerplatz", TileType.STREET, 300, 120, 200, 400),
-        ClientTile(38, "Risiko", TileType.RISK),
+        ClientTile(38, RISIKO, TileType.RISK),
         ClientTile(39, "Arlbergstraße", TileType.STREET, 120, 32, 50, 100),
         ClientTile(40, "Rathausstraße", TileType.STREET, 180, 56, 100, 200)
     )
