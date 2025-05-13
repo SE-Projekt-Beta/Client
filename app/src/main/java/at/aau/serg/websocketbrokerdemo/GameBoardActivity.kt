@@ -44,58 +44,59 @@ class GameBoardActivity : ComponentActivity() {
     private lateinit var myNickname: String
     private var lastShownTurnPlayerId: Int = -1
 
-    data class ViewPosition(val x: Float, val y: Float)
+    data class FieldPosition(val x: Int, val y: Int)
 
-    val fieldViewPositions = mapOf(
-        // Untere Kante: rechts → links (Felder 1–10)
-        1 to ViewPosition(2048f - 40f - 222f, 2048f - 40f - 222f), // Startfeld
-        2 to ViewPosition(2048f - 40f - 222f - 168f * 1, 2048f - 40f - 222f),
-        3 to ViewPosition(2048f - 40f - 222f - 168f * 2, 2048f - 40f - 222f),
-        4 to ViewPosition(2048f - 40f - 222f - 168f * 3, 2048f - 40f - 222f),
-        5 to ViewPosition(2048f - 40f - 222f - 168f * 4, 2048f - 40f - 222f),
-        6 to ViewPosition(2048f - 40f - 222f - 168f * 5, 2048f - 40f - 222f),
-        7 to ViewPosition(2048f - 40f - 222f - 168f * 6, 2048f - 40f - 222f),
-        8 to ViewPosition(2048f - 40f - 222f - 168f * 7, 2048f - 40f - 222f),
-        9 to ViewPosition(2048f - 40f - 222f - 168f * 8, 2048f - 40f - 222f),
-        10 to ViewPosition(40f, 2048f - 40f - 222f),  // untere linke Ecke
+    fun calculateFieldPositions(): List<FieldPosition> {
+        val positions = mutableListOf<FieldPosition>()
+        val boardSize = 2048
+        val outerMargin = 40
+        val innerSize = boardSize - 2 * outerMargin
 
-        // Linke Kante: unten → oben (Felder 11–20)
-        11 to ViewPosition(40f, 2048f - 40f - 222f - 222f * 1),
-        12 to ViewPosition(40f, 2048f - 40f - 222f - 222f * 2),
-        13 to ViewPosition(40f, 2048f - 40f - 222f - 222f * 3),
-        14 to ViewPosition(40f, 2048f - 40f - 222f - 222f * 4),
-        15 to ViewPosition(40f, 2048f - 40f - 222f - 222f * 5),
-        16 to ViewPosition(40f, 2048f - 40f - 222f - 222f * 6),
-        17 to ViewPosition(40f, 2048f - 40f - 222f - 222f * 7),
-        18 to ViewPosition(40f, 2048f - 40f - 222f - 222f * 8),
-        19 to ViewPosition(40f, 2048f - 40f - 222f - 222f * 9),
-        20 to ViewPosition(40f, 40f),  // obere linke Ecke
+        val cornerSize = 222
+        val tileWidth = 168
+        val tileHeight = 222
 
-        // Obere Kante: links → rechts (Felder 21–30)
-        21 to ViewPosition(40f + 222f, 40f),
-        22 to ViewPosition(40f + 222f + 168f * 1, 40f),
-        23 to ViewPosition(40f + 222f + 168f * 2, 40f),
-        24 to ViewPosition(40f + 222f + 168f * 3, 40f),
-        25 to ViewPosition(40f + 222f + 168f * 4, 40f),
-        26 to ViewPosition(40f + 222f + 168f * 5, 40f),
-        27 to ViewPosition(40f + 222f + 168f * 6, 40f),
-        28 to ViewPosition(40f + 222f + 168f * 7, 40f),
-        29 to ViewPosition(40f + 222f + 168f * 8, 40f),
-        30 to ViewPosition(2048f - 40f - 222f, 40f), // obere rechte Ecke
+        // Koordinaten für die Felder 0-39 berechnen
+        for (i in 0 until 40) {
+            val pos: FieldPosition = when (i) {
+                in 0..9 -> { // Unterkante (rechts nach links)
+                    val x = boardSize - outerMargin - cornerSize - i * tileWidth + tileWidth / 2
+                    val y = boardSize - outerMargin - cornerSize / 2
+                    FieldPosition(x, y)
+                }
+                in 10..19 -> { // Linke Kante (unten nach oben)
+                    val x = outerMargin + cornerSize / 2
+                    val y = boardSize - outerMargin - cornerSize - (i - 10) * tileWidth + tileWidth / 2
+                    FieldPosition(x, y)
+                }
+                in 20..29 -> { // Oberkante (links nach rechts)
+                    val x = outerMargin + cornerSize + (i - 20) * tileWidth + tileWidth / 2
+                    val y = outerMargin + cornerSize / 2
+                    FieldPosition(x, y)
+                }
+                in 30..39 -> { // Rechte Kante (oben nach unten)
+                    val x = boardSize - outerMargin - cornerSize / 2
+                    val y = outerMargin + cornerSize + (i - 30) * tileWidth + tileWidth / 2
+                    FieldPosition(x, y)
+                }
+                else -> FieldPosition(0, 0) // Sollte nie passieren
+            }
+            positions.add(pos)
+        }
 
-        // Rechte Kante: oben → unten (Felder 31–40)
-        31 to ViewPosition(2048f - 40f - 222f, 40f + 222f),
-        32 to ViewPosition(2048f - 40f - 222f, 40f + 222f + 222f * 1),
-        33 to ViewPosition(2048f - 40f - 222f, 40f + 222f + 222f * 2),
-        34 to ViewPosition(2048f - 40f - 222f, 40f + 222f + 222f * 3),
-        35 to ViewPosition(2048f - 40f - 222f, 40f + 222f + 222f * 4),
-        36 to ViewPosition(2048f - 40f - 222f, 40f + 222f + 222f * 5),
-        37 to ViewPosition(2048f - 40f - 222f, 40f + 222f + 222f * 6),
-        38 to ViewPosition(2048f - 40f - 222f, 40f + 222f + 222f * 7),
-        39 to ViewPosition(2048f - 40f - 222f, 40f + 222f + 222f * 8),
-        40 to ViewPosition(2048f - 40f - 222f, 2048f - 40f - 222f - 222f * 9) // vorletztes Feld vor Start
-    )
+        return positions
+    }
 
+    fun movePlayerToken(token: ImageView, fieldIndex: Int) {
+        val positions = calculateFieldPositions()
+        val pos = positions[fieldIndex.coerceIn(0, positions.size - 1)]
+
+        // Die Token-Größe berücksichtigen (30x30dp ≈ px berücksichtigen, Beispiel: 30dp ≈ 45px bei mdpi=1.5)
+        val tokenSizePx = token.width / 2
+
+        token.translationX = (pos.x - tokenSizePx).toFloat()
+        token.translationY = (pos.y - tokenSizePx).toFloat()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
