@@ -22,7 +22,7 @@ class ClientBoardMapTest {
     fun testTileAtPosition10IsJail() {
         val jailTile = ClientBoardMap.tiles[10]
         assertEquals("Gefängnis", jailTile.name)
-        assertEquals(TileType.JAIL, jailTile.type)
+        assertEquals(TileType.PRISON, jailTile.type)
     }
 
     @Test
@@ -31,5 +31,28 @@ class ClientBoardMapTest {
             assertNotNull(tile.name)
             assertNotNull(tile.type)
         }
+    }
+
+    @Test
+    fun testGetTileReturnsCorrectTile() {
+        val tile = ClientBoardMap.getTile(1)
+        assertNotNull(tile)
+        assertEquals(1, tile?.index)
+        assertEquals("Start", tile?.name)
+        assertEquals(TileType.START, tile?.type)
+    }
+
+    @Test
+    fun testGetTileReturnsNullForInvalidIndex() {
+        val tile = ClientBoardMap.getTile(999) // gibt es nicht
+        assertEquals(null, tile)
+    }
+
+    @Test
+    fun testFirstTileHasCorrectPosition() {
+        val startTile = ClientBoardMap.getTile(1)
+        assertNotNull(startTile?.position)
+        assertEquals(1937f, startTile?.position?.x)
+        assertEquals(1937f, startTile?.position?.y)
     }
 }
