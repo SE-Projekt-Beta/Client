@@ -14,15 +14,15 @@ class ClientBoardMapTest {
     @Test
     fun testFirstTileIsStart() {
         val startTile = ClientBoardMap.tiles[0]
-        assertEquals("Los", startTile.name)
+        assertEquals("Start", startTile.name)
         assertEquals(TileType.START, startTile.type)
     }
 
     @Test
     fun testTileAtPosition10IsJail() {
         val jailTile = ClientBoardMap.tiles[10]
-        assertEquals("Gefängnis", jailTile.name)
-        assertEquals(TileType.JAIL, jailTile.type)
+        assertEquals("Polizeikontrolle", jailTile.name)
+        assertEquals(TileType.GOTO_JAIL, jailTile.type)
     }
 
     @Test
