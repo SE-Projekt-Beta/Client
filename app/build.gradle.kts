@@ -108,6 +108,8 @@ sonar {
             "**/MainActivity.kt," +
                     "**/LobbyActivity.kt," +
                     "**/UsernameActivity.kt," +
+                    "**/CreateLobbyActivity.kt," +
+                    "**/ListLobbyActivity.kt," +
                     "**/Theme.kt," +
                     "**/Color.kt," +
                     "**/TileType.kt," +
@@ -136,8 +138,8 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.constraintlayout)
-    implementation("org.json:json:20231013")
-    implementation("com.google.code.gson:gson:2.10.1")
+    implementation(libs.json)
+    implementation(libs.gson)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.androidx.activity)
@@ -152,20 +154,20 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation(libs.gson)
-    implementation("com.google.code.gson:gson:2.10.1")
+    implementation(libs.gson)
     implementation(kotlin("test"))
 
 // Testing dependencies
     testImplementation(libs.junit)
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.2")
+    testImplementation(libs.junit.jupiter.api.v582)
+    testRuntimeOnly(libs.junit.jupiter.engine.v582)
 
     // MockK for Kotlin-friendly mocking
-    testImplementation("io.mockk:mockk:1.13.8")
+    testImplementation(libs.mockk)
 
-    testImplementation("androidx.test.ext:junit:1.1.5")
-    testImplementation("androidx.test:core:1.5.0")
-    testImplementation("org.robolectric:robolectric:4.10.3")
+    testImplementation(libs.androidx.junit.v115)
+    testImplementation(libs.androidx.core)
+    testImplementation(libs.robolectric)
 
 
 
