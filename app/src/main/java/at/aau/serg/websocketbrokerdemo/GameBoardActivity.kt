@@ -17,6 +17,7 @@ import at.aau.serg.websocketbrokerdemo.network.GameStomp
 import at.aau.serg.websocketbrokerdemo.network.dto.GameMessage
 import at.aau.serg.websocketbrokerdemo.network.dto.GameMessageType
 import com.google.gson.Gson
+import com.google.gson.JsonObject
 import com.google.gson.reflect.TypeToken
 
 class GameBoardActivity : ComponentActivity() {
@@ -40,21 +41,26 @@ class GameBoardActivity : ComponentActivity() {
     private var myId = -1
     private lateinit var myNickname: String
     private var lastShownTurnPlayerId: Int = -1
+    private var lastHandledTileIndex: Int? = null
+    private var triggeredMessagesThisTurn = mutableSetOf<GameMessageType>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_game)
-
-        Log.i("GameBoardActivity", "onCreate called")
 
         myNickname = intent.getStringExtra("USERNAME") ?: "Unknown"
         myId = LobbyClient.playerId
 
         val playersJson = intent.getStringExtra("players_json")
         if (playersJson != null) {
-            val type = object : TypeToken<List<PlayerClient>>() {}.type
-            val players = Gson().fromJson<List<PlayerClient>>(playersJson, type)
-            players.forEach { GameStateClient.players[it.id] = it }
+            val type = object : TypeToken<List<Map<String, Any>>>() {}.type
+            val parsedList = Gson().fromJson<List<Map<String, Any>>>(playersJson, type)
+            parsedList.forEach {
+                val id = (it["id"] as Double).toInt()
+                val nickname = it["nickname"] as String
+                val player = PlayerClient(id, nickname, 0, 0, true, false, false)
+                GameStateClient.players[id] = player
+            }
         }
 
         initViews()
@@ -83,6 +89,9 @@ class GameBoardActivity : ComponentActivity() {
     private fun setupButtons() {
         btnRollDice.setOnClickListener {
             btnRollDice.isEnabled = false
+            lastHandledTileIndex = null
+            triggeredMessagesThisTurn.clear()
+
             val payload = GameController.buildPayload("playerId", myId)
             gameStomp.sendGameMessage(GameMessage(LobbyClient.lobbyId, GameMessageType.ROLL_DICE, payload))
         }
@@ -110,70 +119,86 @@ class GameBoardActivity : ComponentActivity() {
         gameStomp.connect()
     }
 
-    fun updateTurnView(currentPlayerId: Int, nickname: String) {
+    fun updateTurnView(currentPlayerId: Int) {
         runOnUiThread {
+            val nickname = GameStateClient.getNickname(currentPlayerId) ?: "Spieler X"
             textCurrentTurn.text = "$nickname ist am Zug"
 
             if (currentPlayerId != lastShownTurnPlayerId) {
                 overlay.text = "$nickname ist am Zug"
                 overlay.visibility = View.VISIBLE
-                Handler(Looper.getMainLooper()).postDelayed({
-                    overlay.visibility = View.GONE
-                }, 2000)
+                Handler(Looper.getMainLooper()).postDelayed({ overlay.visibility = View.GONE }, 2000)
                 lastShownTurnPlayerId = currentPlayerId
+                triggeredMessagesThisTurn.clear()
             }
 
+            val fieldIndex = GameController.getCurrentFieldIndex(currentPlayerId)
+            val tile = ClientBoardMap.getTile(fieldIndex)
+            val tileType = tile?.type
+
+            val isSuspended = GameStateClient.players[myId]?.suspended == true
+
             if (currentPlayerId == myId) {
-                enableDiceButton()
+                if (isSuspended) disableDiceButton() else enableDiceButton()
             } else {
                 disableDiceButton()
                 hideActionButtons()
+                lastHandledTileIndex = null
             }
 
-            // ▶ Automatisch Bank- oder Risikokarte ziehen, wenn auf entsprechendem Feld
-            val fieldIndex = GameController.getCurrentFieldIndex(currentPlayerId)
-            val tileType = ClientBoardMap.getTile(fieldIndex)?.type
+            val ownsThisTile = GameStateClient.players[myId]?.properties?.contains(fieldIndex) == true
+            if (currentPlayerId == myId && ownsThisTile) {
+                GameStateClient.players[myId]?.visitedOwnedTiles?.add(fieldIndex)
+            }
 
-            if (currentPlayerId == myId) {
-                val payload = GameController.buildPayload("playerId", myId)
+            if (currentPlayerId == myId && fieldIndex != lastHandledTileIndex) {
+                lastHandledTileIndex = fieldIndex
+                val payload = GameController.buildPayload("playerId", myId, "tilePos", fieldIndex)
+
                 when (tileType) {
-                    TileType.BANK -> gameStomp.sendGameMessage(
-                        GameMessage(LobbyClient.lobbyId, GameMessageType.DRAW_BANK_CARD, payload)
-                    )
-                    TileType.RISK -> gameStomp.sendGameMessage(
-                        GameMessage(LobbyClient.lobbyId, GameMessageType.DRAW_RISK_CARD, payload)
-                    )
-                    TileType.START -> gameStomp.sendGameMessage(GameMessage(LobbyClient.lobbyId, GameMessageType.PASS_START, payload))
-                    TileType.TAX -> gameStomp.sendGameMessage(GameMessage(LobbyClient.lobbyId, GameMessageType.PAY_TAX, payload))
-                    TileType.GOTO_JAIL -> gameStomp.sendGameMessage(GameMessage(LobbyClient.lobbyId, GameMessageType.GO_TO_JAIL, payload))
-
-                    TileType.STREET, TileType.PRISON -> {
-                        // Keine Aktion
+                    TileType.BANK -> sendOnce(GameMessageType.DRAW_BANK_CARD, payload)
+                    TileType.RISK -> sendOnce(GameMessageType.DRAW_RISK_CARD, payload)
+                    TileType.START -> sendOnce(GameMessageType.PASS_START, payload)
+                    TileType.TAX -> {
+                        showTaxDialog(tile?.name ?: "eine Steuer")
+                        sendOnce(GameMessageType.PAY_TAX, payload)
                     }
-                    null -> {
-                        Log.e("GameClientHandler", "Fehler: tileType ist null.")
+                    TileType.GOTO_JAIL -> {
+                        showDialog("Gefängnis", "Du musst ins Gefängnis gehen.")
+                        sendOnce(GameMessageType.GO_TO_JAIL, payload)
                     }
+                    TileType.STREET -> {
+                        val ownerId = OwnershipClient.getOwnerId(fieldIndex)
+                        if (ownerId != null && ownerId != myId) {
+                            val ownerName = GameStateClient.getNickname(ownerId) ?: "ein Spieler"
+                            showRentDialog(ownerName)
+                            sendOnce(GameMessageType.PAY_RENT, payload)
+                        }
+                    }
+                    else -> {}
                 }
             }
         }
     }
 
-    fun updateDice(diceValue: Int) {
-        runOnUiThread {
-            textDice.text = "Gewürfelt: $diceValue"
+    private fun sendOnce(type: GameMessageType, payload: JsonObject) {
+        if (!triggeredMessagesThisTurn.contains(type)) {
+            triggeredMessagesThisTurn.add(type)
+            gameStomp.sendGameMessage(GameMessage(LobbyClient.lobbyId, type, payload))
         }
+    }
+
+
+    fun updateDice(diceValue: Int) {
+        runOnUiThread { textDice.text = "Gewürfelt: $diceValue" }
     }
 
     fun updateTile(tileName: String) {
-        runOnUiThread {
-            textTile.text = "Gelandet auf: $tileName"
-        }
+        runOnUiThread { textTile.text = "Gelandet auf: $tileName" }
     }
 
     fun updateCashDisplay(cash: Int) {
-        runOnUiThread {
-            textCash.text = "Geld: $cash €"
-        }
+        runOnUiThread { textCash.text = "Geld: $cash €" }
     }
 
     fun showEventCard(title: String, description: String) {
@@ -201,27 +226,40 @@ class GameBoardActivity : ComponentActivity() {
         }
     }
 
+    fun showTaxDialog(title: String) {
+        runOnUiThread {
+            TaxDialog(this, "Du musst $title zahlen.").show()
+        }
+    }
+
+    fun showRentDialog(ownerName: String) {
+        runOnUiThread {
+            showDialog("Miete fällig", "Du musst $ownerName Miete zahlen.")
+        }
+    }
+
     fun showBuyOptions(tilePos: Int, tileName: String, canBuy: Boolean, canBuildHouse: Boolean, canBuildHotel: Boolean) {
         runOnUiThread {
+            val hasVisitedBefore = GameStateClient.players[myId]?.visitedOwnedTiles?.contains(tilePos) == true
             btnBuy.visibility = if (canBuy) View.VISIBLE else View.GONE
-            btnBuildHouse.visibility = if (canBuildHouse) View.VISIBLE else View.GONE
-            btnBuildHotel.visibility = if (canBuildHotel) View.VISIBLE else View.GONE
+            btnBuildHouse.visibility = if (canBuildHouse && hasVisitedBefore) View.VISIBLE else View.GONE
+            btnBuildHotel.visibility = if (canBuildHotel && hasVisitedBefore) View.VISIBLE else View.GONE
 
             btnBuy.setOnClickListener {
                 val payload = GameController.buildPayload("playerId", myId, "tilePos", tilePos)
-                gameStomp.sendGameMessage(GameMessage(LobbyClient.lobbyId, GameMessageType.BUY_PROPERTY, payload))
+                sendOnce(GameMessageType.BUY_PROPERTY, payload)
                 btnBuy.visibility = View.GONE
             }
 
             btnBuildHouse.setOnClickListener {
                 val payload = GameController.buildPayload("playerId", myId, "tilePos", tilePos)
-                gameStomp.sendGameMessage(GameMessage(LobbyClient.lobbyId, GameMessageType.BUILD_HOUSE, payload))
+                sendOnce(GameMessageType.BUILD_HOUSE, payload)
                 btnBuildHouse.visibility = View.GONE
             }
 
             btnBuildHotel.setOnClickListener {
                 val payload = GameController.buildPayload("playerId", myId, "tilePos", tilePos)
-                gameStomp.sendGameMessage(GameMessage(LobbyClient.lobbyId, GameMessageType.BUILD_HOTEL, payload))
+                sendOnce(GameMessageType.BUILD_HOTEL, payload)
                 btnBuildHotel.visibility = View.GONE
             }
         }
@@ -235,9 +273,7 @@ class GameBoardActivity : ComponentActivity() {
     }
 
     fun disableDiceButton() {
-        runOnUiThread {
-            btnRollDice.visibility = View.GONE
-        }
+        runOnUiThread { btnRollDice.visibility = View.GONE }
     }
 
     fun showPlayerLost(playerId: Int) {

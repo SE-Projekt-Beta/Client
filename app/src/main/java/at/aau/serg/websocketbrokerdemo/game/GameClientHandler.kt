@@ -10,20 +10,21 @@ import com.google.gson.JsonObject
 class GameClientHandler(
     private val activity: GameBoardActivity
 ) {
+
     fun handle(message: GameMessage) {
         when (message.type) {
-            GameMessageType.GAME_STATE -> handleGameState(message.payload.asJsonObject)
+            GameMessageType.GAME_STATE       -> handleGameState(message.payload.asJsonObject)
             GameMessageType.DRAW_RISK_CARD,
-            GameMessageType.DRAW_BANK_CARD -> handleEventCard(message.payload.asJsonObject)
-            GameMessageType.PASS_START -> handlePassStart()
-            GameMessageType.PAY_TAX -> handleTax()
-            GameMessageType.GO_TO_JAIL -> handleGoToJail()
-            GameMessageType.DICE_ROLLED -> handleDiceRolled(message.payload.asJsonObject)
-            GameMessageType.CASH_TASK -> handleCashTask(message.payload.asJsonObject)
-            GameMessageType.PLAYER_LOST -> handlePlayerLost(message.payload.asJsonObject)
-            GameMessageType.GAME_OVER -> handleGameOver(message.payload.asJsonObject)
-            GameMessageType.ERROR -> Log.e(TAG, "Fehler: ${message.payload}")
-            else -> Log.w(TAG, "Unbekannter Nachrichtentyp: ${message.type}")
+            GameMessageType.DRAW_BANK_CARD   -> handleEventCard(message.payload.asJsonObject)
+            GameMessageType.PASS_START       -> handlePassStart()
+            GameMessageType.PAY_TAX          -> handleTax()
+            GameMessageType.GO_TO_JAIL       -> handleGoToJail()
+            GameMessageType.DICE_ROLLED      -> handleDiceRolled(message.payload.asJsonObject)
+            GameMessageType.CASH_TASK        -> handleCashTask(message.payload.asJsonObject)
+            GameMessageType.PLAYER_LOST      -> handlePlayerLost(message.payload.asJsonObject)
+            GameMessageType.GAME_OVER        -> handleGameOver(message.payload.asJsonObject)
+            GameMessageType.ERROR            -> Log.e(TAG, "Fehler: ${message.payload}")
+            else                             -> Log.w(TAG, "Unbekannter Nachrichtentyp: ${message.type}")
         }
     }
 
@@ -32,13 +33,12 @@ class GameClientHandler(
 
         val myId = LobbyClient.playerId
         val currentPlayerId = GameController.getCurrentPlayerId()
-        val currentPlayerName = GameController.getCurrentPlayerName()
-        val diceValue = payload["dice"]?.asInt ?: -1
         val fieldIndex = GameController.getCurrentFieldIndex(currentPlayerId)
         val tileName = GameController.getTileName(fieldIndex)
         val cash = GameController.getCash(currentPlayerId)
+        val diceValue = payload["dice"]?.asInt ?: -1
 
-        activity.updateTurnView(currentPlayerId, currentPlayerName)
+        activity.updateTurnView(currentPlayerId)
         activity.updateDice(diceValue)
         activity.updateTile(tileName)
         activity.updateCashDisplay(cash)
@@ -46,7 +46,13 @@ class GameClientHandler(
         if (myId == currentPlayerId) {
             activity.enableDiceButton()
             val options = GameController.evaluateTileOptions(currentPlayerId, fieldIndex)
-            activity.showBuyOptions(fieldIndex, tileName, options.canBuy, options.canBuildHouse, options.canBuildHotel)
+            activity.showBuyOptions(
+                tilePos = fieldIndex,
+                tileName = tileName,
+                canBuy = options.canBuy,
+                canBuildHouse = options.canBuildHouse,
+                canBuildHotel = options.canBuildHotel
+            )
         } else {
             activity.disableDiceButton()
             activity.hideActionButtons()

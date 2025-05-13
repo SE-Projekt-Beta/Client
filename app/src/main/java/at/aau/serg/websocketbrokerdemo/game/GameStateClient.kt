@@ -37,7 +37,6 @@ object GameStateClient {
                 alive = p.getBoolean("alive"),
                 suspended = p.getBoolean("suspended"),
                 hasEscapeCard = p.getBoolean("escapeCard"),
-                houseCounts = houseCounts,
                 properties = properties
             )
             players[player.id] = player

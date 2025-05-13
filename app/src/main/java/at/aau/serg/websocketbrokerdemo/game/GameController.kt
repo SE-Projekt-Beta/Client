@@ -60,14 +60,20 @@ object GameController {
     fun canBuildHouse(tileIndex: Int, playerId: Int): Boolean {
         val tile = ClientBoardMap.getTile(tileIndex) ?: return false
         val owner = OwnershipClient.getOwnerId(tileIndex)
-        return tile.type == TileType.STREET && owner == playerId && tile.houseCost != null
+        val houseCount = OwnershipClient.getHouseCount(tileIndex)
+        return tile.type == TileType.STREET && owner == playerId && houseCount < 4
     }
+
 
     fun canBuildHotel(tileIndex: Int, playerId: Int): Boolean {
         val tile = ClientBoardMap.getTile(tileIndex) ?: return false
         val owner = OwnershipClient.getOwnerId(tileIndex)
-        return tile.type == TileType.STREET && owner == playerId && tile.hotelCost != null
+        val houseCount = OwnershipClient.getHouseCount(tileIndex)
+        val hotelBuilt = OwnershipClient.hasHotel(tileIndex)
+        return tile.type == TileType.STREET && owner == playerId && houseCount == 4 && !hotelBuilt
     }
+
+
 
     fun evaluateTileOptions(playerId: Int, tileIndex: Int): TileOptions {
         return TileOptions(

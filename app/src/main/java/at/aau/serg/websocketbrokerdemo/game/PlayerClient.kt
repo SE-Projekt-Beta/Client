@@ -8,7 +8,6 @@ data class PlayerClient(
     var alive: Boolean,
     var suspended: Boolean,
     var hasEscapeCard: Boolean,
-    var houseCounts: MutableMap<Int, Int> = mutableMapOf(),
-    var properties: MutableList<Int> = mutableListOf()
+    val properties: MutableList<Int> = mutableListOf(),
+    val visitedOwnedTiles: MutableSet<Int> = mutableSetOf()
 )
-
