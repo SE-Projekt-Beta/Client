@@ -13,10 +13,14 @@
 
 
 <!--    LobbyList-->
-    <string name="lobby_player_count">%1$d players</string>
+    <plurals name="lobby_player_count">
+        <item quantity="one">%d player</item>
+        <item quantity="other">%d players</item>
+    </plurals>
 
 
-<!--    TileInfoDialog-->
+
+    <!--    TileInfoDialog-->
     <string name="tile_price">Kaufpreis: %1$d €</string>
     <string name="tile_rent">Miete: %1$d €</string>
     <string name="tile_house_cost">Hauskosten: %1$d €</string>
@@ -40,7 +44,7 @@
 
 <!--    Lobby Stuff-->
     <string name="lobby">Lobby</string>
-    <string name="waiting_for_players">Waiting for players...</string>
+    <string name="waiting_for_players">Waiting for players…</string>
     <string name="start_game">Start Game</string>
 
 <!--    Username Stuff-->
@@ -58,7 +62,7 @@
 
 <!--    BankDialog Stuff-->
     <string name="bank">BANK</string>
-    <string name="karteninhalt">Karteninhalt...</string>
+    <string name="karteninhalt">Karteninhalt…</string>
 
 <!--    PassStartDialog-->
     <string name="startbonus">Startbonus!</string>
