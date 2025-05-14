@@ -1,4 +1,4 @@
-package at.aau.serg.websocketbrokerdemo.game
+package at.aau.serg.websocketbrokerdemo.game.dialog
 
 import android.app.Dialog
 import android.content.Context

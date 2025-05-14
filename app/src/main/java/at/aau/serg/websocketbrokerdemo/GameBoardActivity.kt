@@ -9,6 +9,8 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.activity.ComponentActivity
 import at.aau.serg.websocketbrokerdemo.game.*
+import at.aau.serg.websocketbrokerdemo.game.dialog.BankCardDialog
+import at.aau.serg.websocketbrokerdemo.game.dialog.RiskCardDialog
 import at.aau.serg.websocketbrokerdemo.lobby.LobbyClient
 import at.aau.serg.websocketbrokerdemo.model.ClientBoardMap
 import at.aau.serg.websocketbrokerdemo.model.TileInfoDialog
@@ -116,6 +118,7 @@ class GameBoardActivity : ComponentActivity() {
     }
 
     fun updateTurnView(currentPlayerId: Int, nickname: String) {
+        Log.i("GameBoardActivity", "Aktueller Spieler: $nickname (ID: $currentPlayerId)")
         runOnUiThread {
             textCurrentTurn.text = "$nickname ist am Zug"
 
