@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.RecyclerView
 import at.aau.serg.websocketbrokerdemo.lobby.LobbyAdapter
 import at.aau.serg.websocketbrokerdemo.lobby.LobbyClient
 import at.aau.serg.websocketbrokerdemo.lobby.LobbyClient.playerId
-import at.aau.serg.websocketbrokerdemo.lobby.LobbyClient.username
 import at.aau.serg.websocketbrokerdemo.lobby.LobbyHandler
 import at.aau.serg.websocketbrokerdemo.network.LobbyMessageListener
 import at.aau.serg.websocketbrokerdemo.network.LobbyStomp
@@ -80,6 +79,8 @@ class ListLobbyActivity : ComponentActivity() {
 
         //set the lobbyid
         LobbyClient.lobbyId = lobby.id
+        LobbyClient.lobbyName = lobby.name
+
 
         //log it
         Log.i("ListLobby", "Joining lobby: ${lobby.id}")

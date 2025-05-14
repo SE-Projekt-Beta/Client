@@ -2,7 +2,6 @@ package at.aau.serg.websocketbrokerdemo.game
 
 import at.aau.serg.websocketbrokerdemo.model.ClientBoardMap
 import at.aau.serg.websocketbrokerdemo.model.TileType
-import at.aau.serg.websocketbrokerdemo.network.dto.GameMessageType
 import com.google.gson.JsonObject
 import org.json.JSONObject
 

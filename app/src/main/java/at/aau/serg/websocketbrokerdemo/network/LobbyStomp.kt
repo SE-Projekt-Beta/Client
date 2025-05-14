@@ -2,7 +2,6 @@ package at.aau.serg.websocketbrokerdemo.network
 
 import WEBSOCKET_URI
 import android.util.Log
-import at.aau.serg.websocketbrokerdemo.game.OwnershipClient
 import at.aau.serg.websocketbrokerdemo.lobby.LobbyClient
 import at.aau.serg.websocketbrokerdemo.network.dto.LobbyDTO
 import at.aau.serg.websocketbrokerdemo.network.dto.LobbyMessage
@@ -18,6 +17,8 @@ import org.hildan.krossbow.stomp.StompSession
 import org.hildan.krossbow.stomp.sendText
 import org.hildan.krossbow.stomp.subscribeText
 import org.hildan.krossbow.websocket.okhttp.OkHttpWebSocketClient
+
+const val APP_LOBBY = "/app/lobby"
 
 class LobbyStomp(private val listener: LobbyMessageListener) {
 
@@ -55,18 +56,18 @@ class LobbyStomp(private val listener: LobbyMessageListener) {
             addProperty("username", username);
         }
         val msg = LobbyMessage(null, LobbyMessageType.CREATE_USER, payload)
-        scope.launch { session.sendText("/app/lobby", Gson().toJson(msg)) }
+        scope.launch { session.sendText(APP_LOBBY, Gson().toJson(msg)) }
     }
 
     fun sendCreateLobby(lobbyName: String) {
         val payload = JsonObject().apply { addProperty("lobbyName", lobbyName) }
         val msg = LobbyMessage(null, LobbyMessageType.CREATE_LOBBY, payload)
-        scope.launch { session.sendText("/app/lobby", Gson().toJson(msg)) }
+        scope.launch { session.sendText(APP_LOBBY, Gson().toJson(msg)) }
     }
 
     fun sendListLobbies() {
         val msg = LobbyMessage(null, LobbyMessageType.LIST_LOBBIES, JsonObject())
-        scope.launch { session.sendText("/app/lobby", Gson().toJson(msg)) }
+        scope.launch { session.sendText(APP_LOBBY, Gson().toJson(msg)) }
     }
 
     fun sendJoinLobby(playerId: Int, lobbyId: Int) {
@@ -76,7 +77,7 @@ class LobbyStomp(private val listener: LobbyMessageListener) {
         }
         val msg = LobbyMessage(lobbyId, LobbyMessageType.JOIN_LOBBY, payload)
         scope.launch {
-            session.sendText("/app/lobby", Gson().toJson(msg))
+            session.sendText(APP_LOBBY, Gson().toJson(msg))
             Log.i("LobbyStomp", "Sent JOIN_LOBBY for user=$playerId, lobbyId=$lobbyId")
         }
     }
@@ -85,7 +86,7 @@ class LobbyStomp(private val listener: LobbyMessageListener) {
         val id = LobbyClient.lobbyId
         val payload = JsonObject().apply { addProperty("lobbyId", id) }
         val msg = LobbyMessage(id, LobbyMessageType.START_GAME, payload)
-        scope.launch { session.sendText("/app/lobby", Gson().toJson(msg)) }
+        scope.launch { session.sendText(APP_LOBBY, Gson().toJson(msg)) }
     }
 
     private fun parseLobbyMessage(json: String): LobbyMessage =
@@ -107,8 +108,8 @@ class LobbyStomp(private val listener: LobbyMessageListener) {
                     return
                 }
 
-                val playerId = message.payload.asJsonObject.get("playerId").asInt
-                val username = message.payload.asJsonObject.get("username").asString
+                val playerId = message.payload.asJsonObject["playerId"].asInt
+                val username = message.payload.asJsonObject["username"].asString
 
                 // check if the nickname is the same as the one in the client
                 if (username != LobbyClient.username) {
@@ -130,9 +131,9 @@ class LobbyStomp(private val listener: LobbyMessageListener) {
                 val lobbies = arr.map { elem ->
                     val o = elem.asJsonObject
                     LobbyDTO(
-                        id = o.get("lobbyId").asInt,
-                        name = o.get("lobbyName").asString,
-                        playerCount = o.get("playerCount").asInt
+                        id = o["lobbyId"].asInt,
+                        name = o["lobbyName"].asString,
+                        playerCount = o["playerCount"].asInt
                     )
                 }
                 listener.onLobbyListUpdate(lobbies)
@@ -141,7 +142,7 @@ class LobbyStomp(private val listener: LobbyMessageListener) {
                 val playersJson = message.payload.asJsonObject.getAsJsonArray("players")
                 val players = playersJson.map {
                     val o = it.asJsonObject
-                    PlayerDTO(o.get("id").asInt, o.get("nickname").asString)
+                    PlayerDTO(o["id"].asInt, o["nickname"].asString)
                 }
                 listener.onLobbyUpdate(players)
             }

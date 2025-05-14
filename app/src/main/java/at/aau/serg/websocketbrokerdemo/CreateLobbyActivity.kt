@@ -7,7 +7,6 @@ import android.widget.EditText
 import androidx.activity.ComponentActivity
 import at.aau.serg.websocketbrokerdemo.lobby.LobbyHandler
 import at.aau.serg.websocketbrokerdemo.network.LobbyStomp
-import at.aau.serg.websocketbrokerdemo.network.dto.LobbyDTO
 
 class CreateLobbyActivity : ComponentActivity() {
 
@@ -40,9 +39,5 @@ class CreateLobbyActivity : ComponentActivity() {
             finish()
         }
 
-    }
-
-    private fun joinLobby(lobby: LobbyDTO) {
-        // Handle joining the lobby
     }
 }

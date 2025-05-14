@@ -4,6 +4,7 @@ import android.util.Log
 import at.aau.serg.websocketbrokerdemo.GameBoardActivity
 import at.aau.serg.websocketbrokerdemo.game.dialog.RiskCardDialog
 import at.aau.serg.websocketbrokerdemo.game.dialog.StartBonusDialog
+import at.aau.serg.websocketbrokerdemo.game.dialog.TaxDialog
 import at.aau.serg.websocketbrokerdemo.lobby.LobbyClient
 import at.aau.serg.websocketbrokerdemo.network.dto.GameMessage
 import at.aau.serg.websocketbrokerdemo.network.dto.GameMessageType

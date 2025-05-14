@@ -1,8 +1,91 @@
 <resources>
     <string name="app_name">SE2 DKT</string>
-    <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
-    <string name="title_activity_connection_view">ConnectionView</string>
-    <string name="title_activity_view">view</string>
-    <string name="title_activity_main2">MainActivity2</string>
+
+<!--    GameBoardActivity-->
+    <string name="nickname_turn">%1$s ist an Zug</string>
+    <string name="rolled_value">Gewürfelt: %1$d</string>
+    <string name="landed_on">Gelandet auf: %1$s</string>
+    <string name="geld_text">Gelandet auf: %1$d</string>
+
+
+<!--    LobbyActivity-->
+    <string name="lobby_name">Lobby: %1$s - %2$d</string>
+
+
+<!--    LobbyList-->
+    <plurals name="lobby_player_count">
+        <item quantity="one">%d player</item>
+        <item quantity="other">%d players</item>
+    </plurals>
+
+
+
+    <!--    TileInfoDialog-->
+    <string name="tile_price">Kaufpreis: %1$d €</string>
+    <string name="tile_rent">Miete: %1$d €</string>
+    <string name="tile_house_cost">Hauskosten: %1$d €</string>
+    <string name="tile_hotel_cost">Hotelkosten: %1$d €</string>
+
+
+<!--    Game stuff-->
+    <string name="spieler_x_ist_am_zug">Spieler X ist am Zug</string>
+    <string name="board_image_desc">Board Image</string>
+    <string name="player_token">Player Token</string>
+    <string name="wuerfeln">Würfeln</string>
+    <string name="kaufen">Kaufen</string>
+    <string name="haus_bauen">Haus bauen</string>
+    <string name="hotel_bauen">Hotel bauen</string>
+
+    <string name="gewuerfelt_default">Gewürfelt: -</string>
+    <string name="geld_default">Geld: - €</string>
+    <string name="besitz_anzeigen_default">Besitz anzeigen</string>
+    <string name="gelandet_auf_default">Gelandet auf: -</string>
+    <string name="feld">Feld</string>
+
+<!--    Lobby Stuff-->
+    <string name="lobby">Lobby</string>
+    <string name="waiting_for_players">Waiting for players…</string>
+    <string name="start_game">Start Game</string>
+
+<!--    Username Stuff-->
+    <string name="please_enter_your_username">PLEASE ENTER YOUR USERNAME!</string>
+    <string name="username">Username</string>
+    <string name="enter">Enter</string>
+
+<!--    CreateLobby Stuff-->
+    <string name="create_a_lobby">Create a Lobby</string>
+    <string name="enter_lobby_name">Enter lobby name</string>
+    <string name="create">Create</string>
+
+<!--    AllDialog-->
+    <string name="ok">OK</string>
+
+<!--    BankDialog Stuff-->
+    <string name="bank">BANK</string>
+    <string name="karteninhalt">Karteninhalt…</string>
+
+<!--    PassStartDialog-->
+    <string name="startbonus">Startbonus!</string>
+    <string name="du_hast_das_startfeld_berquert">Du hast das Startfeld überquert.</string>
+
+<!--    RiskDialog-->
+    <string name="risiko">RISIKO</string>
+    <string name="gehe_auf_feld_22_passierst_du_den_start_erh_ltst_du_200">Gehe auf Feld 22. Passierst du den Start, erhältst du 200€.</string>
+
+<!--    TaxDialog-->
+    <string name="steuer">Steuer!</string>
+    <string name="du_musst_steuern_zahlen">Du musst Steuern zahlen!</string>
+
+<!--    TileDialog-->
+    <string name="stra_e">Straße</string>
+    <string name="kaufpreis_xxx">Kaufpreis: XXX €</string>
+    <string name="miete_xxx">Miete: XXX €</string>
+    <string name="hauskosten_xxx">Hauskosten: XXX €</string>
+    <string name="hotelkosten_xxx">Hotelkosten: XXX €</string>
+    <string name="schliessen">SCHLIESSEN</string>
+
+<!--    LobbyList-->
+    <string name="new_lobby">New Lobby</string>
+
+
 </resources>

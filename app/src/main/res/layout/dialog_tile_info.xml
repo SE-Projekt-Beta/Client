@@ -13,7 +13,7 @@
         android:id="@+id/tileNameTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Straße"
+        android:text="@string/stra_e"
         android:textSize="20sp"
         android:textStyle="bold"
         android:textColor="#000000"
@@ -23,7 +23,7 @@
         android:id="@+id/tilePriceTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Kaufpreis: XXX €"
+        android:text="@string/kaufpreis_xxx"
         android:textSize="16sp"
         android:layout_marginBottom="8dp" />
 
@@ -31,7 +31,7 @@
         android:id="@+id/tileRentTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Miete: XXX €"
+        android:text="@string/miete_xxx"
         android:textSize="16sp"
         android:layout_marginBottom="8dp" />
 
@@ -39,7 +39,7 @@
         android:id="@+id/tileHouseCostTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hauskosten: XXX €"
+        android:text="@string/hauskosten_xxx"
         android:textSize="16sp"
         android:layout_marginBottom="8dp" />
 
@@ -47,7 +47,7 @@
         android:id="@+id/tileHotelCostTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hotelkosten: XXX €"
+        android:text="@string/hotelkosten_xxx"
         android:textSize="16sp"
         android:layout_marginBottom="16dp" />
 
@@ -55,7 +55,7 @@
         android:id="@+id/closeTileInfoButton"
         android:layout_width="150dp"
         android:layout_height="wrap_content"
-        android:text="SCHLIESSEN"
+        android:text="@string/schliessen"
         android:layout_gravity="center"
         android:textStyle="bold" />
 </LinearLayout>

@@ -3,14 +3,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp"
-    android:background="#FFF8E1">
+    android:padding="16dp">
 
     <Button
         android:id="@+id/newLobbyButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="New Lobby"
+        android:text="@string/new_lobby"
         android:background="@drawable/button_yellow_with_border"
         android:textColor="#000000"/>
 
