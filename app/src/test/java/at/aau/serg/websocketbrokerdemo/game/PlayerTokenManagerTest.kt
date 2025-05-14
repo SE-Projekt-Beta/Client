@@ -61,7 +61,6 @@ class PlayerTokenManagerTest {
 
     @Test
     fun testPositionTokensOnStartTile() {
-        // Execute
         playerTokenManager.positionTokensOnStartTile()
 
         // Verify tokens moved to start position (ClientBoardMap.getTile(1))
@@ -85,7 +84,7 @@ class PlayerTokenManagerTest {
     }
 
     @Test
-    fun `test movePlayerToken moves player correctly`() {
+    fun testMovePlayerToken() {
         val playerId = 0
         val steps = 3
         val newTile = ClientBoardMap.getTile(4)!!

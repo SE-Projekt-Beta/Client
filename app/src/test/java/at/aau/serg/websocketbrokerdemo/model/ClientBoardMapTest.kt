@@ -14,7 +14,7 @@ class ClientBoardMapTest {
     @Test
     fun testFirstTileIsStart() {
         val startTile = ClientBoardMap.tiles[0]
-        assertEquals("Los", startTile.name)
+        assertEquals("Start", startTile.name)
         assertEquals(TileType.START, startTile.type)
     }
 
