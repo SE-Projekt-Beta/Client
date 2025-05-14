@@ -1,7 +1,10 @@
 package at.aau.serg.websocketbrokerdemo.game
 
 import junit.framework.TestCase.assertEquals
+import junit.framework.TestCase.assertNull
 import junit.framework.TestCase.assertTrue
+import org.json.JSONArray
+import org.json.JSONObject
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -9,43 +12,65 @@ class OwnershipClientTest {
 
     @BeforeEach
     fun setup() {
-        // Rücksetzen des Zustands vor jedem Test
-        OwnershipClient.all().keys.forEach { player ->
-            OwnershipClient.getProperties(player).forEach { property ->
-                // Keine Remove-Funktion, daher alternativer Ansatz
-                // da OwnershipClient nicht verändert werden darf, wird hier implizit neuer Player genutzt
-            }
+        OwnershipClient.streetOwners.clear()
+    }
+
+    @Test
+    fun testUpdateFromBoard_withOwners() {
+        val board = JSONArray().apply {
+            put(JSONObject().apply {
+                put("type", "StreetTile")
+                put("index", 0)
+                put("ownerId", 1)
+            })
+            put(JSONObject().apply {
+                put("type", "StreetTile")
+                put("index", 1)
+                put("ownerId", -1) // unbesetzt
+            })
+            put(JSONObject().apply {
+                put("type", "EventTile")
+                put("index", 2)
+            })
         }
+
+        OwnershipClient.updateFromBoard(board)
+
+        assertEquals(1, OwnershipClient.getOwnerId(0))
+        assertNull(OwnershipClient.getOwnerId(1))
+        assertNull(OwnershipClient.getOwnerId(2)) // kein StreetTile, daher kein Eintrag
     }
 
     @Test
-    fun testAddAndRetrieveProperties() {
-        val player = "playerX"
-        OwnershipClient.addProperty(player, "Kärntner Straße")
-        OwnershipClient.addProperty(player, "Opernring")
+    fun testUpdateFromBoard_emptyArray() {
+        val emptyBoard = JSONArray()
 
-        val properties = OwnershipClient.getProperties(player)
-        assertEquals(2, properties.size)
-        assertTrue(properties.contains("Kärntner Straße"))
-        assertTrue(properties.contains("Opernring"))
+        OwnershipClient.updateFromBoard(emptyBoard)
+
+        assertTrue(OwnershipClient.streetOwners.isEmpty())
     }
 
     @Test
-    fun testGetPropertiesForUnknownPlayer() {
-        val result = OwnershipClient.getProperties("unknown_player")
-        assertTrue(result.isEmpty())
+    fun testGetOwnerId_nonExistingIndex() {
+        // Kein Eintrag vorhanden
+        assertNull(OwnershipClient.getOwnerId(99))
     }
 
     @Test
-    fun testAllPropertiesMap() {
-        val player1 = "playerA"
-        val player2 = "playerB"
+    fun testUpdateFromBoard_overwritesOldValues() {
+        // Vorheriger Eintrag
+        OwnershipClient.streetOwners[0] = 42
 
-        OwnershipClient.addProperty(player1, "Straße 1")
-        OwnershipClient.addProperty(player2, "Straße 2")
+        val board = JSONArray().apply {
+            put(JSONObject().apply {
+                put("type", "StreetTile")
+                put("index", 0)
+                put("ownerId", 2)
+            })
+        }
 
-        val all = OwnershipClient.all()
-        assertEquals(listOf("Straße 1"), all[player1])
-        assertEquals(listOf("Straße 2"), all[player2])
+        OwnershipClient.updateFromBoard(board)
+
+        assertEquals(2, OwnershipClient.getOwnerId(0))
     }
 }
