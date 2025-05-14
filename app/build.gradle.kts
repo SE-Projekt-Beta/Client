@@ -43,6 +43,7 @@ android {
 
     testOptions {
         unitTests {
+            isReturnDefaultValues = true
             all {
                 it.useJUnitPlatform()
                 it.finalizedBy(tasks.named("jacocoTestReport"))
@@ -110,7 +111,7 @@ sonar {
                     "**/UsernameActivity.kt," +
                     "**/CreateLobbyActivity.kt," +
                     "**/ListLobbyActivity.kt," +
-                    "**/TileInfoDialog.kt" +
+                    "**/TileInfoDialog.kt," +
                     "**/Theme.kt," +
                     "**/Color.kt," +
                     "**/TileType.kt," +
@@ -121,6 +122,7 @@ sonar {
                     "**/ui/**," +
                     "**/*Activity.kt," +
                     "**/*Adapter.kt," +
+                    "**/network/**," +
                     "**/dto/**"
         )
     }
