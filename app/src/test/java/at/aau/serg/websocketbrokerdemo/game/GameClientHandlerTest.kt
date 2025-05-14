@@ -1,7 +1,5 @@
 package at.aau.serg.websocketbrokerdemo.game
 
-import android.app.Activity
-import android.app.Dialog
 import android.util.Log
 import at.aau.serg.websocketbrokerdemo.GameBoardActivity
 import at.aau.serg.websocketbrokerdemo.lobby.LobbyClient
