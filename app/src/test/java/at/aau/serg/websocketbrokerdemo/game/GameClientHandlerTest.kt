@@ -1,5 +1,7 @@
 package at.aau.serg.websocketbrokerdemo.game
 
+import android.app.Activity
+import android.app.Dialog
 import android.util.Log
 import at.aau.serg.websocketbrokerdemo.GameBoardActivity
 import at.aau.serg.websocketbrokerdemo.lobby.LobbyClient
@@ -10,7 +12,10 @@ import com.google.gson.JsonObject
 import io.mockk.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
 
+@RunWith(RobolectricTestRunner::class)
 class GameClientHandlerTest {
     private lateinit var mockActivity: GameBoardActivity
     private lateinit var handler: GameClientHandler
@@ -191,4 +196,31 @@ class GameClientHandlerTest {
 
         verify { Log.e(any(), match { it.contains("Etwas ist schiefgelaufen") }) }
     }
+
+    @Test
+    fun testHandleDiceRolledMissingSteps() {
+        val payload = JsonObject()
+
+        handler.handle(GameMessage(0, GameMessageType.DICE_ROLLED, payload))
+
+        verify(exactly = 0) { mockActivity.updateDice(any()) }
+    }
+
+    @Test
+    fun testHandleCashTaskOtherPlayerId() {
+        every { LobbyClient.playerId } returns 2
+
+        val payload = JsonObject().apply {
+            addProperty("playerId", 1)
+            addProperty("amount", 100)
+            addProperty("newCash", 2000)
+        }
+
+        handler.handle(GameMessage(0, GameMessageType.CASH_TASK, payload))
+
+        verify(exactly = 0) { mockActivity.updateCashDisplay(any()) }
+        verify { Log.i(any(), match { it.contains("2000") }) }
+    }
+
+
 }
