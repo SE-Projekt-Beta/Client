@@ -2,11 +2,7 @@ package at.aau.serg.websocketbrokerdemo.game
 
 import android.widget.ImageView
 import at.aau.serg.websocketbrokerdemo.GameBoardActivity
-import at.aau.serg.websocketbrokerdemo.game.PlayerTokenManager
 import at.aau.serg.websocketbrokerdemo.model.ClientBoardMap
-import at.aau.serg.websocketbrokerdemo.model.ClientTile
-import at.aau.serg.websocketbrokerdemo.model.TileType
-import at.aau.serg.websocketbrokerdemo.game.Player
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import io.mockk.*
