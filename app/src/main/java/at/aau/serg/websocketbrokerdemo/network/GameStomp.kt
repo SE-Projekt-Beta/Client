@@ -53,6 +53,7 @@ class GameStomp(
     }
 
     fun requestGameState() {
+        Log.i("GameStomp", "Requesting game state for lobby $lobbyId")
         val payload = JsonObject().apply {
             addProperty("lobbyId", LobbyClient.lobbyId)
         }

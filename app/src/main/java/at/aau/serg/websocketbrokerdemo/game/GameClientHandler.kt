@@ -2,6 +2,8 @@ package at.aau.serg.websocketbrokerdemo.game
 
 import android.util.Log
 import at.aau.serg.websocketbrokerdemo.GameBoardActivity
+import at.aau.serg.websocketbrokerdemo.game.dialog.RiskCardDialog
+import at.aau.serg.websocketbrokerdemo.game.dialog.StartBonusDialog
 import at.aau.serg.websocketbrokerdemo.lobby.LobbyClient
 import at.aau.serg.websocketbrokerdemo.network.dto.GameMessage
 import at.aau.serg.websocketbrokerdemo.network.dto.GameMessageType
@@ -28,6 +30,7 @@ class GameClientHandler(
     }
 
     private fun handleGameState(payload: JsonObject) {
+        Log.i(TAG, "Received GAME_STATE payload: $payload")
         GameController.updateFromGameState(payload)
 
         val myId = LobbyClient.playerId
@@ -74,7 +77,8 @@ class GameClientHandler(
 
     private fun handleGoToJail() {
         activity.runOnUiThread {
-            RiskCardDialog(activity,
+            RiskCardDialog(
+                activity,
                 "Gefängnis",
                 "Du wirst ins Gefängnis geschickt. 3 Runden Pause!"
             ).show()

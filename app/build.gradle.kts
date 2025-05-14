@@ -123,6 +123,7 @@ sonar {
                     "**/*Activity.kt," +
                     "**/*Adapter.kt," +
                     "**/network/**," +
+                    "**/game/dialog/**," +
                     "**/dto/**"
         )
     }
