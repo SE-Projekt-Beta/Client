@@ -19,7 +19,7 @@ class PlayerTokenManagerTest {
         MockKAnnotations.init(this)
 
         gameBoardActivity = mockk(relaxed = true)
-        // Mock für findViewById - jedes Mal ein neues ImageView mocken
+        // Mock für findViewById - jedes Mal neues ImageView mocken
         mockImageViews = List(6) { mockk(relaxed = true) }
 
         every { gameBoardActivity.findViewById<ImageView>(any()) } answers {
