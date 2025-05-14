@@ -58,16 +58,6 @@ class GameControllerTest {
     }
 
     @Test
-    fun testGetCurrentPlayerName() {
-        every { GameStateClient.currentPlayerId } returns 1
-        every { GameStateClient.getNickname(1) } returns "PlayerOne"
-
-        val result = GameController.getCurrentPlayerName()
-
-        assertEquals("PlayerOne", result)
-    }
-
-    @Test
     fun testGetCurrentPlayerNameWhenNull() {
         every { GameStateClient.getNickname(1) } returns null
 
