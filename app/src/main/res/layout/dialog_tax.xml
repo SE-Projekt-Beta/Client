@@ -13,7 +13,7 @@
         android:id="@+id/taxTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Steuer!"
+        android:text="@string/steuer"
         android:textSize="24sp"
         android:textStyle="bold"
         android:textColor="#B71C1C"
@@ -23,7 +23,7 @@
         android:id="@+id/taxText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Du musst Steuern zahlen!"
+        android:text="@string/du_musst_steuern_zahlen"
         android:textSize="16sp"
         android:layout_marginBottom="24dp" />
 
@@ -31,7 +31,7 @@
         android:id="@+id/okTaxBtn"
         android:layout_width="150dp"
         android:layout_height="wrap_content"
-        android:text="OK"
+        android:text="@string/ok"
         android:textStyle="bold"
         android:backgroundTint="#B71C1C"
         android:textColor="#FFFFFF" />

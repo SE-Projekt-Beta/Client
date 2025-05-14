@@ -27,7 +27,8 @@ class LobbyAdapter(
     override fun onBindViewHolder(holder: LobbyViewHolder, position: Int) {
         val lobby = lobbies[position]
         holder.lobbyName.text = lobby.name
-        holder.playerCount.text = "${lobby.playerCount} players"
+        holder.playerCount.text = holder.itemView.context.getString(R.string.lobby_player_count, lobby.playerCount)
+
         holder.itemView.setOnClickListener { onLobbyClick(lobby) }
     }
 

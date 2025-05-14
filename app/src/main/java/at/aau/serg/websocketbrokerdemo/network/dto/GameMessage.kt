@@ -1,6 +1,5 @@
 package at.aau.serg.websocketbrokerdemo.network.dto
 
-import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 
 /**

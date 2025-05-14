@@ -41,8 +41,4 @@ class CreateLobbyActivity : ComponentActivity() {
         }
 
     }
-
-    private fun joinLobby(lobby: LobbyDTO) {
-        // Handle joining the lobby
-    }
 }

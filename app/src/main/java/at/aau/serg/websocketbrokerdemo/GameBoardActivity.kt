@@ -13,7 +13,7 @@ import at.aau.serg.websocketbrokerdemo.game.dialog.BankCardDialog
 import at.aau.serg.websocketbrokerdemo.game.dialog.RiskCardDialog
 import at.aau.serg.websocketbrokerdemo.lobby.LobbyClient
 import at.aau.serg.websocketbrokerdemo.model.ClientBoardMap
-import at.aau.serg.websocketbrokerdemo.model.TileInfoDialog
+import at.aau.serg.websocketbrokerdemo.game.dialog.TileInfoDialog
 import at.aau.serg.websocketbrokerdemo.model.TileType
 import at.aau.serg.websocketbrokerdemo.network.GameStomp
 import at.aau.serg.websocketbrokerdemo.network.dto.GameMessage
@@ -120,10 +120,10 @@ class GameBoardActivity : ComponentActivity() {
     fun updateTurnView(currentPlayerId: Int, nickname: String) {
         Log.i("GameBoardActivity", "Aktueller Spieler: $nickname (ID: $currentPlayerId)")
         runOnUiThread {
-            textCurrentTurn.text = "$nickname ist am Zug"
+            textCurrentTurn.text = getString(R.string.nickname_turn, nickname)
 
             if (currentPlayerId != lastShownTurnPlayerId) {
-                overlay.text = "$nickname ist am Zug"
+                overlay.text = getString(R.string.nickname_turn, nickname)
                 overlay.visibility = View.VISIBLE
                 Handler(Looper.getMainLooper()).postDelayed({
                     overlay.visibility = View.GONE
@@ -168,13 +168,13 @@ class GameBoardActivity : ComponentActivity() {
 
     fun updateDice(diceValue: Int) {
         runOnUiThread {
-            textDice.text = "Gewürfelt: $diceValue"
+            textDice.text = getString(R.string.rolled_value, diceValue)
         }
     }
 
     fun updateTile(tileName: String) {
         runOnUiThread {
-            textTile.text = "Gelandet auf: $tileName"
+            textTile.text = getString(R.string.landed_on, tileName)
         }
     }
 
@@ -185,7 +185,7 @@ class GameBoardActivity : ComponentActivity() {
 
     fun updateCashDisplay(cash: Int) {
         runOnUiThread {
-            textCash.text = "Geld: $cash €"
+            textCash.text = getString(R.string.geld_text, cash)
         }
     }
 

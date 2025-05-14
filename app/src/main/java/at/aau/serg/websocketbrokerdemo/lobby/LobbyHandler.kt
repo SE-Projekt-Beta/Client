@@ -39,8 +39,8 @@ class LobbyHandler(private val context: Context) : LobbyMessageListener {
         val order = orderJson.map {
             val obj = it.asJsonObject
             PlayerDTO(
-                id = obj.get("id").asInt,
-                nickname = obj.get("nickname").asString
+                id = obj["id"].asInt,
+                nickname = obj["nickname"].asString
             )
         }
 

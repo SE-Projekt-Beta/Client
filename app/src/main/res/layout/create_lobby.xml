@@ -12,7 +12,7 @@
         android:id="@+id/lobbyTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Create a Lobby"
+        android:text="@string/create_a_lobby"
         android:textSize="24sp"
         android:layout_marginBottom="24dp"/>
 
@@ -20,14 +20,14 @@
         android:id="@+id/lobbyNameInput"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:hint="Enter lobby name"
+        android:hint="@string/enter_lobby_name"
         android:layout_marginBottom="24dp"/>
 
     <Button
         android:id="@+id/createLobbyButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Create"
+        android:text="@string/create"
         android:textColor="#000000"/>
 
 </LinearLayout>
