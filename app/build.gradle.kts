@@ -156,6 +156,7 @@ dependencies {
     implementation(libs.gson)
     implementation(libs.gson)
     implementation(kotlin("test"))
+    implementation("androidx.gridlayout:gridlayout:1.1.0")
 
 // Testing dependencies
     testImplementation(libs.junit)

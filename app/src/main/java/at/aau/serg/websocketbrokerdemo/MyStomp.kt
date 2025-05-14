@@ -1,2 +1,1 @@
-const  val WEBSOCKET_URI = "ws://10.0.2.2:8080/websocket-example-broker";
-
+const val WEBSOCKET_URI = "ws://65.109.95.118:25603/websocket-example-broker";

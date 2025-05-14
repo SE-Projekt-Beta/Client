@@ -30,6 +30,8 @@ class GameBoardActivity : ComponentActivity() {
     private lateinit var textTile: TextView
     private lateinit var overlay: TextView
 
+    private lateinit var playerTokenManager: PlayerTokenManager
+
     private lateinit var btnRollDice: Button
     private lateinit var btnBuy: Button
     private lateinit var btnBuildHouse: Button
@@ -57,9 +59,12 @@ class GameBoardActivity : ComponentActivity() {
             players.forEach { GameStateClient.players[it.id] = it }
         }
 
+        playerTokenManager = PlayerTokenManager(this)
+
         initViews()
         setupButtons()
         setupNetwork()
+        playerTokenManager.positionTokensOnStartTile()
     }
 
     private fun initViews() {
@@ -168,6 +173,11 @@ class GameBoardActivity : ComponentActivity() {
         runOnUiThread {
             textTile.text = "Gelandet auf: $tileName"
         }
+    }
+
+    fun updateTokenPosition(steps: Int) {
+        val currentPlayerId = GameStateClient.currentPlayerId
+        playerTokenManager.movePlayerToken(currentPlayerId, steps)
     }
 
     fun updateCashDisplay(cash: Int) {
