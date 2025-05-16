@@ -30,6 +30,7 @@ class GameBoardActivity : ComponentActivity() {
     private lateinit var textDice: TextView
     private lateinit var textCash: TextView
     private lateinit var textTile: TextView
+    private lateinit var textTesting: TextView
     private lateinit var overlay: TextView
 
     private lateinit var playerTokenManager: PlayerTokenManager
@@ -74,6 +75,9 @@ class GameBoardActivity : ComponentActivity() {
         textDice = findViewById(R.id.textDice)
         textCash = findViewById(R.id.textCash)
         textTile = findViewById(R.id.textTile)
+
+        textTesting = findViewById(R.id.textTesting)
+
         overlay = findViewById(R.id.textCurrentTurnBig)
 
         btnRollDice = findViewById(R.id.rollDiceBtn)
@@ -117,6 +121,12 @@ class GameBoardActivity : ComponentActivity() {
         gameStomp.connect()
     }
 
+    fun updateTestView(message: String) {
+        runOnUiThread {
+            textTesting.text = message
+        }
+    }
+
     fun updateTurnView(currentPlayerId: Int, nickname: String) {
         Log.i("GameBoardActivity", "Aktueller Spieler: $nickname (ID: $currentPlayerId)")
         runOnUiThread {
@@ -144,24 +154,24 @@ class GameBoardActivity : ComponentActivity() {
 
             if (currentPlayerId == myId) {
                 val payload = GameController.buildPayload("playerId", myId)
-                when (tileType) {
-                    TileType.BANK -> gameStomp.sendGameMessage(
-                        GameMessage(LobbyClient.lobbyId, GameMessageType.DRAW_BANK_CARD, payload)
-                    )
-                    TileType.RISK -> gameStomp.sendGameMessage(
-                        GameMessage(LobbyClient.lobbyId, GameMessageType.DRAW_RISK_CARD, payload)
-                    )
-                    TileType.START -> gameStomp.sendGameMessage(GameMessage(LobbyClient.lobbyId, GameMessageType.PASS_START, payload))
-                    TileType.TAX -> gameStomp.sendGameMessage(GameMessage(LobbyClient.lobbyId, GameMessageType.PAY_TAX, payload))
-                    TileType.GOTO_JAIL -> gameStomp.sendGameMessage(GameMessage(LobbyClient.lobbyId, GameMessageType.GO_TO_JAIL, payload))
-
-                    TileType.STREET, TileType.PRISON -> {
-                        // Keine Aktion
-                    }
-                    null -> {
-                        Log.e("GameClientHandler", "Fehler: tileType ist null.")
-                    }
-                }
+//                when (tileType) {
+//                    TileType.BANK -> gameStomp.sendGameMessage(
+//                        GameMessage(LobbyClient.lobbyId, GameMessageType.DRAW_BANK_CARD, payload)
+//                    )
+//                    TileType.RISK -> gameStomp.sendGameMessage(
+//                        GameMessage(LobbyClient.lobbyId, GameMessageType.DRAW_RISK_CARD, payload)
+//                    )
+//                    TileType.START -> gameStomp.sendGameMessage(GameMessage(LobbyClient.lobbyId, GameMessageType.PASS_START, payload))
+//                    TileType.TAX -> gameStomp.sendGameMessage(GameMessage(LobbyClient.lobbyId, GameMessageType.PAY_TAX, payload))
+//                    TileType.GOTO_JAIL -> gameStomp.sendGameMessage(GameMessage(LobbyClient.lobbyId, GameMessageType.GO_TO_JAIL, payload))
+//
+//                    TileType.STREET, TileType.PRISON -> {
+//                        // Keine Aktion
+//                    }
+//                    null -> {
+//                        Log.e("GameClientHandler", "Fehler: tileType ist null.")
+//                    }
+//                }
             }
         }
     }

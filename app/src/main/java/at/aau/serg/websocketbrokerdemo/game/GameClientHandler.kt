@@ -16,6 +16,7 @@ class GameClientHandler(
     fun handle(message: GameMessage) {
         when (message.type) {
             GameMessageType.GAME_STATE -> handleGameState(message.payload.asJsonObject)
+            GameMessageType.ASK_BUY_PROPERTY -> handleAskBuyProperty(message.payload.asJsonObject)
             GameMessageType.DRAW_RISK_CARD,
             GameMessageType.DRAW_BANK_CARD -> handleEventCard(message.payload.asJsonObject)
             GameMessageType.PASS_START -> handlePassStart()
@@ -30,6 +31,27 @@ class GameClientHandler(
         }
     }
 
+    private fun handleAskBuyProperty(payload: JsonObject) {
+
+        // check if the playerid is this player
+        val playerId = payload["playerId"]?.asInt ?: return
+
+        if (playerId != LobbyClient.playerId) {
+            Log.i(TAG, "Spieler $playerId möchte eine Immobilie kaufen.")
+        }
+
+        val fieldIndex = payload["fieldIndex"]?.asInt ?: return
+        val tileName = GameController.getTileName(fieldIndex)
+        val price = GameController.getTilePrice(fieldIndex)
+
+        if (playerId == LobbyClient.playerId) {
+            val options = GameController.evaluateTileOptions(playerId, fieldIndex)
+            activity.showBuyOptions(fieldIndex, tileName, options.canBuy, options.canBuildHouse, options.canBuildHotel)
+        } else {
+            Log.i(TAG, "Spieler $playerId möchte $tileName kaufen.")
+        }
+    }
+
     private fun handleGameState(payload: JsonObject) {
         Log.i(TAG, "Received GAME_STATE payload: $payload")
         GameController.updateFromGameState(payload)
@@ -41,6 +63,9 @@ class GameClientHandler(
         val fieldIndex = GameController.getCurrentFieldIndex(currentPlayerId)
         val tileName = GameController.getTileName(fieldIndex)
         val cash = GameController.getCash(currentPlayerId)
+
+        val playersJson = payload["players"]?.toString() ?: "No players"
+        activity.updateTestView(playersJson)
 
         activity.updateTurnView(currentPlayerId, currentPlayerName)
         activity.updateDice(diceValue)
