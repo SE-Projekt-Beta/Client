@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="300dp"
+    android:layout_height="wrap_content"
+    android:background="#FFFFFF"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:layout_gravity="center"
+    android:gravity="center"
+    android:elevation="6dp">
+
+    <TextView
+        android:id="@+id/bankCardTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/buy"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="#004488"
+        android:layout_marginBottom="12dp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="#004488"
+        android:layout_marginBottom="12dp" />
+
+    <TextView
+        android:id="@+id/bialogBuyTileName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/strasse"
+        android:textSize="16sp"
+        android:textColor="#000000"
+        android:gravity="center"
+        android:layout_marginBottom="24dp" />
+
+    <TextView
+        android:id="@+id/bialogBuyTilePrice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/kaufpreis_xxx"
+        android:textSize="16sp"
+        android:textColor="#000000"
+        android:gravity="center"
+        android:layout_marginBottom="24dp" />
+
+    <Button
+        android:id="@+id/okBankCardBtn"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:text="@string/kaufen"
+        android:textStyle="bold"
+        android:backgroundTint="#004488"
+        android:textColor="#FFFFFF" />
+</LinearLayout>

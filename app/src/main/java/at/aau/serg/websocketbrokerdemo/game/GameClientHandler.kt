@@ -37,7 +37,8 @@ class GameClientHandler(
         val playerId = payload["playerId"]?.asInt ?: return
 
         if (playerId != LobbyClient.playerId) {
-            Log.i(TAG, "Spieler $playerId möchte eine Immobilie kaufen.")
+            Log.i(TAG, "Spieler $playerId kann eine Immobilie kaufen.")
+            return
         }
 
         val fieldIndex = payload["fieldIndex"]?.asInt ?: return
@@ -47,6 +48,8 @@ class GameClientHandler(
         if (playerId == LobbyClient.playerId) {
             val options = GameController.evaluateTileOptions(playerId, fieldIndex)
             activity.showBuyOptions(fieldIndex, tileName, options.canBuy, options.canBuildHouse, options.canBuildHotel)
+            activity.showBuyDialog(fieldIndex, tileName)
+            activity.disableDiceButton()
         } else {
             Log.i(TAG, "Spieler $playerId möchte $tileName kaufen.")
         }
@@ -60,11 +63,12 @@ class GameClientHandler(
         val currentPlayerId = GameController.getCurrentPlayerId()
         val currentPlayerName = GameController.getCurrentPlayerName()
         val diceValue = payload["dice"]?.asInt ?: -1
-        val fieldIndex = GameController.getCurrentFieldIndex(currentPlayerId)
+        val fieldIndex = GameController.getCurrentFieldIndex(myId)
         val tileName = GameController.getTileName(fieldIndex)
-        val cash = GameController.getCash(currentPlayerId)
+        val cash = GameController.getCash(myId)
 
         val playersJson = payload["players"]?.toString() ?: "No players"
+        Log.i(TAG, "Players JSON: $playersJson")
         activity.updateTestView(playersJson)
 
         activity.updateTurnView(currentPlayerId, currentPlayerName)
