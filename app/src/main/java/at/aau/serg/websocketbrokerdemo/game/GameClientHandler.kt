@@ -16,6 +16,7 @@ class GameClientHandler(
     fun handle(message: GameMessage) {
         when (message.type) {
             GameMessageType.GAME_STATE -> handleGameState(message.payload.asJsonObject)
+            GameMessageType.ASK_BUY_PROPERTY -> handleAskBuyProperty(message.payload.asJsonObject)
             GameMessageType.DRAW_RISK_CARD,
             GameMessageType.DRAW_BANK_CARD -> handleEventCard(message.payload.asJsonObject)
             GameMessageType.PASS_START -> handlePassStart()
@@ -30,6 +31,30 @@ class GameClientHandler(
         }
     }
 
+    private fun handleAskBuyProperty(payload: JsonObject) {
+
+        // check if the playerid is this player
+        val playerId = payload["playerId"]?.asInt ?: return
+
+        if (playerId != LobbyClient.playerId) {
+            Log.i(TAG, "Spieler $playerId kann eine Immobilie kaufen.")
+            return
+        }
+
+        val fieldIndex = payload["fieldIndex"]?.asInt ?: return
+        val tileName = GameController.getTileName(fieldIndex)
+        val price = GameController.getTilePrice(fieldIndex)
+
+        if (playerId == LobbyClient.playerId) {
+            val options = GameController.evaluateTileOptions(playerId, fieldIndex)
+            activity.showBuyOptions(fieldIndex, tileName, options.canBuy, options.canBuildHouse, options.canBuildHotel)
+            activity.showBuyDialog(fieldIndex, tileName)
+            activity.disableDiceButton()
+        } else {
+            Log.i(TAG, "Spieler $playerId möchte $tileName kaufen.")
+        }
+    }
+
     private fun handleGameState(payload: JsonObject) {
         Log.i(TAG, "Received GAME_STATE payload: $payload")
         GameController.updateFromGameState(payload)
@@ -38,9 +63,13 @@ class GameClientHandler(
         val currentPlayerId = GameController.getCurrentPlayerId()
         val currentPlayerName = GameController.getCurrentPlayerName()
         val diceValue = payload["dice"]?.asInt ?: -1
-        val fieldIndex = GameController.getCurrentFieldIndex(currentPlayerId)
+        val fieldIndex = GameController.getCurrentFieldIndex(myId)
         val tileName = GameController.getTileName(fieldIndex)
-        val cash = GameController.getCash(currentPlayerId)
+        val cash = GameController.getCash(myId)
+
+        val playersJson = payload["players"]?.toString() ?: "No players"
+        Log.i(TAG, "Players JSON: $playersJson")
+        activity.updateTestView(playersJson)
 
         activity.updateTurnView(currentPlayerId, currentPlayerName)
         activity.updateDice(diceValue)

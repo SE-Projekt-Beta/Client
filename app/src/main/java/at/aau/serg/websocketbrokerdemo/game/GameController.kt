@@ -29,6 +29,9 @@ object GameController {
     fun getTileName(tileIndex: Int): String =
         ClientBoardMap.getTile(tileIndex)?.name ?: "Unbekannt"
 
+    fun getTilePrice(tileIndex: Int): Int? =
+        ClientBoardMap.getTile(tileIndex)?.price
+
     fun getOwnedTileNames(playerId: Int): List<String> {
         return OwnershipClient.streetOwners
             .filterValues { it == playerId }

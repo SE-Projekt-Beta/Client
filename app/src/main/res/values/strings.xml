@@ -2,6 +2,7 @@
     <string name="app_name">SE2 DKT</string>
 
 <!--    GameBoardActivity-->
+    <string name="youArePlayer">You are: %1$s, %2$d</string>
     <string name="nickname_turn">%1$s ist an Zug</string>
     <string name="rolled_value">Gewürfelt: %1$d</string>
     <string name="landed_on">Gelandet auf: %1$s</string>
@@ -77,12 +78,15 @@
     <string name="du_musst_steuern_zahlen">Du musst Steuern zahlen!</string>
 
 <!--    TileDialog-->
-    <string name="stra_e">Straße</string>
+    <string name="strasse">Straße</string>
     <string name="kaufpreis_xxx">Kaufpreis: XXX €</string>
     <string name="miete_xxx">Miete: XXX €</string>
     <string name="hauskosten_xxx">Hauskosten: XXX €</string>
     <string name="hotelkosten_xxx">Hotelkosten: XXX €</string>
     <string name="schliessen">SCHLIESSEN</string>
+
+<!--    BuyDialog-->
+    <string name="buy">Buy</string>
 
 <!--    LobbyList-->
     <string name="new_lobby">New Lobby</string>

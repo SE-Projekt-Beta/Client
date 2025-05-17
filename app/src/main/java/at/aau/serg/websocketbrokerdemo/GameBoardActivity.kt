@@ -26,10 +26,12 @@ class GameBoardActivity : ComponentActivity() {
     private lateinit var gameStomp: GameStomp
     private lateinit var gameClientHandler: GameClientHandler
 
+    private lateinit var textYouArePlayer: TextView
     private lateinit var textCurrentTurn: TextView
     private lateinit var textDice: TextView
     private lateinit var textCash: TextView
     private lateinit var textTile: TextView
+    private lateinit var textTesting: TextView
     private lateinit var overlay: TextView
 
     private lateinit var playerTokenManager: PlayerTokenManager
@@ -41,6 +43,8 @@ class GameBoardActivity : ComponentActivity() {
     private lateinit var btnShowOwnership: Button
     private lateinit var btnViewField: Button
 
+    private lateinit var btnUpdateState: Button
+
     private var myId = -1
     private lateinit var myNickname: String
     private var lastShownTurnPlayerId: Int = -1
@@ -51,7 +55,7 @@ class GameBoardActivity : ComponentActivity() {
 
         Log.i("GameBoardActivity", "onCreate called")
 
-        myNickname = intent.getStringExtra("USERNAME") ?: "Unknown"
+        myNickname = LobbyClient.username
         myId = LobbyClient.playerId
 
         val playersJson = intent.getStringExtra("players_json")
@@ -70,10 +74,16 @@ class GameBoardActivity : ComponentActivity() {
     }
 
     private fun initViews() {
+        textYouArePlayer = findViewById(R.id.textYouArePlayer)
+        textYouArePlayer.text = getString(R.string.youArePlayer, myNickname, myId)
+
         textCurrentTurn = findViewById(R.id.response_view)
         textDice = findViewById(R.id.textDice)
         textCash = findViewById(R.id.textCash)
         textTile = findViewById(R.id.textTile)
+
+        textTesting = findViewById(R.id.textTesting)
+
         overlay = findViewById(R.id.textCurrentTurnBig)
 
         btnRollDice = findViewById(R.id.rollDiceBtn)
@@ -82,6 +92,8 @@ class GameBoardActivity : ComponentActivity() {
         btnBuildHotel = findViewById(R.id.buildHotelBtn)
         btnShowOwnership = findViewById(R.id.btnShowOwnership)
         btnViewField = findViewById(R.id.btnViewField)
+
+        btnUpdateState = findViewById(R.id.btnUpdateState)
 
         hideActionButtons()
         overlay.visibility = View.GONE
@@ -108,6 +120,11 @@ class GameBoardActivity : ComponentActivity() {
                 showDialog("Feldinfo", "Feld nicht gefunden.")
             }
         }
+
+        btnUpdateState.setOnClickListener {
+            val payload = GameController.buildPayload("playerId", myId)
+            gameStomp.sendGameMessage(GameMessage(LobbyClient.lobbyId, GameMessageType.REQUEST_GAME_STATE, payload))
+        }
     }
 
     private fun setupNetwork() {
@@ -117,9 +134,16 @@ class GameBoardActivity : ComponentActivity() {
         gameStomp.connect()
     }
 
+    fun updateTestView(message: String) {
+        runOnUiThread {
+            textTesting.text = message
+        }
+    }
+
     fun updateTurnView(currentPlayerId: Int, nickname: String) {
         Log.i("GameBoardActivity", "Aktueller Spieler: $nickname (ID: $currentPlayerId)")
         runOnUiThread {
+            textYouArePlayer.text = getString(R.string.youArePlayer, myNickname, myId)
             textCurrentTurn.text = getString(R.string.nickname_turn, nickname)
 
             if (currentPlayerId != lastShownTurnPlayerId) {
@@ -144,24 +168,24 @@ class GameBoardActivity : ComponentActivity() {
 
             if (currentPlayerId == myId) {
                 val payload = GameController.buildPayload("playerId", myId)
-                when (tileType) {
-                    TileType.BANK -> gameStomp.sendGameMessage(
-                        GameMessage(LobbyClient.lobbyId, GameMessageType.DRAW_BANK_CARD, payload)
-                    )
-                    TileType.RISK -> gameStomp.sendGameMessage(
-                        GameMessage(LobbyClient.lobbyId, GameMessageType.DRAW_RISK_CARD, payload)
-                    )
-                    TileType.START -> gameStomp.sendGameMessage(GameMessage(LobbyClient.lobbyId, GameMessageType.PASS_START, payload))
-                    TileType.TAX -> gameStomp.sendGameMessage(GameMessage(LobbyClient.lobbyId, GameMessageType.PAY_TAX, payload))
-                    TileType.GOTO_JAIL -> gameStomp.sendGameMessage(GameMessage(LobbyClient.lobbyId, GameMessageType.GO_TO_JAIL, payload))
-
-                    TileType.STREET, TileType.PRISON -> {
-                        // Keine Aktion
-                    }
-                    null -> {
-                        Log.e("GameClientHandler", "Fehler: tileType ist null.")
-                    }
-                }
+//                when (tileType) {
+//                    TileType.BANK -> gameStomp.sendGameMessage(
+//                        GameMessage(LobbyClient.lobbyId, GameMessageType.DRAW_BANK_CARD, payload)
+//                    )
+//                    TileType.RISK -> gameStomp.sendGameMessage(
+//                        GameMessage(LobbyClient.lobbyId, GameMessageType.DRAW_RISK_CARD, payload)
+//                    )
+//                    TileType.START -> gameStomp.sendGameMessage(GameMessage(LobbyClient.lobbyId, GameMessageType.PASS_START, payload))
+//                    TileType.TAX -> gameStomp.sendGameMessage(GameMessage(LobbyClient.lobbyId, GameMessageType.PAY_TAX, payload))
+//                    TileType.GOTO_JAIL -> gameStomp.sendGameMessage(GameMessage(LobbyClient.lobbyId, GameMessageType.GO_TO_JAIL, payload))
+//
+//                    TileType.STREET, TileType.PRISON -> {
+//                        // Keine Aktion
+//                    }
+//                    null -> {
+//                        Log.e("GameClientHandler", "Fehler: tileType ist null.")
+//                    }
+//                }
             }
         }
     }
@@ -213,6 +237,57 @@ class GameBoardActivity : ComponentActivity() {
                 .show()
         }
     }
+
+    fun showBuyDialog(tilePos: Int, tileName: String) {
+        runOnUiThread {
+            Log.i("GameBoardActivity", "showBuyDialog: $tileName")
+            val dialog = android.app.AlertDialog.Builder(this)
+                .setTitle("Kaufen?")
+                .setMessage("Möchten Sie $tileName kaufen?")
+                .setPositiveButton("Ja") { _, _ ->
+                    val payload = GameController.buildPayload("playerId", myId, "tilePos", tilePos)
+                    gameStomp.sendGameMessage(
+                        GameMessage(
+                            LobbyClient.lobbyId,
+                            GameMessageType.BUY_PROPERTY,
+                            payload
+                        )
+                    )
+
+                }
+                .setNegativeButton("Nein") { _, _ ->
+                    Log.i("GameBoardActivity", "Kauf abgebrochen.")
+                }
+                .create()
+            dialog.setCanceledOnTouchOutside(false)
+            dialog.setCancelable(false)
+            dialog.show()
+            dialog.getButton(android.app.AlertDialog.BUTTON_POSITIVE).setOnClickListener {
+                val payload = GameController.buildPayload("playerId", myId, "tilePos", tilePos)
+                gameStomp.sendGameMessage(
+                    GameMessage(
+                        LobbyClient.lobbyId,
+                        GameMessageType.BUY_PROPERTY,
+                        payload
+                    )
+                )
+                dialog.dismiss()
+            }
+            dialog.getButton(android.app.AlertDialog.BUTTON_NEGATIVE).setOnClickListener {
+                Log.i("GameBoardActivity", "Kauf abgebrochen.")
+                val payload = GameController.buildPayload("playerId", myId, "tilePos", -1)
+                gameStomp.sendGameMessage(
+                    GameMessage(
+                        LobbyClient.lobbyId,
+                        GameMessageType.BUY_PROPERTY,
+                        payload
+                    )
+                )
+                dialog.dismiss()
+            }
+        }
+    }
+
 
     fun showBuyOptions(tilePos: Int, tileName: String, canBuy: Boolean, canBuildHouse: Boolean, canBuildHotel: Boolean) {
         runOnUiThread {

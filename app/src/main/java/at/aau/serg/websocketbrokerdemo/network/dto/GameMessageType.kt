@@ -3,9 +3,12 @@ package at.aau.serg.websocketbrokerdemo.network.dto
 enum class GameMessageType {
     GAME_STATE,
     ROLL_DICE,
+    ASK_BUY_PROPERTY,
+    BUY_PROPERTY,
+    PAY_RENT,
+
     PLAYER_MOVED,
     CAN_BUY_PROPERTY,
-    BUY_PROPERTY,
     PROPERTY_BOUGHT,
     CASH_TASK,
     GAME_OVER,
@@ -14,7 +17,6 @@ enum class GameMessageType {
     CURRENT_PLAYER,
     REQUEST_GAME_STATE,
     PLAYER_LOST,
-    PAY_RENT,
     DRAW_RISK_CARD,
     DRAW_BANK_CARD,
     PAY_TAX,
