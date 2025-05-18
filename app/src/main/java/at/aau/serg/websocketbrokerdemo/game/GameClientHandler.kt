@@ -15,10 +15,12 @@ class GameClientHandler(
     private val activity: GameBoardActivity
 ) {
     fun handle(message: GameMessage) {
+        Log.i(TAG, "Message type: ${message.type}")
         when (message.type) {
             GameMessageType.GAME_STATE -> handleGameState(message.payload.asJsonObject)
             GameMessageType.ASK_BUY_PROPERTY -> handleAskBuyProperty(message.payload.asJsonObject)
             GameMessageType.ASK_PAY_PRISON -> handleAskPayPrison(message.payload.asJsonObject)
+            GameMessageType.ROLLED_PRISON -> handleRolledPrison(message.payload.asJsonObject)
             GameMessageType.DRAW_RISK_CARD,
             GameMessageType.DRAW_BANK_CARD -> handleEventCard(message.payload.asJsonObject)
             GameMessageType.PASS_START -> handlePassStart()
@@ -54,6 +56,18 @@ class GameClientHandler(
             activity.disableDiceButton()
         } else {
             Log.i(TAG, "Spieler $playerId möchte $tileName kaufen.")
+        }
+    }
+
+    private fun handleRolledPrison(payload: JsonObject) {
+        val playerId = payload["playerId"]?.asInt ?: return
+        val dice1 = payload["roll1"]?.asInt ?: return
+        val dice2 = payload["roll2"]?.asInt ?: return
+        if (playerId == LobbyClient.playerId) {
+            Log.i(TAG, "Spieler $playerId hat die Würfel $dice1 und $dice2 geworfen.")
+            activity.showRollPrisonDialog(dice1, dice2)
+        } else {
+            Log.i(TAG, "Spieler $playerId hat die Würfel $dice1 und $dice2 geworfen.")
         }
     }
 
