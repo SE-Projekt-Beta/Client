@@ -196,9 +196,9 @@ class GameBoardActivity : ComponentActivity() {
         }
     }
 
-    fun updateTile(tileName: String) {
+    fun updateTile(tileName: String, tileIndex: Int) {
         runOnUiThread {
-            textTile.text = getString(R.string.landed_on, tileName)
+            textTile.text = getString(R.string.landed_on, tileName, tileIndex)
         }
     }
 

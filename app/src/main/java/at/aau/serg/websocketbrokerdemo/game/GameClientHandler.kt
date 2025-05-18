@@ -22,7 +22,7 @@ class GameClientHandler(
             GameMessageType.DRAW_BANK_CARD -> handleEventCard(message.payload.asJsonObject)
             GameMessageType.PASS_START -> handlePassStart()
             GameMessageType.PAY_TAX -> handleTax()
-            GameMessageType.GO_TO_JAIL -> handleGoToJail()
+            GameMessageType.GO_TO_JAIL -> handleGoToJail(message.payload.asJsonObject)
             GameMessageType.DICE_ROLLED -> handleDiceRolled(message.payload.asJsonObject)
             GameMessageType.CASH_TASK -> handleCashTask(message.payload.asJsonObject)
             GameMessageType.PLAYER_LOST -> handlePlayerLost(message.payload.asJsonObject)
@@ -74,7 +74,7 @@ class GameClientHandler(
 
         activity.updateTurnView(currentPlayerId, currentPlayerName)
         activity.updateDice(diceValue)
-        activity.updateTile(tileName)
+        activity.updateTile(tileName, fieldIndex)
         activity.updateCashDisplay(cash)
         activity.updateTokenPosition(diceValue)
 
@@ -106,7 +106,10 @@ class GameClientHandler(
         }
     }
 
-    private fun handleGoToJail() {
+    private fun handleGoToJail(payload: JsonObject) {
+
+
+
         activity.runOnUiThread {
             RiskCardDialog(
                 activity,
