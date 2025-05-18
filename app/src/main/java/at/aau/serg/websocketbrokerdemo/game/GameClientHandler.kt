@@ -18,6 +18,7 @@ class GameClientHandler(
         when (message.type) {
             GameMessageType.GAME_STATE -> handleGameState(message.payload.asJsonObject)
             GameMessageType.ASK_BUY_PROPERTY -> handleAskBuyProperty(message.payload.asJsonObject)
+            GameMessageType.ASK_PAY_PRISON -> handleAskPayPrison(message.payload.asJsonObject)
             GameMessageType.DRAW_RISK_CARD,
             GameMessageType.DRAW_BANK_CARD -> handleEventCard(message.payload.asJsonObject)
             GameMessageType.PASS_START -> handlePassStart()
@@ -53,6 +54,15 @@ class GameClientHandler(
             activity.disableDiceButton()
         } else {
             Log.i(TAG, "Spieler $playerId möchte $tileName kaufen.")
+        }
+    }
+
+    private fun handleAskPayPrison(payload: JsonObject) {
+        val playerId = payload["playerId"]?.asInt ?: return
+        if (playerId == LobbyClient.playerId) {
+            activity.showPayPrisonDialog()
+        } else {
+            Log.i(TAG, "Spieler $playerId muss Gefängnisgeld zahlen.")
         }
     }
 
@@ -108,7 +118,12 @@ class GameClientHandler(
 
     private fun handleGoToJail(payload: JsonObject) {
 
-
+        // check if the playerid is this player
+        val playerId = payload["playerId"]?.asInt ?: return
+        if (playerId != LobbyClient.playerId) {
+            Log.i(TAG, "Spieler $playerId wird ins Gefängnis geschickt.")
+            return
+        }
 
         activity.runOnUiThread {
             RiskCardDialog(

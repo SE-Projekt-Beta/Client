@@ -6,6 +6,8 @@ enum class GameMessageType {
     ROLL_DICE,
     ASK_BUY_PROPERTY,
     BUY_PROPERTY,
+    ASK_PAY_PRISON,
+    PAY_PRISON,
     PAY_RENT,
 
     PLAYER_MOVED,

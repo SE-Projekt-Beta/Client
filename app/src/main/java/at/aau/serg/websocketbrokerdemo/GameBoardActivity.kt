@@ -288,6 +288,31 @@ class GameBoardActivity : ComponentActivity() {
         }
     }
 
+    fun showPayPrisonDialog() {
+        runOnUiThread {
+            val dialog = android.app.AlertDialog.Builder(this)
+                .setTitle("Gefängnisgeld")
+                .setMessage("Möchten Sie 50 Euro zahlen, um aus dem Gefängnis zu kommen?")
+                .setPositiveButton("Ja") { _, _ ->
+                    val payload = GameController.buildPayload("playerId", myId)
+                    gameStomp.sendGameMessage(
+                        GameMessage(
+                            LobbyClient.lobbyId,
+                            GameMessageType.PAY_PRISON,
+                            payload
+                        )
+                    )
+                }
+                .setNegativeButton("Nein") { _, _ ->
+                    Log.i("GameBoardActivity", "Zahlung abgebrochen.")
+                }
+                .create()
+            dialog.setCanceledOnTouchOutside(false)
+            dialog.setCancelable(false)
+            dialog.show()
+        }
+    }
+
 
     fun showBuyOptions(tilePos: Int, tileName: String, canBuy: Boolean, canBuildHouse: Boolean, canBuildHotel: Boolean) {
         runOnUiThread {
