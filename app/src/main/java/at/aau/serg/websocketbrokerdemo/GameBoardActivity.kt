@@ -196,9 +196,9 @@ class GameBoardActivity : ComponentActivity() {
         }
     }
 
-    fun updateTile(tileName: String) {
+    fun updateTile(tileName: String, tileIndex: Int) {
         runOnUiThread {
-            textTile.text = getString(R.string.landed_on, tileName)
+            textTile.text = getString(R.string.landed_on, tileName, tileIndex)
         }
     }
 
@@ -285,6 +285,31 @@ class GameBoardActivity : ComponentActivity() {
                 )
                 dialog.dismiss()
             }
+        }
+    }
+
+    fun showPayPrisonDialog() {
+        runOnUiThread {
+            val dialog = android.app.AlertDialog.Builder(this)
+                .setTitle("Gefängnisgeld")
+                .setMessage("Möchten Sie 50 Euro zahlen, um aus dem Gefängnis zu kommen?")
+                .setPositiveButton("Ja") { _, _ ->
+                    val payload = GameController.buildPayload("playerId", myId)
+                    gameStomp.sendGameMessage(
+                        GameMessage(
+                            LobbyClient.lobbyId,
+                            GameMessageType.PAY_PRISON,
+                            payload
+                        )
+                    )
+                }
+                .setNegativeButton("Nein") { _, _ ->
+                    Log.i("GameBoardActivity", "Zahlung abgebrochen.")
+                }
+                .create()
+            dialog.setCanceledOnTouchOutside(false)
+            dialog.setCancelable(false)
+            dialog.show()
         }
     }
 

@@ -18,11 +18,12 @@ class GameClientHandler(
         when (message.type) {
             GameMessageType.GAME_STATE -> handleGameState(message.payload.asJsonObject)
             GameMessageType.ASK_BUY_PROPERTY -> handleAskBuyProperty(message.payload.asJsonObject)
+            GameMessageType.ASK_PAY_PRISON -> handleAskPayPrison(message.payload.asJsonObject)
             GameMessageType.DRAW_RISK_CARD,
             GameMessageType.DRAW_BANK_CARD -> handleEventCard(message.payload.asJsonObject)
             GameMessageType.PASS_START -> handlePassStart()
             GameMessageType.PAY_TAX -> handleTax()
-            GameMessageType.GO_TO_JAIL -> handleGoToJail()
+            GameMessageType.GO_TO_JAIL -> handleGoToJail(message.payload.asJsonObject)
             GameMessageType.DICE_ROLLED -> handleDiceRolled(message.payload.asJsonObject)
             GameMessageType.CASH_TASK -> handleCashTask(message.payload.asJsonObject)
             GameMessageType.PLAYER_LOST -> handlePlayerLost(message.payload.asJsonObject)
@@ -56,6 +57,15 @@ class GameClientHandler(
         }
     }
 
+    private fun handleAskPayPrison(payload: JsonObject) {
+        val playerId = payload["playerId"]?.asInt ?: return
+        if (playerId == LobbyClient.playerId) {
+            activity.showPayPrisonDialog()
+        } else {
+            Log.i(TAG, "Spieler $playerId muss Gefängnisgeld zahlen.")
+        }
+    }
+
     private fun handleGameState(payload: JsonObject) {
         Log.i(TAG, "Received GAME_STATE payload: $payload")
         GameController.updateFromGameState(payload)
@@ -74,7 +84,7 @@ class GameClientHandler(
 
         activity.updateTurnView(currentPlayerId, currentPlayerName)
         activity.updateDice(diceValue)
-        activity.updateTile(tileName)
+        activity.updateTile(tileName, fieldIndex)
         activity.updateCashDisplay(cash)
         activity.updateTokenPosition(diceValue)
 
@@ -106,7 +116,15 @@ class GameClientHandler(
         }
     }
 
-    private fun handleGoToJail() {
+    private fun handleGoToJail(payload: JsonObject) {
+
+        // check if the playerid is this player
+        val playerId = payload["playerId"]?.asInt ?: return
+        if (playerId != LobbyClient.playerId) {
+            Log.i(TAG, "Spieler $playerId wird ins Gefängnis geschickt.")
+            return
+        }
+
         activity.runOnUiThread {
             RiskCardDialog(
                 activity,
