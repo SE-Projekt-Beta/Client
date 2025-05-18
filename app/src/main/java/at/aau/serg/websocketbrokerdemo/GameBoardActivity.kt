@@ -130,7 +130,7 @@ class GameBoardActivity : ComponentActivity() {
     private fun setupNetwork() {
         gameClientHandler = GameClientHandler(this)
         gameStomp = GameStomp(gameClientHandler, LobbyClient.lobbyId)
-        gameStomp.setOnConnectedListener { gameStomp.requestGameState() }
+        gameStomp.setOnConnectedListener { gameStomp.requestGameStateWithRetry() }
         gameStomp.connect()
     }
 

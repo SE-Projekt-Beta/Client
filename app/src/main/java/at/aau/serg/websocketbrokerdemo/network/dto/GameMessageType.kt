@@ -1,6 +1,7 @@
 package at.aau.serg.websocketbrokerdemo.network.dto
 
 enum class GameMessageType {
+    REQUEST_GAME_STATE,
     GAME_STATE,
     ROLL_DICE,
     ASK_BUY_PROPERTY,
@@ -15,7 +16,6 @@ enum class GameMessageType {
     MUST_PAY_RENT,
     ERROR,
     CURRENT_PLAYER,
-    REQUEST_GAME_STATE,
     PLAYER_LOST,
     DRAW_RISK_CARD,
     DRAW_BANK_CARD,

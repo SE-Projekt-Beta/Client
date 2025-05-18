@@ -6,6 +6,7 @@ import at.aau.serg.websocketbrokerdemo.game.dialog.RiskCardDialog
 import at.aau.serg.websocketbrokerdemo.game.dialog.StartBonusDialog
 import at.aau.serg.websocketbrokerdemo.game.dialog.TaxDialog
 import at.aau.serg.websocketbrokerdemo.lobby.LobbyClient
+import at.aau.serg.websocketbrokerdemo.network.GameStomp
 import at.aau.serg.websocketbrokerdemo.network.dto.GameMessage
 import at.aau.serg.websocketbrokerdemo.network.dto.GameMessageType
 import com.google.gson.JsonObject

@@ -1,6 +1,7 @@
 package at.aau.serg.websocketbrokerdemo.network
 
 import WEBSOCKET_URI
+import android.R.attr.delay
 import android.util.Log
 import at.aau.serg.websocketbrokerdemo.game.GameClientHandler
 import at.aau.serg.websocketbrokerdemo.lobby.LobbyClient
@@ -16,6 +17,8 @@ import org.hildan.krossbow.stomp.subscribeText
 import org.hildan.krossbow.websocket.okhttp.OkHttpWebSocketClient
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.withTimeoutOrNull
 
 class GameStomp(
     private val dktHandler: GameClientHandler,
@@ -45,8 +48,50 @@ class GameStomp(
                 session.subscribeText("/topic/dkt/$lobbyId").collect { raw ->
                     Log.i("GameStomp", "≪ /topic/dkt/$lobbyId: $raw")
                     val gm = gson.fromJson(raw, GameMessage::class.java)
+                    // if its a game state message, call the onGameStateReceived method
+                    if (gm.type == GameMessageType.GAME_STATE) {
+                        onGameStateReceived()
+                    }
                     dktHandler.handle(gm)
                 }
+            }
+        }
+    }
+
+    var gameStateReceived = false
+
+    fun onGameStateReceived() {
+        gameStateReceived = true
+        Log.i("GameStomp", "Game state response received")
+    }
+
+    fun requestGameStateWithRetry(
+        maxRetries: Int = 3,
+        timeoutMs: Long = 3000
+    ) {
+        CoroutineScope(Dispatchers.IO).launch {
+            var attempts = 0
+            gameStateReceived = false
+
+            while (attempts < maxRetries && !gameStateReceived) {
+                Log.i("GameStomp", "Requesting game state attempt ${attempts + 1}")
+                requestGameState()
+
+                withTimeoutOrNull(timeoutMs) {
+                    while (!gameStateReceived) {
+                        delay(100) // Polling interval
+                    }
+                }
+
+                if (!gameStateReceived) {
+                    Log.w("GameStomp", "No response received, retrying...")
+                }
+
+                attempts++
+            }
+
+            if (!gameStateReceived) {
+                Log.e("GameStomp", "Failed to receive game state after $maxRetries attempts")
             }
         }
     }
@@ -66,4 +111,6 @@ class GameStomp(
             Log.i("GameStomp", "≫ /app/dkt/$lobbyId: $json")
         }
     }
+
+    companion object
 }
