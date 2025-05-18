@@ -288,6 +288,24 @@ class GameBoardActivity : ComponentActivity() {
         }
     }
 
+    fun showRollPrisonDialog(dice1: Int, dice2: Int) {
+        runOnUiThread {
+            val dialog = android.app.AlertDialog.Builder(this)
+                .setTitle("Gefängniswurf")
+                .setMessage("Sie haben $dice1 und $dice2 geworfen.")
+                // close button just close the dialog
+                .setNeutralButton("OK") { _, _ ->
+                    Log.i("GameBoardActivity", "Dialog geschlossen.")
+                }
+                .create()
+            dialog.setCanceledOnTouchOutside(false)
+            dialog.setCancelable(false)
+            dialog.show()
+
+        }
+    }
+
+
     fun showPayPrisonDialog() {
         runOnUiThread {
             val dialog = android.app.AlertDialog.Builder(this)
@@ -304,6 +322,14 @@ class GameBoardActivity : ComponentActivity() {
                     )
                 }
                 .setNegativeButton("Nein") { _, _ ->
+                    val payload = GameController.buildPayload("playerId", myId)
+                    gameStomp.sendGameMessage(
+                        GameMessage(
+                            LobbyClient.lobbyId,
+                            GameMessageType.ROLL_PRISON,
+                            payload
+                        )
+                    )
                     Log.i("GameBoardActivity", "Zahlung abgebrochen.")
                 }
                 .create()
