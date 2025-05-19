@@ -6,10 +6,11 @@ import at.aau.serg.websocketbrokerdemo.game.dialog.RiskCardDialog
 import at.aau.serg.websocketbrokerdemo.game.dialog.StartBonusDialog
 import at.aau.serg.websocketbrokerdemo.game.dialog.TaxDialog
 import at.aau.serg.websocketbrokerdemo.lobby.LobbyClient
-import at.aau.serg.websocketbrokerdemo.network.GameStomp
 import at.aau.serg.websocketbrokerdemo.network.dto.GameMessage
 import at.aau.serg.websocketbrokerdemo.network.dto.GameMessageType
 import com.google.gson.JsonObject
+import at.aau.serg.websocketbrokerdemo.game.dialog.BankCardDialog
+
 
 class GameClientHandler(
     private val activity: GameBoardActivity
@@ -21,10 +22,10 @@ class GameClientHandler(
             GameMessageType.ASK_BUY_PROPERTY -> handleAskBuyProperty(message.payload.asJsonObject)
             GameMessageType.ASK_PAY_PRISON -> handleAskPayPrison(message.payload.asJsonObject)
             GameMessageType.ROLLED_PRISON -> handleRolledPrison(message.payload.asJsonObject)
-            GameMessageType.DRAW_RISK_CARD,
-            GameMessageType.DRAW_BANK_CARD -> handleEventCard(message.payload.asJsonObject)
-            GameMessageType.PASS_START -> handlePassStart()
-            GameMessageType.PAY_TAX -> handleTax()
+            GameMessageType.DRAW_RISK_CARD -> handleRiskCardDrawn(message.payload.asJsonObject)
+            GameMessageType.DRAW_BANK_CARD -> handleBankCardDrawn(message.payload.asJsonObject)
+            GameMessageType.PASS_START -> handlePassStart(message)
+            GameMessageType.PAY_TAX -> handleTax(message.payload.asJsonObject)
             GameMessageType.GO_TO_JAIL -> handleGoToJail(message.payload.asJsonObject)
             GameMessageType.DICE_ROLLED -> handleDiceRolled(message.payload.asJsonObject)
             GameMessageType.CASH_TASK -> handleCashTask(message.payload.asJsonObject)
@@ -112,28 +113,84 @@ class GameClientHandler(
         }
     }
 
-    private fun handleEventCard(payload: JsonObject) {
-        val title = payload["title"]?.asString ?: "Ereignis"
-        val description = payload["description"]?.asString ?: ""
-        activity.showEventCard(title, description)
-    }
+    private fun handleBankCardDrawn(payload: JsonObject) {
+        val playerId = payload["playerId"]?.asInt ?: return
+        val amount = payload["amount"]?.asInt ?: return
+        val newCash = payload["newCash"]?.asInt ?: return
+        val description = payload["description"]?.asString ?: return
 
-    private fun handlePassStart() {
+        if (playerId == LobbyClient.playerId) {
+            activity.updateCashDisplay(newCash)
+        }
+
+        val playerName = GameStateClient.getNickname(playerId) ?: "Ein Spieler"
+
         activity.runOnUiThread {
-            StartBonusDialog(activity, "Du bekommst dein Startgeld!").show()
+            BankCardDialog(activity, "Bankkarte", description, playerName).show()
         }
     }
 
-    private fun handleTax() {
+
+
+    private fun handleRiskCardDrawn(payload: JsonObject) {
+        val playerId = payload["playerId"]?.asInt ?: return
+        val title = payload["title"]?.asString ?: "Risiko-Karte"
+        val description = payload["description"]?.asString ?: return
+
+        val playerName = GameStateClient.getNickname(playerId) ?: "Ein Spieler"
+
         activity.runOnUiThread {
-            TaxDialog(activity, "Du musst Steuern zahlen!").show()
+            RiskCardDialog(activity, title, description, playerName).show()
         }
     }
+
+
+
+
+    private fun handlePassStart(message: GameMessage) {
+        val payload = message.payload.asJsonObject
+        val playerId = payload["playerId"]?.asInt ?: return
+        val amount = payload["amount"]?.asInt ?: return
+        val landed = payload["landed"]?.asBoolean ?: false
+
+        if (landed) {
+            val nickname = GameStateClient.getNickname(playerId) ?: "Ein Spieler"
+            activity.runOnUiThread {
+                StartBonusDialog(activity, nickname, amount).show()
+            }
+        } else {
+            if (playerId == LobbyClient.playerId) {
+                val newCash = GameController.getCash(playerId)
+                activity.updateCashDisplay(newCash)
+            }
+            Log.i(TAG, "Spieler $playerId hat Start überquert und $amount€ erhalten.")
+        }
+    }
+
+
+    private fun handleTax(payload: JsonObject) {
+        val playerId = payload["playerId"]?.asInt ?: return
+        val tileName = payload["tileName"]?.asString ?: "Steuer"
+        val amount = payload["amount"]?.asInt ?: return
+        val newCash = payload["newCash"]?.asInt ?: return
+
+        if (playerId == LobbyClient.playerId) {
+            activity.updateCashDisplay(newCash)
+        }
+
+        val nickname = GameStateClient.getNickname(playerId) ?: "Ein Spieler"
+        val message = "$nickname muss $amount€ zahlen."
+
+        activity.runOnUiThread {
+            TaxDialog(activity, tileName, message).show()
+        }
+    }
+
 
     private fun handleGoToJail(payload: JsonObject) {
-
-        // check if the playerid is this player
         val playerId = payload["playerId"]?.asInt ?: return
+        val playerName = GameStateClient.getNickname(playerId) ?: "Ein Spieler"
+
         if (playerId != LobbyClient.playerId) {
             Log.i(TAG, "Spieler $playerId wird ins Gefängnis geschickt.")
             return
@@ -143,10 +200,12 @@ class GameClientHandler(
             RiskCardDialog(
                 activity,
                 "Gefängnis",
-                "Du wirst ins Gefängnis geschickt. 3 Runden Pause!"
+                "wird ins Gefängnis geschickt. 3 Runden Pause!",
+                playerName
             ).show()
         }
     }
+
 
     private fun handleDiceRolled(payload: JsonObject) {
         val steps = payload["steps"]?.asInt ?: return
