@@ -162,30 +162,12 @@ class GameBoardActivity : ComponentActivity() {
                 hideActionButtons()
             }
 
-            // ▶ Automatisch Bank- oder Risikokarte ziehen, wenn auf entsprechendem Feld
+            // Automatisch Bank- oder Risikokarte ziehen, wenn auf entsprechendem Feld
             val fieldIndex = GameController.getCurrentFieldIndex(currentPlayerId)
             val tileType = ClientBoardMap.getTile(fieldIndex)?.type
 
             if (currentPlayerId == myId) {
                 val payload = GameController.buildPayload("playerId", myId)
-//                when (tileType) {
-//                    TileType.BANK -> gameStomp.sendGameMessage(
-//                        GameMessage(LobbyClient.lobbyId, GameMessageType.DRAW_BANK_CARD, payload)
-//                    )
-//                    TileType.RISK -> gameStomp.sendGameMessage(
-//                        GameMessage(LobbyClient.lobbyId, GameMessageType.DRAW_RISK_CARD, payload)
-//                    )
-//                    TileType.START -> gameStomp.sendGameMessage(GameMessage(LobbyClient.lobbyId, GameMessageType.PASS_START, payload))
-//                    TileType.TAX -> gameStomp.sendGameMessage(GameMessage(LobbyClient.lobbyId, GameMessageType.PAY_TAX, payload))
-//                    TileType.GOTO_JAIL -> gameStomp.sendGameMessage(GameMessage(LobbyClient.lobbyId, GameMessageType.GO_TO_JAIL, payload))
-//
-//                    TileType.STREET, TileType.PRISON -> {
-//                        // Keine Aktion
-//                    }
-//                    null -> {
-//                        Log.e("GameClientHandler", "Fehler: tileType ist null.")
-//                    }
-//                }
             }
         }
     }
@@ -216,13 +198,17 @@ class GameBoardActivity : ComponentActivity() {
     fun showEventCard(title: String, description: String) {
         runOnUiThread {
             overlay.visibility = View.GONE
-            if (title.contains("Bank", true)) {
-                BankCardDialog(this, title, description).show()
+
+            val playerName = GameStateClient.getNickname(LobbyClient.playerId) ?: "Du"
+
+            if (title.contains("Bank", ignoreCase = true)) {
+                BankCardDialog(this, title, description, playerName).show()
             } else {
-                RiskCardDialog(this, title, description).show()
+                RiskCardDialog(this, title, description, playerName).show()
             }
         }
     }
+
 
     fun showGameOverDialog(ranking: String) {
         showDialog("Spiel beendet", ranking)
