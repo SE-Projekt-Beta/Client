@@ -9,14 +9,21 @@ import at.aau.serg.websocketbrokerdemo.R
 
 class StartBonusDialog(
     context: Context,
-    private val message: String
+    private val playerName: String,
+    private val amount: Int
 ) : Dialog(context) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.dialog_pass_start)
+        setContentView(R.layout.dialog_start_bonus)
 
-        findViewById<TextView>(R.id.startText).text = message
-        findViewById<Button>(R.id.okStartBtn).setOnClickListener { dismiss() }
+        val titleView = findViewById<TextView>(R.id.startTitle)
+        val textView = findViewById<TextView>(R.id.startText)
+        val okButton = findViewById<Button>(R.id.okStartBtn)
+
+        titleView.text = context.getString(R.string.startbonus)
+        textView.text = "$playerName ist auf dem Startfeld gelandet und erhält $amount€."
+
+        okButton.setOnClickListener { dismiss() }
     }
 }
