@@ -2,6 +2,8 @@ package at.aau.serg.websocketbrokerdemo
 
 import android.content.Context
 import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.Bundle
 import android.os.Handler
@@ -23,6 +25,7 @@ import at.aau.serg.websocketbrokerdemo.network.dto.GameMessage
 import at.aau.serg.websocketbrokerdemo.network.dto.GameMessageType
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import kotlin.math.sqrt
 
 class GameBoardActivity : ComponentActivity() {
 
@@ -390,4 +393,35 @@ class GameBoardActivity : ComponentActivity() {
             btnBuildHotel.visibility = View.GONE
         }
     }
+
+    private val sensorListener = object : SensorEventListener {
+        override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
+            // Nicht benötigt
+        }
+
+        override fun onSensorChanged(event: SensorEvent?) {
+            if (event.sensor.type == Sensor.TYPE_ACCELEROMETER) {
+                val x = event.values[0]
+                val y = event.values[1]
+                val z = event.values[2]
+
+                val gX = x / SensorManager.GRAVITY_EARTH
+                val gY = y / SensorManager.GRAVITY_EARTH
+                val gZ = z / SensorManager.GRAVITY_EARTH
+
+                val gForce = sqrt(gX * gX + gY * gY + gZ * gZ)
+
+                if (gForce > shakeThresholdGravity) {
+                    val now = System.currentTimeMillis()
+                    if (shakeTimestamp + 1000 > now) {
+                        return // Verhindert mehrfaches Triggern
+                    }
+                    shakeTimestamp = now
+
+                    onShakeDetected()
+                }
+            }
+        }
+    }
+
 }
