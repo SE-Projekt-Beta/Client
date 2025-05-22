@@ -424,4 +424,12 @@ class GameBoardActivity : ComponentActivity() {
         }
     }
 
+    private  fun onShakeDetected() {
+        if (GameStateClient.currentPlayerId == myId && btnRollDice.isEnabled) {
+            runOnUiThread {
+                btnRollDice.performClick()
+            }
+        }
+    }
+
 }
