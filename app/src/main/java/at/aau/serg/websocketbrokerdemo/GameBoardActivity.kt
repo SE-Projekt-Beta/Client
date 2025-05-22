@@ -1,5 +1,6 @@
 package at.aau.serg.websocketbrokerdemo
 
+import android.hardware.SensorManager
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -22,6 +23,11 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
 class GameBoardActivity : ComponentActivity() {
+
+    private lateinit var sensorManager: SensorManager
+    private var accelerometer: Sensor? = null
+    private var shakeTimestamp: Long = 0
+    private var shakeThresholdGravity = 2.7f
 
     private lateinit var gameStomp: GameStomp
     private lateinit var gameClientHandler: GameClientHandler
