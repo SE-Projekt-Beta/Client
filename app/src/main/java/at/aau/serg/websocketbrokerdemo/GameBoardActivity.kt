@@ -432,6 +432,12 @@ class GameBoardActivity : ComponentActivity() {
 
     @RequiresPermission(Manifest.permission.VIBRATE)
     private  fun onShakeDetected() {
+        val lobbyId = LobbyClient.lobbyId
+        if (lobbyId < 0) {
+            Log.w("Shake", "Ungültige Lobby-ID beim Shake: $lobbyId")
+            return
+        }
+
         if (GameStateClient.currentPlayerId == myId && btnRollDice.isEnabled) {
             runOnUiThread {
                 btnRollDice.performClick()
@@ -454,8 +460,11 @@ class GameBoardActivity : ComponentActivity() {
 
     @RequiresPermission(Manifest.permission.VIBRATE)
     private  fun vibrateOnShake() {
-        val vibrator = getSystemService(VIBRATOR_SERVICE) as Vibrator
-        vibrator.vibrate(VibrationEffect.createOneShot(150, VibrationEffect.DEFAULT_AMPLITUDE))
+        val vibrator = getSystemService(VIBRATOR_SERVICE) as? Vibrator
+        if (vibrator?.hasVibrator() == true) {
+            vibrator.vibrate(VibrationEffect.createOneShot(200, VibrationEffect.DEFAULT_AMPLITUDE))
+        }
+
     }
 
 }
