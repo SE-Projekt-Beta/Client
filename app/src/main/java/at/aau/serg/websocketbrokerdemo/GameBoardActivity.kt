@@ -432,4 +432,16 @@ class GameBoardActivity : ComponentActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        accelerometer?.also {
+            sensorManager.registerListener(sensorListener, it, SensorManager.SENSOR_DELAY_UI)
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        sensorManager.unregisterListener(sensorListener)
+    }
+
 }
