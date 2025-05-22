@@ -1,5 +1,7 @@
 package at.aau.serg.websocketbrokerdemo
 
+import android.content.Context
+import android.hardware.Sensor
 import android.hardware.SensorManager
 import android.os.Bundle
 import android.os.Handler
@@ -77,6 +79,9 @@ class GameBoardActivity : ComponentActivity() {
         setupButtons()
         setupNetwork()
         playerTokenManager.positionTokensOnStartTile()
+
+        sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
     }
 
     private fun initViews() {
