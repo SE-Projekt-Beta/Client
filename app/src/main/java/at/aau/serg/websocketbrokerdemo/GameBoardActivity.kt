@@ -1,18 +1,23 @@
 package at.aau.serg.websocketbrokerdemo
 
+import android.Manifest
 import android.content.Context
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.os.VibrationEffect
+import android.os.Vibrator
 import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import androidx.activity.ComponentActivity
+import androidx.annotation.RequiresPermission
 import at.aau.serg.websocketbrokerdemo.game.*
 import at.aau.serg.websocketbrokerdemo.game.dialog.BankCardDialog
 import at.aau.serg.websocketbrokerdemo.game.dialog.RiskCardDialog
@@ -424,11 +429,13 @@ class GameBoardActivity : ComponentActivity() {
         }
     }
 
+    @RequiresPermission(Manifest.permission.VIBRATE)
     private  fun onShakeDetected() {
         if (GameStateClient.currentPlayerId == myId && btnRollDice.isEnabled) {
             runOnUiThread {
                 btnRollDice.performClick()
             }
+            vibrateOnShake()
         }
     }
 
@@ -442,6 +449,12 @@ class GameBoardActivity : ComponentActivity() {
     override fun onPause() {
         super.onPause()
         sensorManager.unregisterListener(sensorListener)
+    }
+
+    @RequiresPermission(Manifest.permission.VIBRATE)
+    private  fun vibrateOnShake() {
+        val vibrator = getSystemService(VIBRATOR_SERVICE) as Vibrator
+        vibrator.vibrate(VibrationEffect.createOneShot(150, VibrationEffect.DEFAULT_AMPLITUDE))
     }
 
 }
