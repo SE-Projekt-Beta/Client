@@ -404,8 +404,9 @@ class GameBoardActivity : ComponentActivity() {
             // Nicht benötigt
         }
 
+        @RequiresPermission(Manifest.permission.VIBRATE)
         override fun onSensorChanged(event: SensorEvent?) {
-            if (event.sensor.type == Sensor.TYPE_ACCELEROMETER) {
+            if (event!!.sensor.type == Sensor.TYPE_ACCELEROMETER) {
                 val x = event.values[0]
                 val y = event.values[1]
                 val z = event.values[2]
