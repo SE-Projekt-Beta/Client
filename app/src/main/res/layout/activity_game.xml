@@ -35,7 +35,9 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintWidth_percent="0.65">
+        app:layout_constraintWidth_percent="0.65"
+        app:layout_constraintHeight_percent="0.65"
+        app:layout_constraintDimensionRatio="1:1">
 
         <ImageView
             android:id="@+id/boardImage"
@@ -51,8 +53,7 @@
             android:layout_height="30dp"
             android:layout_gravity="bottom|end"
             android:contentDescription="@string/player_token"
-            android:src="@drawable/circle_blue"
-            android:visibility="gone"/>
+            android:src="@drawable/circle_blue" />
 
         <ImageView
             android:id="@+id/player_token2"
