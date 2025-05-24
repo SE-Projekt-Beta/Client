@@ -51,7 +51,7 @@
             android:layout_height="30dp"
             android:layout_gravity="bottom|end"
             android:contentDescription="@string/player_token"
-            android:src="@drawable/kegel_blau"
+            android:src="@drawable/circle_blue"
             android:visibility="gone"/>
 
         <ImageView
@@ -59,7 +59,7 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:contentDescription="@string/player_token"
-            android:src="@drawable/kegel_rot"
+            android:src="@drawable/circle_red"
             android:layout_gravity="bottom|end"
             android:visibility="gone"/>
 
@@ -68,7 +68,7 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:contentDescription="@string/player_token"
-            android:src="@drawable/kegel_gelb"
+            android:src="@drawable/circle_orange"
             android:layout_gravity="bottom|end"
             android:visibility="gone"/>
 
@@ -77,7 +77,7 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:contentDescription="@string/player_token"
-            android:src="@drawable/kegel_gruen"
+            android:src="@drawable/circle_green"
             android:layout_gravity="bottom|end"
             android:visibility="gone"/>
 
@@ -86,7 +86,7 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:contentDescription="@string/player_token"
-            android:src="@drawable/kegel_lila"
+            android:src="@drawable/circle_purple"
             android:layout_gravity="bottom|end"
             android:visibility="gone"/>
 
@@ -95,7 +95,7 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:contentDescription="@string/player_token"
-            android:src="@drawable/kegel_tuerkis"
+            android:src="@drawable/circle_pink"
             android:layout_gravity="bottom|end"
             android:visibility="gone"/>
 
