@@ -65,6 +65,7 @@ class LoginHandler(private val activity: UsernameActivity) : LobbyMessageListene
 
 
     override fun onStartGame(payload: JsonObject) {
+        // Ignoriere START_GAME-Nachricht während des Logins
 
     }
 

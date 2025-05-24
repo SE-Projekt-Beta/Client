@@ -12,7 +12,6 @@ import at.aau.serg.websocketbrokerdemo.lobby.LobbyClient
 import at.aau.serg.websocketbrokerdemo.lobby.LobbyHandler
 import at.aau.serg.websocketbrokerdemo.network.LobbyStomp
 import at.aau.serg.websocketbrokerdemo.network.dto.PlayerDTO
-import at.aau.serg.websocketbrokerdemo.R
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
@@ -32,8 +31,9 @@ class LobbyActivity : AppCompatActivity() {
         playersTextView = findViewById(R.id.playerListView)
         startButton = findViewById(R.id.buttonStart)
 
-        val lobbyName = LobbyClient.lobbyId
-        titleLobby.text = "Lobby: $lobbyName"
+        val lobbyName = LobbyClient.lobbyName
+        val lobbyId = LobbyClient.lobbyId
+        titleLobby.text = getString(R.string.lobby_name, lobbyName, lobbyId)
 
         lobbyHandler = LobbyHandler(this)
         lobbyStomp = LobbyStomp(lobbyHandler)

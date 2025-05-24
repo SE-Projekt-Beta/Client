@@ -1,4 +1,5 @@
-package at.aau.serg.websocketbrokerdemo.game
+package at.aau.serg.websocketbrokerdemo.game.dialog
+
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
@@ -8,6 +9,7 @@ import at.aau.serg.websocketbrokerdemo.R
 
 class TaxDialog(
     context: Context,
+    private val titleText: String,
     private val message: String
 ) : Dialog(context) {
 
@@ -15,6 +17,7 @@ class TaxDialog(
         super.onCreate(savedInstanceState)
         setContentView(R.layout.dialog_tax)
 
+        findViewById<TextView>(R.id.taxTitle).text = titleText
         findViewById<TextView>(R.id.taxText).text = message
         findViewById<Button>(R.id.okTaxBtn).setOnClickListener { dismiss() }
     }

@@ -2,7 +2,6 @@ package at.aau.serg.websocketbrokerdemo.game
 
 import at.aau.serg.websocketbrokerdemo.model.ClientBoardMap
 import at.aau.serg.websocketbrokerdemo.model.TileType
-import at.aau.serg.websocketbrokerdemo.network.dto.GameMessageType
 import com.google.gson.JsonObject
 import org.json.JSONObject
 
@@ -29,6 +28,9 @@ object GameController {
 
     fun getTileName(tileIndex: Int): String =
         ClientBoardMap.getTile(tileIndex)?.name ?: "Unbekannt"
+
+    fun getTilePrice(tileIndex: Int): Int? =
+        ClientBoardMap.getTile(tileIndex)?.price
 
     fun getOwnedTileNames(playerId: Int): List<String> {
         return OwnershipClient.streetOwners

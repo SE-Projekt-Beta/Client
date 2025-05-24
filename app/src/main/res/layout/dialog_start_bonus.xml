@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="300dp"
     android:layout_height="wrap_content"
-    android:background="@android:color/white"
+    android:background="#FFFFFF"
     android:orientation="vertical"
     android:padding="24dp"
     android:layout_gravity="center"
@@ -10,39 +10,29 @@
     android:elevation="6dp">
 
     <TextView
-        android:id="@+id/riskCardTitle"
+        android:id="@+id/startTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/risiko"
+        android:text="@string/startbonus"
         android:textSize="24sp"
         android:textStyle="bold"
-        android:textColor="#AA0000"
-        android:gravity="center"
-        android:layout_marginBottom="12dp" />
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="#AA0000"
+        android:textColor="#2E7D32"
         android:layout_marginBottom="12dp" />
 
     <TextView
-        android:id="@+id/riskCardText"
+        android:id="@+id/startText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/gehe_auf_feld_22_passierst_du_den_start_erh_ltst_du_200"
+        android:text="@string/du_hast_das_startfeld_berquert"
         android:textSize="16sp"
-        android:textColor="#000000"
-        android:gravity="center"
         android:layout_marginBottom="24dp" />
 
     <Button
-        android:id="@+id/okRiskCardBtn"
+        android:id="@+id/okStartBtn"
         android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:text="@string/ok"
         android:textStyle="bold"
-        android:backgroundTint="#AA0000"
-        android:textColor="#FFFFFF"
-        android:layout_gravity="center" />
+        android:backgroundTint="#2E7D32"
+        android:textColor="#FFFFFF" />
 </LinearLayout>

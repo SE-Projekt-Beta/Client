@@ -5,7 +5,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFF8E1"
     tools:context=".GameBoardActivity">
 
     <!-- Overlay für aktuellen Spieler -->
@@ -13,7 +12,7 @@
         android:id="@+id/textCurrentTurnBig"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Spieler X ist am Zug"
+        android:text="@string/spieler_x_ist_am_zug"
         android:textSize="24sp"
         android:textStyle="bold"
         android:textColor="@android:color/white"
@@ -42,6 +41,7 @@
             android:id="@+id/boardImage"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:contentDescription="@string/board_image_desc"
             android:scaleType="fitCenter"
             android:src="@drawable/dktmap" />
 
@@ -50,6 +50,7 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_gravity="bottom|end"
+            android:contentDescription="@string/player_token"
             android:src="@drawable/kegel_blau"
             android:visibility="gone"/>
 
@@ -57,6 +58,7 @@
             android:id="@+id/player_token2"
             android:layout_width="30dp"
             android:layout_height="30dp"
+            android:contentDescription="@string/player_token"
             android:src="@drawable/kegel_rot"
             android:layout_gravity="bottom|end"
             android:visibility="gone"/>
@@ -65,6 +67,7 @@
             android:id="@+id/player_token3"
             android:layout_width="30dp"
             android:layout_height="30dp"
+            android:contentDescription="@string/player_token"
             android:src="@drawable/kegel_gelb"
             android:layout_gravity="bottom|end"
             android:visibility="gone"/>
@@ -73,6 +76,7 @@
             android:id="@+id/player_token4"
             android:layout_width="30dp"
             android:layout_height="30dp"
+            android:contentDescription="@string/player_token"
             android:src="@drawable/kegel_gruen"
             android:layout_gravity="bottom|end"
             android:visibility="gone"/>
@@ -81,6 +85,7 @@
             android:id="@+id/player_token5"
             android:layout_width="30dp"
             android:layout_height="30dp"
+            android:contentDescription="@string/player_token"
             android:src="@drawable/kegel_lila"
             android:layout_gravity="bottom|end"
             android:visibility="gone"/>
@@ -89,6 +94,7 @@
             android:id="@+id/player_token6"
             android:layout_width="30dp"
             android:layout_height="30dp"
+            android:contentDescription="@string/player_token"
             android:src="@drawable/kegel_tuerkis"
             android:layout_gravity="bottom|end"
             android:visibility="gone"/>
@@ -112,7 +118,7 @@
             android:id="@+id/response_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Spieler X ist am Zug"
+            android:text="@string/spieler_x_ist_am_zug"
             android:textStyle="bold"
             android:textSize="16sp" />
 
@@ -120,21 +126,21 @@
             android:id="@+id/textDice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Gewürfelt: -"
+            android:text="@string/gewuerfelt_default"
             android:layout_marginTop="8dp" />
 
         <TextView
             android:id="@+id/textCash"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Geld: - €"
+            android:text="@string/geld_default"
             android:layout_marginTop="4dp" />
 
         <Button
             android:id="@+id/btnShowOwnership"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Besitz anzeigen"
+            android:text="@string/besitz_anzeigen_default"
             android:layout_marginTop="8dp"
             android:background="@drawable/button_yellow_with_border"
             app:layout_constraintEnd_toEndOf="parent"
@@ -144,18 +150,37 @@
             android:id="@+id/textTile"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Gelandet auf: -"
+            android:text="@string/gelandet_auf_default"
             android:layout_marginTop="12dp"/>
 
         <Button
             android:id="@+id/btnViewField"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Feld"
+            android:text="@string/feld"
             android:layout_marginTop="4dp"
             android:background="@drawable/button_yellow_with_border"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"/>
+
+        <TextView
+            android:id="@+id/textYouArePlayer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/youArePlayer"
+            android:textStyle="bold"
+            android:textSize="16sp" />
+
+        <Button
+            android:id="@+id/btnUpdateState"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Update State"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/button_yellow_with_border"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
+
     </LinearLayout>
 
     <!-- Rechte Leiste: Aktionen -->
@@ -175,7 +200,7 @@
             android:id="@+id/rollDiceBtn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Würfeln"
+            android:text="@string/wuerfeln"
             android:background="@drawable/button_yellow_with_border"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"/>
@@ -184,7 +209,7 @@
             android:id="@+id/buybtn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Kaufen"
+            android:text="@string/kaufen"
             android:layout_marginTop="12dp"
             android:visibility="gone"
             android:background="@drawable/button_yellow_with_border"
@@ -195,7 +220,7 @@
             android:id="@+id/buildHouseBtn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Haus bauen"
+            android:text="@string/haus_bauen"
             android:layout_marginTop="12dp"
             android:visibility="gone"
             android:background="@drawable/button_yellow_with_border"
@@ -206,11 +231,20 @@
             android:id="@+id/buildHotelBtn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Hotel bauen"
+            android:text="@string/hotel_bauen"
             android:layout_marginTop="12dp"
             android:visibility="gone"
             android:background="@drawable/button_yellow_with_border"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"/>
+
+        <TextView
+            android:id="@+id/textTesting"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/gelandet_auf_default"
+            android:layout_marginTop="12dp"/>
+
+
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

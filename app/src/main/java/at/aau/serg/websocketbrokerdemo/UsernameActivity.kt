@@ -7,10 +7,8 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import at.aau.serg.websocketbrokerdemo.lobby.LobbyClient.lobbyId
 import at.aau.serg.websocketbrokerdemo.lobby.LobbyClient
 import at.aau.serg.websocketbrokerdemo.network.LobbyStomp
-import at.aau.serg.websocketbrokerdemo.R
 
 class UsernameActivity : AppCompatActivity() {
 

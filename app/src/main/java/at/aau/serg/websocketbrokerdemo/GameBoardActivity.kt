@@ -9,9 +9,11 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.activity.ComponentActivity
 import at.aau.serg.websocketbrokerdemo.game.*
+import at.aau.serg.websocketbrokerdemo.game.dialog.BankCardDialog
+import at.aau.serg.websocketbrokerdemo.game.dialog.RiskCardDialog
 import at.aau.serg.websocketbrokerdemo.lobby.LobbyClient
 import at.aau.serg.websocketbrokerdemo.model.ClientBoardMap
-import at.aau.serg.websocketbrokerdemo.model.TileInfoDialog
+import at.aau.serg.websocketbrokerdemo.game.dialog.TileInfoDialog
 import at.aau.serg.websocketbrokerdemo.model.TileType
 import at.aau.serg.websocketbrokerdemo.network.GameStomp
 import at.aau.serg.websocketbrokerdemo.network.dto.GameMessage
@@ -24,10 +26,12 @@ class GameBoardActivity : ComponentActivity() {
     private lateinit var gameStomp: GameStomp
     private lateinit var gameClientHandler: GameClientHandler
 
+    private lateinit var textYouArePlayer: TextView
     private lateinit var textCurrentTurn: TextView
     private lateinit var textDice: TextView
     private lateinit var textCash: TextView
     private lateinit var textTile: TextView
+    private lateinit var textTesting: TextView
     private lateinit var overlay: TextView
 
     private lateinit var playerTokenManager: PlayerTokenManager
@@ -39,6 +43,8 @@ class GameBoardActivity : ComponentActivity() {
     private lateinit var btnShowOwnership: Button
     private lateinit var btnViewField: Button
 
+    private lateinit var btnUpdateState: Button
+
     private var myId = -1
     private lateinit var myNickname: String
     private var lastShownTurnPlayerId: Int = -1
@@ -49,7 +55,7 @@ class GameBoardActivity : ComponentActivity() {
 
         Log.i("GameBoardActivity", "onCreate called")
 
-        myNickname = intent.getStringExtra("USERNAME") ?: "Unknown"
+        myNickname = LobbyClient.username
         myId = LobbyClient.playerId
 
         val playersJson = intent.getStringExtra("players_json")
@@ -68,10 +74,16 @@ class GameBoardActivity : ComponentActivity() {
     }
 
     private fun initViews() {
+        textYouArePlayer = findViewById(R.id.textYouArePlayer)
+        textYouArePlayer.text = getString(R.string.youArePlayer, myNickname, myId)
+
         textCurrentTurn = findViewById(R.id.response_view)
         textDice = findViewById(R.id.textDice)
         textCash = findViewById(R.id.textCash)
         textTile = findViewById(R.id.textTile)
+
+        textTesting = findViewById(R.id.textTesting)
+
         overlay = findViewById(R.id.textCurrentTurnBig)
 
         btnRollDice = findViewById(R.id.rollDiceBtn)
@@ -80,6 +92,8 @@ class GameBoardActivity : ComponentActivity() {
         btnBuildHotel = findViewById(R.id.buildHotelBtn)
         btnShowOwnership = findViewById(R.id.btnShowOwnership)
         btnViewField = findViewById(R.id.btnViewField)
+
+        btnUpdateState = findViewById(R.id.btnUpdateState)
 
         hideActionButtons()
         overlay.visibility = View.GONE
@@ -106,21 +120,34 @@ class GameBoardActivity : ComponentActivity() {
                 showDialog("Feldinfo", "Feld nicht gefunden.")
             }
         }
+
+        btnUpdateState.setOnClickListener {
+            val payload = GameController.buildPayload("playerId", myId)
+            gameStomp.sendGameMessage(GameMessage(LobbyClient.lobbyId, GameMessageType.REQUEST_GAME_STATE, payload))
+        }
     }
 
     private fun setupNetwork() {
         gameClientHandler = GameClientHandler(this)
         gameStomp = GameStomp(gameClientHandler, LobbyClient.lobbyId)
-        gameStomp.setOnConnectedListener { gameStomp.requestGameState() }
+        gameStomp.setOnConnectedListener { gameStomp.requestGameStateWithRetry() }
         gameStomp.connect()
     }
 
-    fun updateTurnView(currentPlayerId: Int, nickname: String) {
+    fun updateTestView(message: String) {
         runOnUiThread {
-            textCurrentTurn.text = "$nickname ist am Zug"
+            textTesting.text = message
+        }
+    }
+
+    fun updateTurnView(currentPlayerId: Int, nickname: String) {
+        Log.i("GameBoardActivity", "Aktueller Spieler: $nickname (ID: $currentPlayerId)")
+        runOnUiThread {
+            textYouArePlayer.text = getString(R.string.youArePlayer, myNickname, myId)
+            textCurrentTurn.text = getString(R.string.nickname_turn, nickname)
 
             if (currentPlayerId != lastShownTurnPlayerId) {
-                overlay.text = "$nickname ist am Zug"
+                overlay.text = getString(R.string.nickname_turn, nickname)
                 overlay.visibility = View.VISIBLE
                 Handler(Looper.getMainLooper()).postDelayed({
                     overlay.visibility = View.GONE
@@ -135,43 +162,25 @@ class GameBoardActivity : ComponentActivity() {
                 hideActionButtons()
             }
 
-            // ▶ Automatisch Bank- oder Risikokarte ziehen, wenn auf entsprechendem Feld
+            // Automatisch Bank- oder Risikokarte ziehen, wenn auf entsprechendem Feld
             val fieldIndex = GameController.getCurrentFieldIndex(currentPlayerId)
             val tileType = ClientBoardMap.getTile(fieldIndex)?.type
 
             if (currentPlayerId == myId) {
                 val payload = GameController.buildPayload("playerId", myId)
-                when (tileType) {
-                    TileType.BANK -> gameStomp.sendGameMessage(
-                        GameMessage(LobbyClient.lobbyId, GameMessageType.DRAW_BANK_CARD, payload)
-                    )
-                    TileType.RISK -> gameStomp.sendGameMessage(
-                        GameMessage(LobbyClient.lobbyId, GameMessageType.DRAW_RISK_CARD, payload)
-                    )
-                    TileType.START -> gameStomp.sendGameMessage(GameMessage(LobbyClient.lobbyId, GameMessageType.PASS_START, payload))
-                    TileType.TAX -> gameStomp.sendGameMessage(GameMessage(LobbyClient.lobbyId, GameMessageType.PAY_TAX, payload))
-                    TileType.GOTO_JAIL -> gameStomp.sendGameMessage(GameMessage(LobbyClient.lobbyId, GameMessageType.GO_TO_JAIL, payload))
-
-                    TileType.STREET, TileType.PRISON -> {
-                        // Keine Aktion
-                    }
-                    null -> {
-                        Log.e("GameClientHandler", "Fehler: tileType ist null.")
-                    }
-                }
             }
         }
     }
 
     fun updateDice(diceValue: Int) {
         runOnUiThread {
-            textDice.text = "Gewürfelt: $diceValue"
+            textDice.text = getString(R.string.rolled_value, diceValue)
         }
     }
 
-    fun updateTile(tileName: String) {
+    fun updateTile(tileName: String, tileIndex: Int) {
         runOnUiThread {
-            textTile.text = "Gelandet auf: $tileName"
+            textTile.text = getString(R.string.landed_on, tileName, tileIndex)
         }
     }
 
@@ -182,20 +191,24 @@ class GameBoardActivity : ComponentActivity() {
 
     fun updateCashDisplay(cash: Int) {
         runOnUiThread {
-            textCash.text = "Geld: $cash €"
+            textCash.text = getString(R.string.geld_text, cash)
         }
     }
 
     fun showEventCard(title: String, description: String) {
         runOnUiThread {
             overlay.visibility = View.GONE
-            if (title.contains("Bank", true)) {
-                BankCardDialog(this, title, description).show()
+
+            val playerName = GameStateClient.getNickname(LobbyClient.playerId) ?: "Du"
+
+            if (title.contains("Bank", ignoreCase = true)) {
+                BankCardDialog(this, title, description, playerName).show()
             } else {
-                RiskCardDialog(this, title, description).show()
+                RiskCardDialog(this, title, description, playerName).show()
             }
         }
     }
+
 
     fun showGameOverDialog(ranking: String) {
         showDialog("Spiel beendet", ranking)
@@ -210,6 +223,108 @@ class GameBoardActivity : ComponentActivity() {
                 .show()
         }
     }
+
+    fun showBuyDialog(tilePos: Int, tileName: String) {
+        runOnUiThread {
+            Log.i("GameBoardActivity", "showBuyDialog: $tileName")
+            val dialog = android.app.AlertDialog.Builder(this)
+                .setTitle("Kaufen?")
+                .setMessage("Möchten Sie $tileName kaufen?")
+                .setPositiveButton("Ja") { _, _ ->
+                    val payload = GameController.buildPayload("playerId", myId, "tilePos", tilePos)
+                    gameStomp.sendGameMessage(
+                        GameMessage(
+                            LobbyClient.lobbyId,
+                            GameMessageType.BUY_PROPERTY,
+                            payload
+                        )
+                    )
+
+                }
+                .setNegativeButton("Nein") { _, _ ->
+                    Log.i("GameBoardActivity", "Kauf abgebrochen.")
+                }
+                .create()
+            dialog.setCanceledOnTouchOutside(false)
+            dialog.setCancelable(false)
+            dialog.show()
+            dialog.getButton(android.app.AlertDialog.BUTTON_POSITIVE).setOnClickListener {
+                val payload = GameController.buildPayload("playerId", myId, "tilePos", tilePos)
+                gameStomp.sendGameMessage(
+                    GameMessage(
+                        LobbyClient.lobbyId,
+                        GameMessageType.BUY_PROPERTY,
+                        payload
+                    )
+                )
+                dialog.dismiss()
+            }
+            dialog.getButton(android.app.AlertDialog.BUTTON_NEGATIVE).setOnClickListener {
+                Log.i("GameBoardActivity", "Kauf abgebrochen.")
+                val payload = GameController.buildPayload("playerId", myId, "tilePos", -1)
+                gameStomp.sendGameMessage(
+                    GameMessage(
+                        LobbyClient.lobbyId,
+                        GameMessageType.BUY_PROPERTY,
+                        payload
+                    )
+                )
+                dialog.dismiss()
+            }
+        }
+    }
+
+    fun showRollPrisonDialog(dice1: Int, dice2: Int) {
+        runOnUiThread {
+            val dialog = android.app.AlertDialog.Builder(this)
+                .setTitle("Gefängniswurf")
+                .setMessage("Sie haben $dice1 und $dice2 geworfen.")
+                // close button just close the dialog
+                .setNeutralButton("OK") { _, _ ->
+                    Log.i("GameBoardActivity", "Dialog geschlossen.")
+                }
+                .create()
+            dialog.setCanceledOnTouchOutside(false)
+            dialog.setCancelable(false)
+            dialog.show()
+
+        }
+    }
+
+
+    fun showPayPrisonDialog() {
+        runOnUiThread {
+            val dialog = android.app.AlertDialog.Builder(this)
+                .setTitle("Gefängnisgeld")
+                .setMessage("Möchten Sie 50 Euro zahlen, um aus dem Gefängnis zu kommen?")
+                .setPositiveButton("Ja") { _, _ ->
+                    val payload = GameController.buildPayload("playerId", myId)
+                    gameStomp.sendGameMessage(
+                        GameMessage(
+                            LobbyClient.lobbyId,
+                            GameMessageType.PAY_PRISON,
+                            payload
+                        )
+                    )
+                }
+                .setNegativeButton("Nein") { _, _ ->
+                    val payload = GameController.buildPayload("playerId", myId)
+                    gameStomp.sendGameMessage(
+                        GameMessage(
+                            LobbyClient.lobbyId,
+                            GameMessageType.ROLL_PRISON,
+                            payload
+                        )
+                    )
+                    Log.i("GameBoardActivity", "Zahlung abgebrochen.")
+                }
+                .create()
+            dialog.setCanceledOnTouchOutside(false)
+            dialog.setCancelable(false)
+            dialog.show()
+        }
+    }
+
 
     fun showBuyOptions(tilePos: Int, tileName: String, canBuy: Boolean, canBuildHouse: Boolean, canBuildHotel: Boolean) {
         runOnUiThread {
