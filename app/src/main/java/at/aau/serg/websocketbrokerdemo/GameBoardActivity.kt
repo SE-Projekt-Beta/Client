@@ -195,20 +195,6 @@ class GameBoardActivity : ComponentActivity() {
         }
     }
 
-    fun showEventCard(title: String, description: String) {
-        runOnUiThread {
-            overlay.visibility = View.GONE
-
-            val playerName = GameStateClient.getNickname(LobbyClient.playerId) ?: "Du"
-
-            if (title.contains("Bank", ignoreCase = true)) {
-                BankCardDialog(this, title, description, playerName).show()
-            } else {
-                RiskCardDialog(this, title, description, playerName).show()
-            }
-        }
-    }
-
 
     fun showGameOverDialog(ranking: String) {
         showDialog("Spiel beendet", ranking)

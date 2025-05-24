@@ -54,7 +54,7 @@ class GameClientHandlerTest {
 
         verify { mockActivity.updateTurnView(1, "Alice") }
         verify { mockActivity.updateDice(5) }
-        verify { mockActivity.updateTile("Ringstraße") }
+        verify { mockActivity.updateTile("Ringstraße", 4) }
         verify { mockActivity.updateCashDisplay(1500) }
         verify { mockActivity.enableDiceButton() }
         verify {
@@ -73,67 +73,6 @@ class GameClientHandlerTest {
         verify { mockActivity.disableDiceButton() }
         verify { mockActivity.hideActionButtons() }
     }
-
-    @Test
-    fun testHandleEventCard() {
-        val payload = JsonObject().apply {
-            addProperty("title", "Risiko!")
-            addProperty("description", "Ziehe eine Karte.")
-        }
-
-        val message = GameMessage(0, GameMessageType.DRAW_RISK_CARD, payload)
-        handler.handle(message)
-
-        verify { mockActivity.showEventCard("Risiko!", "Ziehe eine Karte.") }
-    }
-    /*
-    @Test
-    fun testHandlePassStart() {
-        every { mockActivity.runOnUiThread(any()) } answers {
-            firstArg<Runnable>().run()
-        }
-
-        handler.handle(GameMessage(0, GameMessageType.PASS_START, JsonObject()))
-
-        verify {
-            mockActivity.runOnUiThread(any())
-            // Nicht direkt testbar: StartBonusDialog(activity, ...).show()
-        }
-    }
-
-     */
-    /*
-    @Test
-    fun testHandleTax() {
-        every { mockActivity.runOnUiThread(any()) } answers {
-            firstArg<Runnable>().run()
-        }
-
-        handler.handle(GameMessage(0, GameMessageType.PAY_TAX, JsonObject()))
-
-        verify {
-            mockActivity.runOnUiThread(any())
-            // TaxDialog(activity, ...).show() wird erwartet
-        }
-    }
-
-     */
-    /*
-    @Test
-    fun testHandleGoToJail() {
-        every { mockActivity.runOnUiThread(any()) } answers {
-            firstArg<Runnable>().run()
-        }
-
-        handler.handle(GameMessage(0, GameMessageType.GO_TO_JAIL, JsonObject()))
-
-        verify {
-            mockActivity.runOnUiThread(any())
-            // RiskCardDialog(activity, ...).show() wird erwartet
-        }
-    }
-
-     */
 
     @Test
     fun testHandleDiceRolled() {
