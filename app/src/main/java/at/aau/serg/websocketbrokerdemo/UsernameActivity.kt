@@ -13,7 +13,7 @@ import at.aau.serg.websocketbrokerdemo.network.LobbyStomp
 class UsernameActivity : AppCompatActivity() {
 
     private lateinit var lobbyStomp: LobbyStomp
-    private lateinit var loginHandler: LoginHandler
+    private lateinit var noOpLobbyListener: NoOpLobbyListener
     private lateinit var usernameEditText: EditText
     private lateinit var enterButton: Button
 
@@ -24,8 +24,8 @@ class UsernameActivity : AppCompatActivity() {
         usernameEditText = findViewById(R.id.usernameEditText)
         enterButton = findViewById(R.id.enterButton)
 
-        loginHandler = LoginHandler(this)
-        lobbyStomp = LobbyStomp(loginHandler)
+        noOpLobbyListener = NoOpLobbyListener(this)
+        lobbyStomp = LobbyStomp(noOpLobbyListener)
         lobbyStomp.connect()
 
         enterButton.setOnClickListener {
