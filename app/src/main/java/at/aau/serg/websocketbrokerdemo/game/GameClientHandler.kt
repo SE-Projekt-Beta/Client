@@ -208,6 +208,7 @@ class GameClientHandler(
 
 
     private fun handleDiceRolled(payload: JsonObject) {
+        // TODO: Zwei Würfel implementieren
         val steps = payload["steps"]?.asInt ?: return
         activity.updateDice(steps)
         activity.updateTokenPosition(steps)
