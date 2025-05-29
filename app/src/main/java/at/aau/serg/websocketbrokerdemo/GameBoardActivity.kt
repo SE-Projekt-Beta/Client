@@ -48,6 +48,7 @@ class GameBoardActivity : ComponentActivity() {
     private var myId = -1
     private lateinit var myNickname: String
     private var lastShownTurnPlayerId: Int = -1
+    private var isRolling = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -172,11 +173,26 @@ class GameBoardActivity : ComponentActivity() {
         }
     }
 
-    fun updateDice(diceValue: Int) {
+    fun updateDice(roll1: Int, roll2: Int) {
         runOnUiThread {
-            textDice.text = getString(R.string.rolled_value, diceValue)
+            textDice.text = getString(R.string.rolled_values, roll1, roll2)
         }
     }
+
+    fun onRollFinished() {
+        isRolling = false;
+    }
+    /*
+    private fun onShakeDetected() {
+        if (isRolling) return
+        if (GameStateClient.currentPlayerId == myId && btnRollDice.isEnabled) {
+            isRolling = true
+            runOnUiThread { btnRollDice.performClick() }
+            vibrateOnShake()
+        }
+    }
+
+     */
 
     fun updateTile(tileName: String, tileIndex: Int) {
         runOnUiThread {
