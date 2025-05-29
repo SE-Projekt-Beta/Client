@@ -35,8 +35,9 @@ class PlayerTokenManager(private val gameBoardActivity: GameBoardActivity) {
     fun movePlayerToken(playerId: Int, steps: Int) {
         val player = GameStateClient.players[playerId] ?: return
         val newPosition = (player.position + steps) % 40
+        val tileIndex = if (newPosition == 0) 40 else newPosition
 
-        val tile = ClientBoardMap.getTile(newPosition) ?: return
+        val tile = ClientBoardMap.getTile(tileIndex) ?: return
 
         // Hole das Token des Spielers
         val token = playerTokens.getOrNull(playerId)
