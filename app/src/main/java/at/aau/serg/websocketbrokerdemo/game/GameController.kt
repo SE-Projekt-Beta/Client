@@ -1,5 +1,6 @@
 package at.aau.serg.websocketbrokerdemo.game
 
+import android.util.Log
 import at.aau.serg.websocketbrokerdemo.model.ClientBoardMap
 import at.aau.serg.websocketbrokerdemo.model.TileType
 import com.google.gson.JsonObject
@@ -60,10 +61,17 @@ object GameController {
     }
 
     fun canBuildHouse(tileIndex: Int, playerId: Int): Boolean {
-        val tile = ClientBoardMap.getTile(tileIndex) ?: return false
+        val tile = ClientBoardMap.getTile(tileIndex)
         val owner = OwnershipClient.getOwnerId(tileIndex)
-        return tile.type == TileType.STREET && owner == playerId && tile.houseCost != null
+
+        Log.i("canBuildHouse", "tileIndex=$tileIndex, type=${tile?.type}, owner=$owner, houseCost=${tile?.houseCost}")
+
+        return tile != null &&
+                tile.type == TileType.STREET &&
+                owner == playerId &&
+                tile.houseCost != null
     }
+
 
     fun canBuildHotel(tileIndex: Int, playerId: Int): Boolean {
         val tile = ClientBoardMap.getTile(tileIndex) ?: return false
@@ -78,6 +86,41 @@ object GameController {
             canBuildHotel = canBuildHotel(tileIndex, playerId)
         )
     }
+
+    fun getBuildableHouseTiles(playerId: Int): List<Int> {
+        val allTiles = OwnershipClient.streetOwners
+            .filterValues { it == playerId }
+            .keys
+
+        Log.i("BuildDebug", "Tiles im Besitz: $allTiles")
+
+        val buildable = allTiles.filter { canBuildHouse(it, playerId) }
+
+        Log.i("BuildDebug", "Baubare Tiles: $buildable")
+
+        return buildable
+    }
+
+    fun getHouseOverview(): String {
+        return GameStateClient.players.values.joinToString("\n\n") { player ->
+            val name = player.nickname
+            val cash = player.cash
+            val houses = if (player.houseCounts.isEmpty()) {
+                "Keine Häuser"
+            } else {
+                player.houseCounts.entries.joinToString("\n") { (tileIndex, count) ->
+                    val tileName = getTileName(tileIndex)
+                    "$tileName: $count"
+                }
+            }
+            "$name (Cash: $cash)\n$houses"
+        }
+    }
+
+
+
+
+
 
     data class TileOptions(val canBuy: Boolean, val canBuildHouse: Boolean, val canBuildHotel: Boolean)
 }
