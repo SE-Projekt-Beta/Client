@@ -1,5 +1,6 @@
 package at.aau.serg.websocketbrokerdemo
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -42,8 +43,12 @@ class GameBoardActivity : ComponentActivity() {
     private lateinit var btnBuildHotel: Button
     private lateinit var btnShowOwnership: Button
     private lateinit var btnViewField: Button
+    private lateinit var btnShowHouses: Button
 
+
+    private var hasBuiltHouseThisTurn = false
     private lateinit var btnUpdateState: Button
+
 
     private var myId = -1
     private lateinit var myNickname: String
@@ -92,6 +97,9 @@ class GameBoardActivity : ComponentActivity() {
         btnBuildHotel = findViewById(R.id.buildHotelBtn)
         btnShowOwnership = findViewById(R.id.btnShowOwnership)
         btnViewField = findViewById(R.id.btnViewField)
+        btnShowHouses = findViewById(R.id.btnShowHouses)
+
+
 
         btnUpdateState = findViewById(R.id.btnUpdateState)
 
@@ -125,6 +133,11 @@ class GameBoardActivity : ComponentActivity() {
             val payload = GameController.buildPayload("playerId", myId)
             gameStomp.sendGameMessage(GameMessage(LobbyClient.lobbyId, GameMessageType.REQUEST_GAME_STATE, payload))
         }
+        btnShowHouses.setOnClickListener {
+            val overview = GameController.getHouseOverview()
+            showDialog("Häuser aller Spieler", overview)
+        }
+
     }
 
     private fun setupNetwork() {
@@ -140,12 +153,15 @@ class GameBoardActivity : ComponentActivity() {
         }
     }
 
+
     fun updateTurnView(currentPlayerId: Int, nickname: String) {
         Log.i("GameBoardActivity", "Aktueller Spieler: $nickname (ID: $currentPlayerId)")
+
         runOnUiThread {
             textYouArePlayer.text = getString(R.string.youArePlayer, myNickname, myId)
             textCurrentTurn.text = getString(R.string.nickname_turn, nickname)
 
+            // Overlay nur bei Spielerwechsel anzeigen
             if (currentPlayerId != lastShownTurnPlayerId) {
                 overlay.text = getString(R.string.nickname_turn, nickname)
                 overlay.visibility = View.VISIBLE
@@ -153,24 +169,42 @@ class GameBoardActivity : ComponentActivity() {
                     overlay.visibility = View.GONE
                 }, 2000)
                 lastShownTurnPlayerId = currentPlayerId
+
+                // Beim ersten Zug für diesen Spieler: Bau-Status zurücksetzen
+                if (currentPlayerId == myId) {
+                    hasBuiltHouseThisTurn = false
+                }
             }
 
             if (currentPlayerId == myId) {
                 enableDiceButton()
+
+                // Nur anzeigen, wenn Hausbau erlaubt und noch nicht gebaut
+                val buildableTiles = GameController.getBuildableHouseTiles(myId)
+                if (!hasBuiltHouseThisTurn && buildableTiles.isNotEmpty()) {
+                    btnBuildHouse.visibility = View.VISIBLE
+                    btnBuildHouse.isEnabled = true
+                } else {
+                    btnBuildHouse.visibility = View.GONE
+                }
+
             } else {
                 disableDiceButton()
                 hideActionButtons()
+                btnBuildHouse.visibility = View.GONE
             }
 
-            // Automatisch Bank- oder Risikokarte ziehen, wenn auf entsprechendem Feld
+            // (optional) Kartenlogik vorbereiten
             val fieldIndex = GameController.getCurrentFieldIndex(currentPlayerId)
             val tileType = ClientBoardMap.getTile(fieldIndex)?.type
-
             if (currentPlayerId == myId) {
                 val payload = GameController.buildPayload("playerId", myId)
+                // ggf. weitere Logik
             }
         }
     }
+
+
 
     fun updateDice(diceValue: Int) {
         runOnUiThread {
@@ -325,10 +359,29 @@ class GameBoardActivity : ComponentActivity() {
             }
 
             btnBuildHouse.setOnClickListener {
-                val payload = GameController.buildPayload("playerId", myId, "tilePos", tilePos)
-                gameStomp.sendGameMessage(GameMessage(LobbyClient.lobbyId, GameMessageType.BUILD_HOUSE, payload))
-                btnBuildHouse.visibility = View.GONE
+                val buildableTiles = GameController.getBuildableHouseTiles(myId)
+                if (buildableTiles.isEmpty()) {
+                    showDialog("Keine Felder", "Du hast keine Grundstücke, auf denen du ein Haus bauen kannst.")
+                    return@setOnClickListener
+                }
+
+                val tileNames = buildableTiles.map { ClientBoardMap.getTile(it)?.name ?: "Feld $it" }
+                val tileIndices = buildableTiles.toIntArray()
+
+                AlertDialog.Builder(this)
+                    .setTitle("Grundstück auswählen")
+                    .setItems(tileNames.toTypedArray()) { _, which ->
+                        val selectedTilePos = tileIndices[which]
+                        val payload = GameController.buildPayload("playerId", myId, "tilePos", selectedTilePos)
+                        gameStomp.sendGameMessage(GameMessage(LobbyClient.lobbyId, GameMessageType.BUILD_HOUSE, payload))
+
+                        hasBuiltHouseThisTurn = true
+                        btnBuildHouse.visibility = View.GONE
+                    }
+                    .setNegativeButton("Abbrechen", null)
+                    .show()
             }
+
 
             btnBuildHotel.setOnClickListener {
                 val payload = GameController.buildPayload("playerId", myId, "tilePos", tilePos)
