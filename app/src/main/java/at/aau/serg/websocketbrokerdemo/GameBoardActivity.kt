@@ -349,7 +349,8 @@ class GameBoardActivity : ComponentActivity() {
     fun showBuyOptions(tilePos: Int, tileName: String, canBuy: Boolean, canBuildHouse: Boolean, canBuildHotel: Boolean) {
         runOnUiThread {
             btnBuy.visibility = if (canBuy) View.VISIBLE else View.GONE
-            btnBuildHouse.visibility = if (canBuildHouse) View.VISIBLE else View.GONE
+            // Nur anzeigen, wenn in dieser Runde noch kein Haus gebaut wurde:
+            btnBuildHouse.visibility = if (!hasBuiltHouseThisTurn && canBuildHouse) View.VISIBLE else View.GONE
             btnBuildHotel.visibility = if (canBuildHotel) View.VISIBLE else View.GONE
 
             btnBuy.setOnClickListener {
@@ -382,7 +383,6 @@ class GameBoardActivity : ComponentActivity() {
                     .show()
             }
 
-
             btnBuildHotel.setOnClickListener {
                 val payload = GameController.buildPayload("playerId", myId, "tilePos", tilePos)
                 gameStomp.sendGameMessage(GameMessage(LobbyClient.lobbyId, GameMessageType.BUILD_HOTEL, payload))
@@ -390,6 +390,7 @@ class GameBoardActivity : ComponentActivity() {
             }
         }
     }
+
 
     fun enableDiceButton() {
         runOnUiThread {
