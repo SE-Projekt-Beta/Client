@@ -88,7 +88,6 @@ class GameClientHandler(
         val myId = LobbyClient.playerId
         val currentPlayerId = GameController.getCurrentPlayerId()
         val currentPlayerName = GameController.getCurrentPlayerName()
-        val diceValue = payload["dice"]?.asInt ?: -1
         val fieldIndex = GameController.getCurrentFieldIndex(myId)
         val tileName = GameController.getTileName(fieldIndex)
         val cash = GameController.getCash(myId)
@@ -98,10 +97,8 @@ class GameClientHandler(
         activity.updateTestView(playersJson)
 
         activity.updateTurnView(currentPlayerId, currentPlayerName)
-        activity.updateDice(diceValue)
         activity.updateTile(tileName, fieldIndex)
         activity.updateCashDisplay(cash)
-        activity.updateTokenPosition(diceValue)
 
         if (myId == currentPlayerId) {
             activity.enableDiceButton()
@@ -208,9 +205,15 @@ class GameClientHandler(
 
 
     private fun handleDiceRolled(payload: JsonObject) {
-        val steps = payload["steps"]?.asInt ?: return
-        activity.updateDice(steps)
+        val roll1 = payload["roll1"]?.asInt ?: return
+        val roll2 = payload["roll2"]?.asInt ?: return
+        val steps = roll1 + roll2
+
+        activity.updateDice(roll1, roll2)
         activity.updateTokenPosition(steps)
+
+        // Wurf ist vollständig angekommen, wir können schütteln wieder erlauben
+        activity.onRollFinished()
     }
 
     private fun handleCashTask(payload: JsonObject) {
