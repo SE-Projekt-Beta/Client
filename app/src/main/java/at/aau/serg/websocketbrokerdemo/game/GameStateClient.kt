@@ -56,4 +56,5 @@ object GameStateClient {
 
     val remainingPlayers: Int
         get() = players.values.count { it.alive }
+
 }

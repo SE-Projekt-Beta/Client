@@ -7,16 +7,29 @@ object OwnershipClient {
 
     fun updateFromBoard(boardArray: JSONArray) {
         streetOwners.clear()
+
+        // Reset alle Häuser
+        GameStateClient.players.values.forEach { it.houseCounts.clear() }
+
         for (i in 0 until boardArray.length()) {
             val tile = boardArray.getJSONObject(i)
-            val type = tile.getString("type")
-            if (type == "StreetTile" && tile.has("ownerId")) {
-                val index = tile.getInt("index")
-                val ownerId = tile.optInt("ownerId", -1)
-                streetOwners[index] = if (ownerId >= 0) ownerId else null
+            val index = tile.getInt("index")
+
+            if (tile.getString("type") == "StreetTile" && tile.has("ownerId")) {
+                val ownerId = tile.getInt("ownerId")
+                if (ownerId >= 0) {
+                    streetOwners[index] = ownerId
+
+                    val houseCount = tile.optInt("houseCount", 0)
+                    val player = GameStateClient.getPlayer(ownerId)
+                    if (houseCount > 0 && player != null) {
+                        player.houseCounts[index] = houseCount
+                    }
+                }
             }
         }
     }
+
 
     fun getOwnerId(tileIndex: Int): Int? {
         return streetOwners[tileIndex]
