@@ -116,11 +116,5 @@ object GameController {
             "$name (Cash: $cash)\n$houses"
         }
     }
-
-
-
-
-
-
     data class TileOptions(val canBuy: Boolean, val canBuildHouse: Boolean, val canBuildHotel: Boolean)
 }

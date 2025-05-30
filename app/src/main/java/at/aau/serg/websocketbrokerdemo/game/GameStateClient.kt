@@ -1,7 +1,5 @@
 package at.aau.serg.websocketbrokerdemo.game
 
-import at.aau.serg.websocketbrokerdemo.model.ClientBoardMap
-import at.aau.serg.websocketbrokerdemo.model.TileType
 import org.json.JSONObject
 
 object GameStateClient {
