@@ -250,7 +250,7 @@ class GameClientHandler(
             Log.i(TAG, "Extra message for player $playerId, not showing to current player.")
             return
         }
-        activity.showDialog("Extra Message", message)
+        activity.showDialog(title, message)
     }
 
     companion object {
