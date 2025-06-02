@@ -70,6 +70,13 @@ class ListLobbyActivity : ComponentActivity() {
 
     }
 
+    override fun onResume() {
+        super.onResume()
+        Log.i("ListLobbyActivity", "onResume called")
+        // Request the list of lobbies when the activity is resumed
+        lobbyStomp.sendListLobbies()
+    }
+
     private fun joinLobby(lobby: LobbyDTO) {
 
         playerId = LobbyClient.playerId
