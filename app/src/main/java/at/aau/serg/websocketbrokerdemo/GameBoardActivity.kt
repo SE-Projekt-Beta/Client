@@ -227,11 +227,11 @@ class GameBoardActivity : ComponentActivity() {
     }
 
 
-    fun showGameOverDialog(ranking: String) {
-        showDialog("Spiel beendet", ranking)
+    fun showGameOverDialog(winnerName: String) {
+        showDialog("Spiel beendet, Gewinner", winnerName)
     }
 
-    private fun showDialog(title: String, message: String) {
+    fun showDialog(title: String, message: String) {
         runOnUiThread {
             android.app.AlertDialog.Builder(this)
                 .setTitle(title)

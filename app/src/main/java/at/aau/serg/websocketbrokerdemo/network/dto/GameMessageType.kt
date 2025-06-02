@@ -11,6 +11,7 @@ enum class GameMessageType {
     ROLL_PRISON,
     ROLLED_PRISON,
     PAY_RENT,
+    EXTRA_MESSAGE,
 
     PLAYER_MOVED,
     CAN_BUY_PROPERTY,
