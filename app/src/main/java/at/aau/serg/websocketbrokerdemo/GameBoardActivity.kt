@@ -227,11 +227,24 @@ class GameBoardActivity : ComponentActivity() {
     }
 
 
-    fun showGameOverDialog(ranking: String) {
-        showDialog("Spiel beendet", ranking)
+    fun showGameOverDialog(winnerName: String) {
+        runOnUiThread {
+            android.app.AlertDialog.Builder(this)
+                .setTitle("Spiel beendet")
+                .setMessage("Der Gewinner ist $winnerName. Möchten Sie zum Lobby-Bildschirm zurückkehren?")
+                .setPositiveButton("Ja") { _, _ ->
+                    LobbyClient.lobbyId = -1 // Lobby-ID zurücksetzen
+                    LobbyClient.lobbyName = "" // Lobby-Name zurücksetzen
+                    LobbyClient.playerId = -1 // Spieler-ID zurücksetzen
+                    finish() // Schließt die Activity
+                }
+                .setNegativeButton("Nein", null)
+                .show()
+        }
+
     }
 
-    private fun showDialog(title: String, message: String) {
+    fun showDialog(title: String, message: String) {
         runOnUiThread {
             android.app.AlertDialog.Builder(this)
                 .setTitle(title)

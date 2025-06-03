@@ -31,6 +31,7 @@ class GameClientHandler(
             GameMessageType.CASH_TASK -> handleCashTask(message.payload.asJsonObject)
             GameMessageType.PLAYER_LOST -> handlePlayerLost(message.payload.asJsonObject)
             GameMessageType.GAME_OVER -> handleGameOver(message.payload.asJsonObject)
+            GameMessageType.EXTRA_MESSAGE -> handleExtraMessage(message.payload.asJsonObject)
             GameMessageType.ERROR -> Log.e(TAG, "Fehler: ${message.payload}")
             else -> Log.w(TAG, "Unbekannter Nachrichtentyp: ${message.type}")
         }
@@ -235,10 +236,21 @@ class GameClientHandler(
     }
 
     private fun handleGameOver(payload: JsonObject) {
-        val ranking = payload["ranking"]?.asJsonArray
-            ?.joinToString("\n") { it.asString }
-            ?: "Unbekannt"
-        activity.showGameOverDialog(ranking)
+        val winnerId = payload["winnerId"]?.asInt ?: return
+        val winnerName = payload["winnerName"]?.asString ?: return
+        activity.showGameOverDialog(winnerName)
+    }
+
+    private fun handleExtraMessage(payload: JsonObject) {
+        val playerId = payload["playerId"]?.asInt ?: return
+        val title = payload["title"]?.asString ?: "Extra Message"
+        val message = payload["message"]?.asString ?: return
+        Log.i(TAG, "Extra message: $message for player $playerId")
+        if (playerId != LobbyClient.playerId) {
+            Log.i(TAG, "Extra message for player $playerId, not showing to current player.")
+            return
+        }
+        activity.showDialog(title, message)
     }
 
     companion object {
