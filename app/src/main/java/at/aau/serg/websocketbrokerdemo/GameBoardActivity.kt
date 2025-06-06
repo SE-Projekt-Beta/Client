@@ -125,7 +125,6 @@ fun tileAt(row: Int, col: Int): ClientTile? {
 }
 
 
-
 @Composable
 fun MonopolyTile(
     tile: ClientTile,
