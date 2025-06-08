@@ -31,6 +31,7 @@ class GameClientHandler(
             GameMessageType.CASH_TASK -> handleCashTask(message.payload.asJsonObject)
             GameMessageType.PLAYER_LOST -> handlePlayerLost(message.payload.asJsonObject)
             GameMessageType.GAME_OVER -> handleGameOver(message.payload.asJsonObject)
+            GameMessageType.EXTRA_MESSAGE -> handleExtraMessage(message.payload.asJsonObject)
             GameMessageType.ERROR -> Log.e(TAG, "Fehler: ${message.payload}")
             else -> Log.w(TAG, "Unbekannter Nachrichtentyp: ${message.type}")
         }
@@ -88,7 +89,6 @@ class GameClientHandler(
         val myId = LobbyClient.playerId
         val currentPlayerId = GameController.getCurrentPlayerId()
         val currentPlayerName = GameController.getCurrentPlayerName()
-        val diceValue = payload["dice"]?.asInt ?: -1
         val fieldIndex = GameController.getCurrentFieldIndex(myId)
         val tileName = GameController.getTileName(fieldIndex)
         val cash = GameController.getCash(myId)
@@ -98,10 +98,8 @@ class GameClientHandler(
         activity.updateTestView(playersJson)
 
         activity.updateTurnView(currentPlayerId, currentPlayerName)
-        activity.updateDice(diceValue)
         activity.updateTile(tileName, fieldIndex)
         activity.updateCashDisplay(cash)
-        activity.updateTokenPosition(diceValue)
 
         if (myId == currentPlayerId) {
             activity.enableDiceButton()
@@ -208,9 +206,15 @@ class GameClientHandler(
 
 
     private fun handleDiceRolled(payload: JsonObject) {
-        val steps = payload["steps"]?.asInt ?: return
-        activity.updateDice(steps)
+        val roll1 = payload["roll1"]?.asInt ?: return
+        val roll2 = payload["roll2"]?.asInt ?: return
+        val steps = roll1 + roll2
+
+        activity.updateDice(roll1, roll2)
         activity.updateTokenPosition(steps)
+
+        // Wurf ist vollständig angekommen, wir können schütteln wieder erlauben
+        activity.onRollFinished()
     }
 
     private fun handleCashTask(payload: JsonObject) {
@@ -232,10 +236,21 @@ class GameClientHandler(
     }
 
     private fun handleGameOver(payload: JsonObject) {
-        val ranking = payload["ranking"]?.asJsonArray
-            ?.joinToString("\n") { it.asString }
-            ?: "Unbekannt"
-        activity.showGameOverDialog(ranking)
+        val winnerId = payload["winnerId"]?.asInt ?: return
+        val winnerName = payload["winnerName"]?.asString ?: return
+        activity.showGameOverDialog(winnerName)
+    }
+
+    private fun handleExtraMessage(payload: JsonObject) {
+        val playerId = payload["playerId"]?.asInt ?: return
+        val title = payload["title"]?.asString ?: "Extra Message"
+        val message = payload["message"]?.asString ?: return
+        Log.i(TAG, "Extra message: $message for player $playerId")
+        if (playerId != LobbyClient.playerId) {
+            Log.i(TAG, "Extra message for player $playerId, not showing to current player.")
+            return
+        }
+        activity.showDialog(title, message)
     }
 
     companion object {

@@ -70,6 +70,17 @@ class ListLobbyActivity : ComponentActivity() {
 
     }
 
+    override fun onResume() {
+        super.onResume()
+        Log.i("ListLobbyActivity", "onResume called")
+        // register before calling connect
+        lobbyStomp.setOnConnectedListener {
+            // this will only run once the socket is open
+            lobbyStomp.sendListLobbies()
+        }
+        lobbyStomp.connect()
+    }
+
     private fun joinLobby(lobby: LobbyDTO) {
 
         playerId = LobbyClient.playerId

@@ -47,13 +47,11 @@ class GameClientHandlerTest {
 
     @Test
     fun testHandleGameState_myTurn() {
-        val payload = JsonObject().apply { addProperty("dice", 5) }
-        val message = GameMessage(0, GameMessageType.GAME_STATE, payload)
+        val payload = JsonObject()  // Kein "dice" notwendig
 
-        handler.handle(message)
+        handler.handle(GameMessage(0, GameMessageType.GAME_STATE, payload))
 
         verify { mockActivity.updateTurnView(1, "Alice") }
-        verify { mockActivity.updateDice(5) }
         verify { mockActivity.updateTile("Ringstraße", 4) }
         verify { mockActivity.updateCashDisplay(1500) }
         verify { mockActivity.enableDiceButton() }
@@ -76,11 +74,16 @@ class GameClientHandlerTest {
 
     @Test
     fun testHandleDiceRolled() {
-        val payload = JsonObject().apply { addProperty("steps", 6) }
+        val payload = JsonObject().apply {
+            addProperty("roll1", 3)
+            addProperty("roll2", 4)
+        }
 
         handler.handle(GameMessage(0, GameMessageType.DICE_ROLLED, payload))
 
-        verify { mockActivity.updateDice(6) }
+        verify { mockActivity.updateDice(3, 4) }
+        verify { mockActivity.updateTokenPosition(7) }
+        verify { mockActivity.onRollFinished() }
     }
 
     @Test
@@ -112,15 +115,13 @@ class GameClientHandlerTest {
     @Test
     fun testHandleGameOver() {
         val payload = JsonObject().apply {
-            add("ranking", JsonArray().apply {
-                add("1. Alice")
-                add("2. Bob")
-            })
+            addProperty("winnerId", 1)
+            addProperty("winnerName", "Alice")
         }
 
         handler.handle(GameMessage(0, GameMessageType.GAME_OVER, payload))
 
-        verify { mockActivity.showGameOverDialog("1. Alice\n2. Bob") }
+        verify { mockActivity.showGameOverDialog("Alice") }
     }
 
     @Test
@@ -140,7 +141,9 @@ class GameClientHandlerTest {
 
         handler.handle(GameMessage(0, GameMessageType.DICE_ROLLED, payload))
 
-        verify(exactly = 0) { mockActivity.updateDice(any()) }
+        verify(exactly = 0) { mockActivity.updateDice(any(), any()) }
+        verify(exactly = 0) { mockActivity.updateTokenPosition(any()) }
+        verify(exactly = 0) { mockActivity.onRollFinished() }
     }
 
     @Test
