@@ -106,9 +106,9 @@ fun tileAt(row: Int, col: Int): ClientTile? {
         return tiles.getOrNull(size - col - 1)
     }
 
-    // Left column, bottom to top (after bottom row, [size-2][0] to [0][0])
+    // Left column, top to bottom (after bottom row, [0][0] to [size-2][0])
     if (col == 0 && row in 0 until size - 1) {
-        return tiles.getOrNull(size + row)
+        return tiles.getOrNull(2 * size - 2 - row)
     }
 
     // Top row, left to right ([0][1] to [0][size-1])
