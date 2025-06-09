@@ -93,10 +93,9 @@ class GameClientHandler(
         val tileName = GameController.getTileName(fieldIndex)
         val cash = GameController.getCash(myId)
 
-        val playersJson = payload["players"]?.toString() ?: "No players"
+        val playersJson = payload["players"]?.asJsonArray ?: return
         Log.i(TAG, "Players JSON: $playersJson")
-        activity.updateTestView(playersJson)
-
+        activity.updatePlayerPositionsFromJson(playersJson.toString())
         activity.updateTurnView(currentPlayerId, currentPlayerName)
         activity.updateTile(tileName, fieldIndex)
         activity.updateCashDisplay(cash)

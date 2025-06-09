@@ -2,6 +2,7 @@ package at.aau.serg.websocketbrokerdemo
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
@@ -9,7 +10,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -22,24 +23,19 @@ import at.aau.serg.websocketbrokerdemo.model.ClientBoardMap
 import at.aau.serg.websocketbrokerdemo.model.ClientTile
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
+import at.aau.serg.websocketbrokerdemo.game.GameClientHandler
+import at.aau.serg.websocketbrokerdemo.game.GameController
+import at.aau.serg.websocketbrokerdemo.network.GameStomp
+import at.aau.serg.websocketbrokerdemo.network.dto.GameMessage
+import at.aau.serg.websocketbrokerdemo.network.dto.GameMessageType
+import com.google.gson.JsonArray
 
+val playerColors = mutableMapOf<Int, Color>()
 
-// Dummy player colors map (playerId -> Color)
-val playerColors = mapOf(
-    1 to Color.Red,
-    2 to Color.Blue,
-    3 to Color.Green,
-    4 to Color.Magenta
-)
-
-// Example ownership: tile index -> playerId
 val tileOwnership = mapOf(
     1 to 1,
     2 to 3,
@@ -52,11 +48,19 @@ val tileOwnership = mapOf(
 
 class GameBoardActivity : ComponentActivity() {
 
+    private lateinit var gameStomp: GameStomp
+    private lateinit var gameClientHandler: GameClientHandler
+
+    private lateinit var viewModel: GameBoardViewModel
+
     private var myId = -1
     private lateinit var myNickname: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Initialize viewModel property here (once)
+        viewModel = GameBoardViewModel()
 
         myNickname = LobbyClient.username
         myId = LobbyClient.playerId
@@ -68,69 +72,246 @@ class GameBoardActivity : ComponentActivity() {
             players.forEach { GameStateClient.players[it.id] = it }
         }
 
-        // Network setup removed for brevity or add here as before
+        gameClientHandler = GameClientHandler(this)
+        gameStomp = GameStomp(gameClientHandler, LobbyClient.lobbyId)
+        gameStomp.setOnConnectedListener { gameStomp.requestGameStateWithRetry() }
+        gameStomp.connect()
+
+        // Setup player colors and positions inside the already initialized viewModel
+        val playerCount = GameStateClient.players.size
+        GameStateClient.players.values.forEach { player ->
+            playerColors[player.id] = when (player.id % playerCount) {
+                1 -> Color.Red
+                2 -> Color.Blue
+                3 -> Color.Green
+                4 -> Color.Yellow
+                else -> Color.Gray
+            }
+            viewModel.updatePlayerPosition(player.id, player.position)
+        }
+
+        viewModel.onRollDice = {
+            val payload = GameController.buildPayload("playerId", myId)
+            gameStomp.sendGameMessage(GameMessage(LobbyClient.lobbyId, GameMessageType.ROLL_DICE, payload))
+        }
 
         setContent {
-            GameBoardScreen(myNickname, myId)
+            GameBoardScreen(myNickname, myId, viewModel)
         }
     }
 
-    // Empty placeholder functions (as requested)
-    fun updateTestView(message: String) {}
-    fun updateTurnView(currentPlayerId: Int, nickname: String) {}
-    fun updateDice(roll1: Int, roll2: Int) {}
-    fun onRollFinished() {}
-    fun updateTile(tileName: String, tileIndex: Int) {}
-    fun updateTokenPosition(steps: Int) {}
-    fun updateCashDisplay(cash: Int) {}
-    fun showGameOverDialog(winnerName: String) {}
-    fun showDialog(title: String, message: String) {}
-    fun showBuyDialog(tilePos: Int, tileName: String) {}
-    fun showRollPrisonDialog(dice1: Int, dice2: Int) {}
-    fun showPayPrisonDialog() {}
-    fun showBuyOptions(tilePos: Int, tileName: String, canBuy: Boolean, canBuildHouse: Boolean, canBuildHotel: Boolean) {}
-    fun enableDiceButton() {}
-    fun disableDiceButton() {}
-    fun showPlayerLost(playerId: Int) {}
-    fun hideActionButtons() {}
-}
 
-val tileSizeDp = 60.dp
+
+
+    // Empty placeholders
+    fun updatePlayerPositionsFromJson(jsonString: String) {
+        val type = object : TypeToken<List<PlayerClient>>() {}.type
+        val players: List<PlayerClient> = Gson().fromJson(jsonString, type)
+
+        players.forEach { player ->
+            viewModel.updatePlayerPosition(player.id, player.position)
+        }
+    }
+
+    fun showBuyDialog(tilePos: Int, tileName: String) {
+        runOnUiThread {
+            val dialog = androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle("Buy Property")
+                .setMessage("Do you want to buy $tileName at position $tilePos?")
+                .setPositiveButton("Buy", null)
+                .setNegativeButton("Cancel", null)
+                .create()
+            dialog.setCanceledOnTouchOutside(false)
+            dialog.setCancelable(false)
+            dialog.show()
+            dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE).setOnClickListener {
+                val payload = GameController.buildPayload("playerId", myId, "tilePos", tilePos)
+                gameStomp.sendGameMessage(
+                    GameMessage(
+                        LobbyClient.lobbyId,
+                        GameMessageType.BUY_PROPERTY,
+                        payload
+                    )
+                )
+                dialog.dismiss()
+            }
+            dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_NEGATIVE).setOnClickListener {
+                val payload = GameController.buildPayload("playerId", myId, "tilePos", -1)
+                gameStomp.sendGameMessage(
+                    GameMessage(
+                        LobbyClient.lobbyId,
+                        GameMessageType.BUY_PROPERTY,
+                        payload
+                    )
+                )
+                dialog.dismiss()
+            }
+        }
+    }
+
+
+    fun updateTurnView(currentPlayerId: Int, nickname: String) {
+        runOnUiThread {
+            // Show turn info (could be a Toast, Snackbar, or update a TextView if you add one)
+            // For now, just log
+            Log.i("GameBoardActivity", "Aktueller Spieler: $nickname (ID: $currentPlayerId)")
+        }
+    }
+
+    fun updateDice(roll1: Int, roll2: Int) {
+        runOnUiThread {
+            Log.i("GameBoardActivity", "Dice rolled: $roll1, $roll2")
+        }
+    }
+
+    fun onRollFinished() {
+        // Could be used to re-enable UI, etc.
+        Log.i("GameBoardActivity", "Roll finished")
+    }
+
+    fun updateTile(tileName: String, tileIndex: Int) {
+        runOnUiThread {
+            Log.i("GameBoardActivity", "Landed on $tileName ($tileIndex)")
+        }
+    }
+
+    fun updateTokenPosition(steps: Int) {
+        // Not visualized in Compose version, but could be animated
+        Log.i("GameBoardActivity", "Token moved $steps steps")
+    }
+
+    fun updateCashDisplay(cash: Int) {
+        runOnUiThread {
+            Log.i("GameBoardActivity", "Cash: $cash")
+        }
+    }
+
+    fun showGameOverDialog(winnerName: String) {
+        runOnUiThread {
+            androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle("Game Over")
+                .setMessage("The winner is $winnerName. Return to lobby?")
+                .setPositiveButton("Yes") { _, _ ->
+                    LobbyClient.lobbyId = -1
+                    LobbyClient.lobbyName = ""
+                    LobbyClient.playerId = -1
+                    finish()
+                }
+                .setNegativeButton("No", null)
+                .show()
+        }
+    }
+
+    fun showDialog(title: String, message: String) {
+        runOnUiThread {
+            androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle(title)
+                .setMessage(message)
+                .setPositiveButton("OK", null)
+                .show()
+        }
+    }
+
+    fun showRollPrisonDialog(dice1: Int, dice2: Int) {
+        runOnUiThread {
+            val dialog = androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle("Prison Roll")
+                .setMessage("You rolled $dice1 and $dice2.")
+                .setNeutralButton("OK", null)
+                .create()
+            dialog.setCanceledOnTouchOutside(false)
+            dialog.setCancelable(false)
+            dialog.show()
+        }
+    }
+
+    fun showPayPrisonDialog() {
+        runOnUiThread {
+            val dialog = androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle("Pay Prison Fee")
+                .setMessage("Do you want to pay 50€ to get out of jail?")
+                .setPositiveButton("Yes") { _, _ ->
+                    val payload = GameController.buildPayload("playerId", myId)
+                    gameStomp.sendGameMessage(
+                        GameMessage(
+                            LobbyClient.lobbyId,
+                            GameMessageType.PAY_PRISON,
+                            payload
+                        )
+                    )
+                }
+                .setNegativeButton("No") { _, _ ->
+                    val payload = GameController.buildPayload("playerId", myId)
+                    gameStomp.sendGameMessage(
+                        GameMessage(
+                            LobbyClient.lobbyId,
+                            GameMessageType.ROLL_PRISON,
+                            payload
+                        )
+                    )
+                }
+                .create()
+            dialog.setCanceledOnTouchOutside(false)
+            dialog.setCancelable(false)
+            dialog.show()
+        }
+    }
+
+    fun showBuyOptions(tilePos: Int, tileName: String, canBuy: Boolean, canBuildHouse: Boolean, canBuildHotel: Boolean) {
+        // In Compose, you would show/hide buttons in the UI state, but for now just log
+        Log.i("GameBoardActivity", "Buy options: canBuy=$canBuy, canBuildHouse=$canBuildHouse, canBuildHotel=$canBuildHotel")
+    }
+
+    fun enableDiceButton() {
+        // In Compose, you would update state to enable the button
+        Log.i("GameBoardActivity", "Dice button enabled")
+    }
+
+    fun disableDiceButton() {
+        // In Compose, you would update state to disable the button
+        Log.i("GameBoardActivity", "Dice button disabled")
+    }
+
+    fun showPlayerLost(playerId: Int) {
+        val nickname = GameStateClient.getNickname(playerId) ?: "A player"
+        runOnUiThread {
+            showDialog("Bankrupt", "$nickname is bankrupt and out of the game.")
+        }
+    }
+
+    fun hideActionButtons() {
+        // In Compose, you would update state to hide action buttons
+        Log.i("GameBoardActivity", "Action buttons hidden")
+    }
+}
 
 fun tileAt(row: Int, col: Int): ClientTile? {
     val size = 11
     val tiles = ClientBoardMap.tiles
 
-    // Bottom row, right to left (Start at [size-1][size-1] to [size-1][0])
-    if (row == size - 1 && col in 0 until size) {
-        return tiles.getOrNull(size - col - 1)
+    return when {
+        row == size - 1 && col in 0 until size -> tiles.getOrNull(size - col - 1)
+        col == 0 && row in 0 until size - 1 -> tiles.getOrNull(2 * size - 2 - row)
+        row == 0 && col in 1 until size -> tiles.getOrNull(2 * size - 1 + col - 1)
+        col == size - 1 && row in 1 until size - 1 -> tiles.getOrNull(3 * size - 2 + row - 1)
+        else -> null
     }
-
-    // Left column, top to bottom (after bottom row, [0][0] to [size-2][0])
-    if (col == 0 && row in 0 until size - 1) {
-        return tiles.getOrNull(2 * size - 2 - row)
-    }
-
-    // Top row, left to right ([0][1] to [0][size-1])
-    if (row == 0 && col in 1 until size) {
-        return tiles.getOrNull(2 * size - 1 + col - 1)
-    }
-
-    // Right column, top to bottom ([1][size-1] to [size-2][size-1])
-    if (col == size - 1 && row in 1 until size - 1) {
-        return tiles.getOrNull(3 * size - 2 + row - 1)
-    }
-
-    return null
 }
 
+fun findTileCoordinates(tileIndex: Int): Pair<Int, Int>? {
+    val size = 11
+    val correctedIndex = (tileIndex - 1 + 40) % 40 // Fix: show position one less, wrap around
+    return when (correctedIndex) {
+        in 0..10 -> size - 1 to size - 1 - correctedIndex // bottom
+        in 11..19 -> 2 * size - 2 - correctedIndex to 0 // left
+        in 20..29 -> 0 to correctedIndex - 20 // top
+        in 30..39 -> correctedIndex - 30 to size - 1 // right (fixed: remove +1)
+        else -> null
+    }
+}
 
 @Composable
-fun MonopolyTile(
-    tile: ClientTile,
-    ownedByPlayerId: Int?,
-    modifier: Modifier = Modifier
-) {
+fun MonopolyTile(tile: ClientTile, ownedByPlayerId: Int?, modifier: Modifier = Modifier) {
     val ownerColor = ownedByPlayerId?.let { playerColors[it] } ?: Color(0xFFF0F0F0)
     Box(
         modifier = modifier
@@ -158,10 +339,22 @@ fun MonopolyTile(
     }
 }
 
+
 @SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
-fun GameBoardScreen(nickname: String, playerId: Int) {
+fun GameBoardScreen(nickname: String, playerId: Int, viewModel: GameBoardViewModel) {
+    val playerPositions = viewModel.playerPositions
     val gridSize = 11
+
+//    val playerPositions = remember {
+//        mutableStateMapOf(
+//            1 to 0,
+//            2 to 4,
+//            3 to 10,
+//            4 to 39
+//        )
+//    }
+
     Column(modifier = Modifier.fillMaxSize()) {
         Text(
             "Welcome, $nickname (ID: $playerId)",
@@ -176,55 +369,100 @@ fun GameBoardScreen(nickname: String, playerId: Int) {
         ) {
             val tileWidth = maxWidth / gridSize
             val tileHeight = maxHeight / gridSize
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                repeat(gridSize) { row ->
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        repeat(gridSize) { col ->
-                            val tile = tileAt(row, col)
-                            when {
-                                row == 5 && col == 5 -> {
-                                    // Center: Roll Dice button
-                                    Box(
-                                        modifier = Modifier
-                                            .width(tileWidth)
-                                            .height(tileHeight),
-                                        contentAlignment = Alignment.Center
-                                    ) {
-                                        Button(onClick = { /* TODO: roll dice */ }) {
-                                            Text("Roll Dice")
+
+            Box {
+                Column {
+                    repeat(gridSize) { row ->
+                        Row {
+                            repeat(gridSize) { col ->
+                                val tile = tileAt(row, col)
+                                when {
+                                    row == 5 && col == 5 -> {
+                                        Box(
+                                            modifier = Modifier
+                                                .width(tileWidth)
+                                                .height(tileHeight),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            Button(onClick = {
+                                                viewModel.rollDice()
+                                            }) {
+                                                Text("Roll Dice")
+                                            }
                                         }
                                     }
-                                }
-                                tile != null -> {
-                                    MonopolyTile(
-                                        tile = tile,
-                                        ownedByPlayerId = tileOwnership[tile.index],
-                                        modifier = Modifier
-                                            .width(tileWidth)
-                                            .height(tileHeight)
-                                    )
-                                }
-                                else -> {
-                                    Spacer(
-                                        modifier = Modifier
-                                            .width(tileWidth)
-                                            .height(tileHeight)
-                                    )
+
+                                    tile != null -> {
+                                        MonopolyTile(
+                                            tile = tile,
+                                            ownedByPlayerId = tileOwnership[tile.index],
+                                            modifier = Modifier
+                                                .width(tileWidth)
+                                                .height(tileHeight)
+                                        )
+                                    }
+
+                                    else -> {
+                                        Spacer(
+                                            modifier = Modifier
+                                                .width(tileWidth)
+                                                .height(tileHeight)
+                                        )
+                                    }
                                 }
                             }
                         }
                     }
                 }
+
+                PlayerTokensOverlay(playerPositions, tileWidth, tileHeight)
             }
         }
     }
 }
 
+class GameBoardViewModel : ViewModel() {
+    val playerPositions = mutableStateMapOf<Int, Int>()
+    var onRollDice: (() -> Unit)? = null
+
+
+    fun updatePlayerPosition(playerId: Int, newTile: Int) {
+        playerPositions[playerId] = newTile
+    }
+
+
+    fun rollDice() {
+        onRollDice?.invoke()
+    }
+
+}
+
+
+@Composable
+fun PlayerTokensOverlay(
+    playerPositions: Map<Int, Int>,
+    tileWidth: Dp,
+    tileHeight: Dp
+) {
+    Box(modifier = Modifier.fillMaxSize()) {
+        for ((playerId, tileIndex) in playerPositions) {
+            val coords = findTileCoordinates(tileIndex)
+            if (coords != null) {
+                val (row, col) = coords
+                Box(
+                    modifier = Modifier
+                        .offset(
+                            x = tileWidth * col,
+                            y = tileHeight * row
+                        )
+                        .size(14.dp)
+                        .background(
+                            color = playerColors[playerId] ?: Color.Black,
+                            shape = RoundedCornerShape(50)
+                        )
+                        .border(1.dp, Color.Black, RoundedCornerShape(50))
+                )
+            }
+        }
+    }
+}
