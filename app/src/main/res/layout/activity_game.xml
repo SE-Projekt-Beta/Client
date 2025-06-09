@@ -238,12 +238,36 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"/>
 
+        <Button
+            android:id="@+id/btnShowHouses"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Häuser anzeigen"
+            android:layout_marginTop="24dp"
+            android:background="@drawable/button_yellow_with_border"
+            android:visibility="visible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/textHouseOverview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:visibility="gone"
+            android:textColor="@android:color/black"
+            android:textSize="14sp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            />
+
         <TextView
             android:id="@+id/textTesting"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/gelandet_auf_default"
-            android:layout_marginTop="12dp"/>
+            android:layout_marginTop="12dp" />
+
 
 
     </LinearLayout>

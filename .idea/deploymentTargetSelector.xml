@@ -8,7 +8,7 @@
           <targets>
             <Target type="DEFAULT_BOOT">
               <handle>
-                <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\thoma\.android\avd\Pixel_8a_1_4.avd" />
+                <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\thoma\.android\avd\Pixel_8a_1_5.avd" />
               </handle>
             </Target>
             <Target type="DEFAULT_BOOT">
@@ -18,6 +18,12 @@
             </Target>
           </targets>
         </DialogSelection>
+      </SelectionState>
+      <SelectionState runConfigName="GameBoardActivityTest">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="UsernameActivityTest">
+        <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>
   </component>
