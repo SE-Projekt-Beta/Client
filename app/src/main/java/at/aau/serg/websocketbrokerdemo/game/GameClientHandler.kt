@@ -10,6 +10,7 @@ import at.aau.serg.websocketbrokerdemo.network.dto.GameMessage
 import at.aau.serg.websocketbrokerdemo.network.dto.GameMessageType
 import com.google.gson.JsonObject
 import at.aau.serg.websocketbrokerdemo.game.dialog.BankCardDialog
+import kotlin.text.get
 
 
 class GameClientHandler(
@@ -206,12 +207,14 @@ class GameClientHandler(
 
 
     private fun handleDiceRolled(payload: JsonObject) {
-        val roll1 = payload["roll1"]?.asInt ?: return
-        val roll2 = payload["roll2"]?.asInt ?: return
-        val steps = roll1 + roll2
+        val steps1 = payload["steps1"]?.asInt ?: return
+        val steps2 = payload["steps2"]?.asInt ?: return
 
-        activity.updateDice(roll1, roll2)
-        activity.updateTokenPosition(steps)
+        // Einzelnen Würfel anzeigen
+        activity.updateDice(steps1, steps2)
+
+        // Bewegung der Spielfigur
+        activity.updateTokenPosition(steps1 + steps2)
 
         // Wurf ist vollständig angekommen, wir können schütteln wieder erlauben
         activity.onRollFinished()

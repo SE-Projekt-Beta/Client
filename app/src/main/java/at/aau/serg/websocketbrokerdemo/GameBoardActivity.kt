@@ -1,14 +1,24 @@
 package at.aau.serg.websocketbrokerdemo
 
+import android.Manifest
 import android.app.AlertDialog
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.os.VibrationEffect
+import android.os.Vibrator
 import android.util.Log
 import android.view.View
 import android.widget.Button
+import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.ComponentActivity
+import androidx.annotation.RequiresPermission
 import at.aau.serg.websocketbrokerdemo.game.*
 import at.aau.serg.websocketbrokerdemo.game.dialog.BankCardDialog
 import at.aau.serg.websocketbrokerdemo.game.dialog.RiskCardDialog
@@ -21,8 +31,18 @@ import at.aau.serg.websocketbrokerdemo.network.dto.GameMessage
 import at.aau.serg.websocketbrokerdemo.network.dto.GameMessageType
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import kotlin.math.sqrt
 
 class GameBoardActivity : ComponentActivity() {
+
+    private lateinit var sensorManager: SensorManager
+    private var accelerometer: Sensor? = null
+    private var shakeTimestamp: Long = 0
+    private var shakeThresholdGravity = 2.7f
+
+    private lateinit var diceContainer: LinearLayout
+    private lateinit var dice1Image: ImageView
+    private lateinit var dice2Image: ImageView
 
     private lateinit var gameStomp: GameStomp
     private lateinit var gameClientHandler: GameClientHandler
@@ -80,6 +100,10 @@ class GameBoardActivity : ComponentActivity() {
     private fun initViews() {
         textYouArePlayer = findViewById(R.id.textYouArePlayer)
         textYouArePlayer.text = getString(R.string.youArePlayer, myNickname, myId)
+
+        diceContainer = findViewById(R.id.diceContainer)
+        dice1Image = findViewById(R.id.dice1)
+        dice2Image = findViewById(R.id.dice2)
 
         textCurrentTurn = findViewById(R.id.response_view)
         textDice = findViewById(R.id.textDice)
@@ -199,9 +223,12 @@ class GameBoardActivity : ComponentActivity() {
         }
     }
 
-    fun updateDice(roll1: Int, roll2: Int) {
+    fun updateDice(dice1: Int, dice2: Int) {
         runOnUiThread {
-            textDice.text = getString(R.string.rolled_values, roll1, roll2)
+            textDice.text = getString(R.string.rolled_values, dice1, dice2)
+
+            // Bilder anzeigen
+            showDice()
         }
     }
 
@@ -413,6 +440,107 @@ class GameBoardActivity : ComponentActivity() {
     fun disableDiceButton() {
         runOnUiThread {
             btnRollDice.visibility = View.GONE
+        }
+    }
+
+    private val sensorListener = object : SensorEventListener {
+        override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
+            // Nicht benötigt
+        }
+
+        @RequiresPermission(Manifest.permission.VIBRATE)
+        override fun onSensorChanged(event: SensorEvent?) {
+            if (event!!.sensor.type == Sensor.TYPE_ACCELEROMETER) {
+                val x = event.values[0]
+                val y = event.values[1]
+                val z = event.values[2]
+
+                val gX = x / SensorManager.GRAVITY_EARTH
+                val gY = y / SensorManager.GRAVITY_EARTH
+                val gZ = z / SensorManager.GRAVITY_EARTH
+
+                val gForce = sqrt(gX * gX + gY * gY + gZ * gZ)
+
+                if (gForce > shakeThresholdGravity) {
+                    val now = System.currentTimeMillis()
+                    if (shakeTimestamp + 1000 > now) {
+                        return // Verhindert mehrfaches Triggern
+                    }
+                    shakeTimestamp = now
+
+                    onShakeDetected()
+                }
+            }
+        }
+    }
+
+    @RequiresPermission(Manifest.permission.VIBRATE)
+    private fun onShakeDetected() {
+        val lobbyId = LobbyClient.lobbyId
+        if (lobbyId < 0) {
+            Log.w("Shake", "Ungültige Lobby-ID beim Shake: $lobbyId")
+            return
+        }
+
+        if (isRolling) return // Wenn schon gwürfelt wird, abbrechen
+
+        if (GameStateClient.currentPlayerId == myId && btnRollDice.isEnabled) {
+            isRolling = true // Wurf startet
+            runOnUiThread {
+                btnRollDice.performClick()
+            }
+            vibrateOnShake()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        accelerometer?.also {
+            sensorManager.registerListener(sensorListener, it, SensorManager.SENSOR_DELAY_UI)
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        sensorManager.unregisterListener(sensorListener)
+    }
+
+    @RequiresPermission(Manifest.permission.VIBRATE)
+    private fun vibrateOnShake() {
+        val vibrator = getSystemService(VIBRATOR_SERVICE) as? Vibrator
+        if (vibrator?.hasVibrator() == true) {
+            vibrator.vibrate(VibrationEffect.createOneShot(200, VibrationEffect.DEFAULT_AMPLITUDE))
+        }
+
+    }
+
+    private fun showDice(dice1: Int, dice2: Int) {
+        // Würfel-Bilder aktualisieren
+        val diceRes1 = getDiceDrawable(dice1)
+        val diceRes2 = getDiceDrawable(dice2)
+
+        dice1Image.setImageResource(diceRes1)
+        dice2Image.setImageResource(diceRes2)
+
+        // Sichtbar machen
+        diceContainer.visibility = View.VISIBLE
+
+        // Automatisch nach 2 Sekunden ausblenden
+        Handler(Looper.getMainLooper()).postDelayed({
+            diceContainer.visibility = View.GONE
+            isRolling = false // Wurf ist fertig, neues Wurf-Event möglich
+        }, 1000)
+    }
+
+    private fun getDiceDrawable(value: Int): Int {
+        return when (value)     {
+            1 -> R.drawable.view_1
+            2 -> R.drawable.view_2
+            3 -> R.drawable.view_3
+            4 -> R.drawable.view_4
+            5 -> R.drawable.view_5
+            6 -> R.drawable.view_6
+            else -> R.drawable.view_1
         }
     }
 
