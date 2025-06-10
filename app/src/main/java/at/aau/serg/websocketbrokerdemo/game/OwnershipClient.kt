@@ -1,9 +1,10 @@
 package at.aau.serg.websocketbrokerdemo.game
 
+import androidx.compose.runtime.mutableStateMapOf
 import org.json.JSONArray
 
 object OwnershipClient {
-    val streetOwners: MutableMap<Int, Int?> = mutableMapOf()
+    val streetOwners = mutableStateMapOf<Int, Int?>()
 
     fun updateFromBoard(boardArray: JSONArray) {
         streetOwners.clear()
