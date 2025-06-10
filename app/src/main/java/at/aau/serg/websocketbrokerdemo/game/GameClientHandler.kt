@@ -8,7 +8,9 @@ import at.aau.serg.websocketbrokerdemo.game.dialog.TaxDialog
 import at.aau.serg.websocketbrokerdemo.lobby.LobbyClient
 import at.aau.serg.websocketbrokerdemo.network.dto.GameMessage
 import at.aau.serg.websocketbrokerdemo.network.dto.GameMessageType
+import com.google.gson.Gson
 import com.google.gson.JsonObject
+import com.google.gson.reflect.TypeToken
 import at.aau.serg.websocketbrokerdemo.game.dialog.BankCardDialog
 
 
@@ -95,7 +97,10 @@ class GameClientHandler(
 
         val playersJson = payload["players"]?.asJsonArray ?: return
         Log.i(TAG, "Players JSON: $playersJson")
-        activity.updatePlayerPositionsFromJson(playersJson.toString())
+        val type = object : TypeToken<List<PlayerClient>>() {}.type
+        val players: List<PlayerClient> = Gson().fromJson(playersJson, type)
+        activity.updatePlayerPositions(players)
+//        activity.updateTileOwnership(players)
         activity.updateTurnView(currentPlayerId, currentPlayerName)
         activity.updateTile(tileName, fieldIndex)
         activity.updateCashDisplay(cash)

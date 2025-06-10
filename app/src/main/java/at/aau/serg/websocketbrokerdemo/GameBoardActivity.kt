@@ -29,22 +29,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import at.aau.serg.websocketbrokerdemo.game.GameClientHandler
 import at.aau.serg.websocketbrokerdemo.game.GameController
+import at.aau.serg.websocketbrokerdemo.game.OwnershipClient
 import at.aau.serg.websocketbrokerdemo.network.GameStomp
 import at.aau.serg.websocketbrokerdemo.network.dto.GameMessage
 import at.aau.serg.websocketbrokerdemo.network.dto.GameMessageType
 import com.google.gson.JsonArray
 
 val playerColors = mutableMapOf<Int, Color>()
-
-val tileOwnership = mapOf(
-    1 to 1,
-    2 to 3,
-    4 to 2,
-    5 to 1,
-    10 to 4,
-    39 to 2,
-    40 to 3
-)
 
 class GameBoardActivity : ComponentActivity() {
 
@@ -100,18 +91,15 @@ class GameBoardActivity : ComponentActivity() {
         }
     }
 
-
-
-
-    // Empty placeholders
-    fun updatePlayerPositionsFromJson(jsonString: String) {
-        val type = object : TypeToken<List<PlayerClient>>() {}.type
-        val players: List<PlayerClient> = Gson().fromJson(jsonString, type)
-
+    fun updatePlayerPositions(players: List<PlayerClient>) {
         players.forEach { player ->
             viewModel.updatePlayerPosition(player.id, player.position)
         }
     }
+
+//    fun updateTileOwnership(players: List<PlayerClient>) {
+//        viewModel.updateTileOwnership(players)
+//    }
 
     fun showBuyDialog(tilePos: Int, tileName: String) {
         runOnUiThread {
@@ -344,6 +332,7 @@ fun MonopolyTile(tile: ClientTile, ownedByPlayerId: Int?, modifier: Modifier = M
 @Composable
 fun GameBoardScreen(nickname: String, playerId: Int, viewModel: GameBoardViewModel) {
     val playerPositions = viewModel.playerPositions
+    val tileOwnership = viewModel.tileOwnership // <-- Use ViewModel's tileOwnership
     val gridSize = 11
 
 
@@ -417,11 +406,19 @@ class GameBoardViewModel : ViewModel() {
     val playerPositions = mutableStateMapOf<Int, Int>()
     var onRollDice: (() -> Unit)? = null
 
+    // Use OwnershipClient.streetOwners directly for tile ownership
+    val tileOwnership: Map<Int, Int?>
+        get() = OwnershipClient.streetOwners
 
     fun updatePlayerPosition(playerId: Int, newTile: Int) {
         playerPositions[playerId] = newTile
     }
 
+    fun updatePlayerPositions(players: List<PlayerClient>) {
+        players.forEach { player ->
+            updatePlayerPosition(player.id, player.position)
+        }
+    }
 
     fun rollDice() {
         onRollDice?.invoke()

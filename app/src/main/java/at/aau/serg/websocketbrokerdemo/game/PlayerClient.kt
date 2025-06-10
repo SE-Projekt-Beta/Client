@@ -1,5 +1,7 @@
 package at.aau.serg.websocketbrokerdemo.game
 
+import com.google.gson.annotations.SerializedName
+
 data class PlayerClient(
     val id: Int,
     val nickname: String,
@@ -11,4 +13,3 @@ data class PlayerClient(
     var houseCounts: MutableMap<Int, Int> = mutableMapOf(),
     var properties: MutableList<Int> = mutableListOf()
 )
-
