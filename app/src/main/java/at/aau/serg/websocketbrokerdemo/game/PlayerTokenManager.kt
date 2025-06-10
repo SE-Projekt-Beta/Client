@@ -1,5 +1,8 @@
 package at.aau.serg.websocketbrokerdemo.game
 
+import android.graphics.PointF
+import android.util.Log
+import android.view.View
 import android.widget.ImageView
 import at.aau.serg.websocketbrokerdemo.GameBoardActivity
 import at.aau.serg.websocketbrokerdemo.R
@@ -16,17 +19,39 @@ class PlayerTokenManager(private val gameBoardActivity: GameBoardActivity) {
         gameBoardActivity.findViewById(R.id.player_token6)
     )
 
+    private val playerIdToTokenIndex = mutableMapOf<Int, Int>()
+
+    private var boardWidth: Float = 0f
+    private var boardHeight: Float = 0f
+    private val originalBoardWidth = 2048f
+    private val originalBoardHeight = 2048f
+
+    fun setBoardSize(width: Float, height: Float) {
+        this.boardWidth = width
+        this.boardHeight = height
+        Log.d("TokenDebug", "setBoardSize was executed")
+    }
+
+    private fun scalePosition(original: PointF): PointF {
+        val scaleX = boardWidth/originalBoardWidth
+        val scaleY = boardHeight/originalBoardHeight
+        return PointF(original.x*scaleX, original.y*scaleY)
+    }
+
     fun positionTokensOnStartTile() {
         val startTile = ClientBoardMap.getTile(1) ?: return
 
         gameBoardActivity.runOnUiThread {
-            playerTokens.forEachIndexed { index, token ->
-                val player = GameStateClient.players.values.elementAtOrNull(index)
-                player?.let {
-                    token.visibility = ImageView.VISIBLE
-                    token.translationX = startTile.position!!.x
-                    token.translationY = startTile.position.y
-                }
+            GameStateClient.players.values.forEachIndexed { index, player ->
+                val token = playerTokens.getOrNull(index) ?: return@forEachIndexed
+                playerIdToTokenIndex[player.id] = index // Mappe playerId -> token index
+
+                val scaledPos = scalePosition(startTile.position!!)
+                token.visibility = View.VISIBLE
+                token.x = scaledPos.x
+                token.y = scaledPos.y
+
+                Log.d("TokenDebug", "Placing token at start x=${scaledPos.x}, y=${scaledPos.y}")
             }
         }
     }
@@ -39,13 +64,24 @@ class PlayerTokenManager(private val gameBoardActivity: GameBoardActivity) {
 
         val tile = ClientBoardMap.getTile(tileIndex) ?: return
 
+        Log.d("TokenDebug", "Trying to move playerId=$playerId to tile=$tileIndex")
+
         // Hole das Token des Spielers
-        val token = playerTokens.getOrNull(playerId)
-        token?.let {
-            gameBoardActivity.runOnUiThread {
-                it.translationX = tile.position!!.x
-                it.translationY = tile.position.y
-            }
+        val tokenIndex = playerIdToTokenIndex[playerId] ?: run {
+            Log.w("TokenDebug", "No token index found for playerId=$playerId")
+            return
+        }
+
+        val token = playerTokens.getOrNull(tokenIndex) ?: run {
+            Log.w("TokenDebug", "No token view found for index=$tokenIndex")
+            return
+        }
+
+        gameBoardActivity.runOnUiThread {
+            val scaledPos = scalePosition(tile.position!!)
+            token.x = scaledPos.x
+            token.y = scaledPos.y
+            Log.d("TokenDebug", "Placing token at scaled x=${scaledPos.x}, y=${scaledPos.y}")
         }
 
         player.position = newPosition

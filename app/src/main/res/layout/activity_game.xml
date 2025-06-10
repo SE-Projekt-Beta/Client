@@ -51,7 +51,6 @@
             android:id="@+id/player_token1"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:layout_gravity="bottom|end"
             android:contentDescription="@string/player_token"
             android:src="@drawable/circle_blue" />
 
@@ -61,7 +60,6 @@
             android:layout_height="30dp"
             android:contentDescription="@string/player_token"
             android:src="@drawable/circle_red"
-            android:layout_gravity="bottom|end"
             android:visibility="gone"/>
 
         <ImageView
@@ -70,7 +68,6 @@
             android:layout_height="30dp"
             android:contentDescription="@string/player_token"
             android:src="@drawable/circle_orange"
-            android:layout_gravity="bottom|end"
             android:visibility="gone"/>
 
         <ImageView
@@ -79,7 +76,6 @@
             android:layout_height="30dp"
             android:contentDescription="@string/player_token"
             android:src="@drawable/circle_green"
-            android:layout_gravity="bottom|end"
             android:visibility="gone"/>
 
         <ImageView
@@ -88,7 +84,6 @@
             android:layout_height="30dp"
             android:contentDescription="@string/player_token"
             android:src="@drawable/circle_purple"
-            android:layout_gravity="bottom|end"
             android:visibility="gone"/>
 
         <ImageView
@@ -97,7 +92,6 @@
             android:layout_height="30dp"
             android:contentDescription="@string/player_token"
             android:src="@drawable/circle_pink"
-            android:layout_gravity="bottom|end"
             android:visibility="gone"/>
 
     </FrameLayout>

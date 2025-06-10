@@ -8,7 +8,7 @@ object ClientBoardMap {
     private const val BANK = "Bank"
 
     val tiles: List<ClientTile> = listOf(
-        ClientTile(1, "Start", TileType.START, position = PointF(1937f, 1937f)),
+        ClientTile(1, "Start", TileType.START, position = PointF(100f, 100f)),
         ClientTile(2, "Amtsplatz", TileType.STREET, 220, 80, 160, 320, position = PointF(1742f, 1937f)),
         ClientTile(3, "Risiko", TileType.RISK, position = PointF(1574f, 1937f)),
         ClientTile(4, "Kraft- Zentrale", TileType.STREET, 400, 100, 300, 500, position = PointF(1406f, 1937f)),
