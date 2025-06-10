@@ -55,7 +55,7 @@
             android:src="@drawable/circle_blue" />
 
         <ImageView
-            android:id="@+id/player_token4"
+            android:id="@+id/player_token2"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:contentDescription="@string/player_token"
@@ -63,7 +63,7 @@
             android:visibility="gone"/>
 
         <ImageView
-            android:id="@+id/player_token2"
+            android:id="@+id/player_token3"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:contentDescription="@string/player_token"
@@ -71,7 +71,7 @@
             android:visibility="gone"/>
 
         <ImageView
-            android:id="@+id/player_token3"
+            android:id="@+id/player_token4"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:contentDescription="@string/player_token"
