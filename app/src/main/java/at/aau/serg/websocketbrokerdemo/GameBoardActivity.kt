@@ -346,14 +346,6 @@ fun GameBoardScreen(nickname: String, playerId: Int, viewModel: GameBoardViewMod
     val playerPositions = viewModel.playerPositions
     val gridSize = 11
 
-//    val playerPositions = remember {
-//        mutableStateMapOf(
-//            1 to 0,
-//            2 to 4,
-//            3 to 10,
-//            4 to 39
-//        )
-//    }
 
     Column(modifier = Modifier.fillMaxSize()) {
         Text(
