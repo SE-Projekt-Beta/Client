@@ -98,6 +98,18 @@ class GameClientHandler(
         Log.i(TAG, "Players JSON: $playersJson")
         activity.updateTestView(playersJson)
 
+        // Update all player tokens based on their current position in the game state
+        try {
+            val gson = com.google.gson.Gson()
+            val type = object : com.google.gson.reflect.TypeToken<List<at.aau.serg.websocketbrokerdemo.game.PlayerClient>>() {}.type
+            val players: List<at.aau.serg.websocketbrokerdemo.game.PlayerClient> = gson.fromJson(playersJson, type)
+            players.forEach { player ->
+                activity.setPlayerTokenPosition(player.id, player.position)
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to update player tokens from playersJson", e)
+        }
+
         activity.updateTurnView(currentPlayerId, currentPlayerName)
         activity.updateTile(tileName, fieldIndex)
         activity.updateCashDisplay(cash)
