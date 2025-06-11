@@ -72,6 +72,9 @@ class PlayerTokenManagerTest {
         val tileIndex = if (newPosition == 0) 40 else newPosition
         val newTile = ClientBoardMap.getTile(tileIndex)!!
 
+        // Initialize token mapping before moving
+        playerTokenManager.positionTokensOnStartTile()
+
         playerTokenManager.movePlayerToken(playerId, steps)
 
         verify { mockImageViews[0].x = newTile.position!!.x }
