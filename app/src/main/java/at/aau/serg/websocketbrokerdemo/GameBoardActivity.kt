@@ -2,6 +2,7 @@ package at.aau.serg.websocketbrokerdemo
 
 import android.Manifest
 import android.app.AlertDialog
+import android.content.Context
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
@@ -79,6 +80,9 @@ class GameBoardActivity : ComponentActivity() {
 
         Log.i("GameBoardActivity", "onCreate called")
 
+        sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
+
         myNickname = LobbyClient.username
         myId = LobbyClient.playerId
 
@@ -102,8 +106,8 @@ class GameBoardActivity : ComponentActivity() {
         textYouArePlayer.text = getString(R.string.youArePlayer, myNickname, myId)
 
         diceContainer = findViewById(R.id.diceContainer)
-        dice1Image = findViewById(R.id.dice1)
-        dice2Image = findViewById(R.id.dice2)
+        dice1Image = findViewById(R.id.diceImage1)
+        dice2Image = findViewById(R.id.diceImage2)
 
         textCurrentTurn = findViewById(R.id.response_view)
         textDice = findViewById(R.id.textDice)
@@ -227,8 +231,7 @@ class GameBoardActivity : ComponentActivity() {
         runOnUiThread {
             textDice.text = getString(R.string.rolled_values, dice1, dice2)
 
-            // Bilder anzeigen
-            showDice()
+            showDice(dice1, dice2)
         }
     }
 
@@ -443,6 +446,22 @@ class GameBoardActivity : ComponentActivity() {
         }
     }
 
+    fun enableDiceView() {
+        runOnUiThread {
+            dice1Image.visibility = View.VISIBLE
+            dice2Image.visibility = View.VISIBLE
+            diceContainer.visibility = View.VISIBLE
+        }
+    }
+
+    fun disabeleDiceView() {
+        runOnUiThread {
+            dice1Image.visibility = View.GONE
+            dice2Image.visibility = View.GONE
+            diceContainer.visibility = View.GONE
+        }
+    }
+
     private val sensorListener = object : SensorEventListener {
         override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
             // Nicht benötigt
@@ -515,6 +534,8 @@ class GameBoardActivity : ComponentActivity() {
     }
 
     private fun showDice(dice1: Int, dice2: Int) {
+        Log.d("Dice", "Zeige Würfel: $dice1, $dice2")
+
         // Würfel-Bilder aktualisieren
         val diceRes1 = getDiceDrawable(dice1)
         val diceRes2 = getDiceDrawable(dice2)
@@ -522,14 +543,14 @@ class GameBoardActivity : ComponentActivity() {
         dice1Image.setImageResource(diceRes1)
         dice2Image.setImageResource(diceRes2)
 
-        // Sichtbar machen
-        diceContainer.visibility = View.VISIBLE
+        // Dice-Button ausblenden
+        disableDiceButton()
 
-        // Automatisch nach 2 Sekunden ausblenden
-        Handler(Looper.getMainLooper()).postDelayed({
-            diceContainer.visibility = View.GONE
-            isRolling = false // Wurf ist fertig, neues Wurf-Event möglich
-        }, 1000)
+        // Würfel sichtbar machen
+        enableDiceView()
+
+        isRolling = false
+
     }
 
     private fun getDiceDrawable(value: Int): Int {
