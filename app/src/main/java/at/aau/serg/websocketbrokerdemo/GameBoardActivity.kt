@@ -98,7 +98,18 @@ class GameBoardActivity : ComponentActivity() {
         initViews()
         setupButtons()
         setupNetwork()
-        playerTokenManager.positionTokensOnStartTile()
+
+        val boardView = findViewById<View>(R.id.boardImage)
+        boardView.post {
+            val boardWidth = boardView.width.toFloat()
+            val boardHeight = boardView.height.toFloat()
+            Log.d("BoardSize", "Board width=$boardWidth, height=$boardHeight")
+
+            playerTokenManager.setBoardSize(boardWidth, boardHeight)
+            Log.d("TokenDebug", "setBoardSize was called")
+
+            playerTokenManager.positionTokensOnStartTile()
+        }
     }
 
     private fun initViews() {

@@ -19,7 +19,6 @@ class PlayerTokenManagerTest {
         MockKAnnotations.init(this)
 
         gameBoardActivity = mockk(relaxed = true)
-        // Mock für findViewById - jedes Mal neues ImageView mocken
         mockImageViews = List(6) { mockk(relaxed = true) }
 
         every { gameBoardActivity.findViewById<ImageView>(any()) } answers {
@@ -47,37 +46,38 @@ class PlayerTokenManagerTest {
         )
 
         playerTokenManager = PlayerTokenManager(gameBoardActivity)
+        // Setze Boardgröße auf Original, damit Skalierung 1 ist
+        playerTokenManager.setBoardSize(2048f, 2048f)
     }
 
     @Test
     fun testPositionTokensOnStartTile() {
+        val startTile = ClientBoardMap.getTile(1)!!
         playerTokenManager.positionTokensOnStartTile()
 
-        verify {
-            mockImageViews[0].translationX = any()
-            mockImageViews[0].translationY = any()
-            mockImageViews[1].translationX = any()
-            mockImageViews[1].translationY = any()
-        }
+        // Prüfe für Spieler 0
+        verify { mockImageViews[0].x = startTile.position!!.x }
+        verify { mockImageViews[0].y = startTile.position!!.y }
+
+        // Prüfe für Spieler 1
+        verify { mockImageViews[1].x = startTile.position!!.x }
+        verify { mockImageViews[1].y = startTile.position!!.y }
     }
 
     @Test
     fun testMovePlayerToken() {
         val playerId = 0
         val steps = 3
-        val newTile = ClientBoardMap.getTile(4)!!
-
-        every { gameBoardActivity.runOnUiThread(any()) } answers {
-            (firstArg() as Runnable).run()
-        }
+        val newPosition = (GameStateClient.players[playerId]!!.position + steps) % 40
+        val tileIndex = if (newPosition == 0) 40 else newPosition
+        val newTile = ClientBoardMap.getTile(tileIndex)!!
 
         playerTokenManager.movePlayerToken(playerId, steps)
 
-        // Verify token position updated
-        verify { mockImageViews[0].translationX = newTile.position!!.x }
-        verify { mockImageViews[0].translationY = newTile.position!!.y }
+        verify { mockImageViews[0].x = newTile.position!!.x }
+        verify { mockImageViews[0].y = newTile.position!!.y }
 
         // Verify player position updated
-        assertEquals(4, GameStateClient.players[playerId]?.position)
+        assertEquals(newPosition, GameStateClient.players[playerId]?.position)
     }
 }

@@ -35,7 +35,9 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintWidth_percent="0.65">
+        app:layout_constraintWidth_percent="0.65"
+        app:layout_constraintHeight_percent="0.65"
+        app:layout_constraintDimensionRatio="1:1">
 
         <ImageView
             android:id="@+id/boardImage"
@@ -47,56 +49,49 @@
 
         <ImageView
             android:id="@+id/player_token1"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_gravity="bottom|end"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
             android:contentDescription="@string/player_token"
-            android:src="@drawable/kegel_blau"
-            android:visibility="gone"/>
+            android:src="@drawable/circle_blue" />
 
         <ImageView
             android:id="@+id/player_token2"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
             android:contentDescription="@string/player_token"
-            android:src="@drawable/kegel_rot"
-            android:layout_gravity="bottom|end"
+            android:src="@drawable/circle_green"
             android:visibility="gone"/>
 
         <ImageView
             android:id="@+id/player_token3"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
             android:contentDescription="@string/player_token"
-            android:src="@drawable/kegel_gelb"
-            android:layout_gravity="bottom|end"
+            android:src="@drawable/circle_red"
             android:visibility="gone"/>
 
         <ImageView
             android:id="@+id/player_token4"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
             android:contentDescription="@string/player_token"
-            android:src="@drawable/kegel_gruen"
-            android:layout_gravity="bottom|end"
+            android:src="@drawable/circle_orange"
             android:visibility="gone"/>
 
         <ImageView
             android:id="@+id/player_token5"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
             android:contentDescription="@string/player_token"
-            android:src="@drawable/kegel_lila"
-            android:layout_gravity="bottom|end"
+            android:src="@drawable/circle_purple"
             android:visibility="gone"/>
 
         <ImageView
             android:id="@+id/player_token6"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
             android:contentDescription="@string/player_token"
-            android:src="@drawable/kegel_tuerkis"
-            android:layout_gravity="bottom|end"
+            android:src="@drawable/circle_pink"
             android:visibility="gone"/>
 
     </FrameLayout>

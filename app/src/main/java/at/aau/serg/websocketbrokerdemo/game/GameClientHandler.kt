@@ -226,6 +226,7 @@ class GameClientHandler(
 
         // Bewegung der Spielfigur
         activity.updateTokenPosition(steps1 + steps2)
+        Log.d("TokenDebug", "Calling updateTokenPosition after rolling dice")
 
         // Wurf ist vollständig angekommen, wir können schütteln wieder erlauben
         activity.onRollFinished()
