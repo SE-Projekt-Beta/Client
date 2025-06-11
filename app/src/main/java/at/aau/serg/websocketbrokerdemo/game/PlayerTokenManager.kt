@@ -59,7 +59,7 @@ class PlayerTokenManager(private val gameBoardActivity: GameBoardActivity) {
     // Funktion, um einen Spieler nach dem Würfeln zu verschieben
     fun movePlayerToken(playerId: Int, steps: Int) {
         val player = GameStateClient.players[playerId] ?: return
-        val newPosition = player.position % 40
+        val newPosition = (player.position + steps) % 40
         val tileIndex = if (newPosition == 0) 40 else newPosition
 
         val tile = ClientBoardMap.getTile(tileIndex) ?: return
