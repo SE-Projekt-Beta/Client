@@ -10,6 +10,7 @@ import at.aau.serg.websocketbrokerdemo.network.dto.GameMessage
 import at.aau.serg.websocketbrokerdemo.network.dto.GameMessageType
 import com.google.gson.JsonObject
 import at.aau.serg.websocketbrokerdemo.game.dialog.BankCardDialog
+import kotlin.text.get
 
 
 class GameClientHandler(
@@ -102,10 +103,12 @@ class GameClientHandler(
         activity.updateCashDisplay(cash)
 
         if (myId == currentPlayerId) {
+            activity.disableDiceButton()    // Würfel ausblenden
             activity.enableDiceButton()
             val options = GameController.evaluateTileOptions(currentPlayerId, fieldIndex)
             activity.showBuyOptions(fieldIndex, tileName, options.canBuy, options.canBuildHouse, options.canBuildHotel)
         } else {
+            activity.disableDiceView()
             activity.disableDiceButton()
             activity.hideActionButtons()
         }
@@ -206,12 +209,23 @@ class GameClientHandler(
 
 
     private fun handleDiceRolled(payload: JsonObject) {
-        val roll1 = payload["roll1"]?.asInt ?: return
-        val roll2 = payload["roll2"]?.asInt ?: return
-        val steps = roll1 + roll2
+        val steps1 = payload["roll1"]?.asInt ?: return
+        val steps2 = payload["roll2"]?.asInt ?: return
+        val rollingPlayerId = payload["playerId"]?.asInt ?: GameController.getCurrentPlayerId()
+        val myId = LobbyClient.playerId
 
-        activity.updateDice(roll1, roll2)
-        activity.updateTokenPosition(steps)
+        if (rollingPlayerId == myId) {
+            activity.updateDice(steps1, steps2)     // Einzelne Würfel setzen
+            activity.disableDiceButton()        // Würfel-Button ausblenden
+            activity.enableDiceView()       // Würfelbilder einbeldnen
+        } else {
+            // Andere sehen keine Würfel
+            activity.disableDiceView()
+            activity.disableDiceButton()
+        }
+
+        // Bewegung der Spielfigur
+        activity.updateTokenPosition(steps1 + steps2)
         Log.d("TokenDebug", "Calling updateTokenPosition after rolling dice")
 
         // Wurf ist vollständig angekommen, wir können schütteln wieder erlauben

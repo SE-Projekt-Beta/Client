@@ -96,6 +96,7 @@
 
     </FrameLayout>
 
+
     <!-- Linke Leiste: Spielerinfos -->
     <LinearLayout
         android:id="@+id/leftControls"
@@ -190,6 +191,33 @@
         app:layout_constraintStart_toEndOf="@id/boardFrame"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintWidth_percent="0.17">
+
+        <!-- 🎲 Würfelanzeige -->
+        <LinearLayout
+            android:id="@+id/diceContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="end"
+            android:layout_gravity="end"
+            android:visibility="gone"
+            android:layout_marginBottom="12dp"
+            android:background="@drawable/bg_overlay_dark">
+
+            <ImageView
+                android:id="@+id/diceImage1"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="@drawable/dice_border"
+                android:src="@drawable/view_1" />
+
+            <ImageView
+                android:id="@+id/diceImage2"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="@drawable/dice_border"
+                android:src="@drawable/view_1" />
+        </LinearLayout>
 
         <Button
             android:id="@+id/rollDiceBtn"
