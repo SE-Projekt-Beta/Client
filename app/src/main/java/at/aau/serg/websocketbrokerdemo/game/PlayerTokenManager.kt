@@ -86,4 +86,26 @@ class PlayerTokenManager(private val gameBoardActivity: GameBoardActivity) {
 
         player.position = newPosition
     }
+
+    // Set a player's token to an exact board position (used for syncing with game state)
+    fun setPlayerTokenPosition(playerId: Int, position: Int) {
+        val tileIndex = if (position % 40 == 0) 40 else position % 40
+        val tile = ClientBoardMap.getTile(tileIndex) ?: return
+
+        // Hole das Token des Spielers
+        val tokenIndex = playerIdToTokenIndex[playerId] ?: run {
+            Log.w("TokenDebug", "No token index found for playerId=$playerId")
+            return
+        }
+        val token = playerTokens.getOrNull(tokenIndex) ?: run {
+            Log.w("TokenDebug", "No token view found for index=$tokenIndex")
+            return
+        }
+        gameBoardActivity.runOnUiThread {
+            val scaledPos = scalePosition(tile.position!!)
+            token.x = scaledPos.x
+            token.y = scaledPos.y
+            Log.d("TokenDebug", "Set token for playerId=$playerId at scaled x=${scaledPos.x}, y=${scaledPos.y}")
+        }
+    }
 }

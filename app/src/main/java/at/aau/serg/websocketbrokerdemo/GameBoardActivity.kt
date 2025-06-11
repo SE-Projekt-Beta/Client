@@ -256,6 +256,10 @@ class GameBoardActivity : ComponentActivity() {
         }
     }
 
+    fun setPlayerTokenPosition(playerId: Int, position: Int) {
+        playerTokenManager.setPlayerTokenPosition(playerId, position)
+    }
+
     fun updateTokenPosition(steps: Int) {
         val currentPlayerId = GameStateClient.currentPlayerId
         playerTokenManager.movePlayerToken(currentPlayerId, steps)
