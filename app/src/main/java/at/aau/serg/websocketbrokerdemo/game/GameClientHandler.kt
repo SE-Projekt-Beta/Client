@@ -108,7 +108,7 @@ class GameClientHandler(
             val options = GameController.evaluateTileOptions(currentPlayerId, fieldIndex)
             activity.showBuyOptions(fieldIndex, tileName, options.canBuy, options.canBuildHouse, options.canBuildHotel)
         } else {
-            activity.disableDiceButton()
+            activity.disableDiceView()
             activity.disableDiceButton()
             activity.hideActionButtons()
         }
@@ -211,7 +211,7 @@ class GameClientHandler(
     private fun handleDiceRolled(payload: JsonObject) {
         val steps1 = payload["roll1"]?.asInt ?: return
         val steps2 = payload["roll2"]?.asInt ?: return
-        val rollingPlayerId = GameController.getCurrentPlayerId()
+        val rollingPlayerId = payload["playerId"]?.asInt ?: GameController.getCurrentPlayerId()
         val myId = LobbyClient.playerId
 
         if (rollingPlayerId == myId) {
@@ -220,10 +220,9 @@ class GameClientHandler(
             activity.enableDiceView()       // Würfelbilder einbeldnen
         } else {
             // Andere sehen keine Würfel
-            activity.disabeleDiceView()
+            activity.disableDiceView()
             activity.disableDiceButton()
         }
-
 
         // Bewegung der Spielfigur
         activity.updateTokenPosition(steps1 + steps2)

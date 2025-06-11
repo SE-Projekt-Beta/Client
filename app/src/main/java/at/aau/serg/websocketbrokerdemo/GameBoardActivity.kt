@@ -454,7 +454,7 @@ class GameBoardActivity : ComponentActivity() {
         }
     }
 
-    fun disabeleDiceView() {
+    fun disableDiceView() {
         runOnUiThread {
             dice1Image.visibility = View.GONE
             dice2Image.visibility = View.GONE
@@ -503,7 +503,7 @@ class GameBoardActivity : ComponentActivity() {
 
         if (isRolling) return // Wenn schon gwürfelt wird, abbrechen
 
-        if (GameStateClient.currentPlayerId == myId && btnRollDice.isEnabled) {
+        if (GameStateClient.currentPlayerId == myId && btnRollDice.visibility == View.VISIBLE && btnRollDice.isEnabled) {
             isRolling = true // Wurf startet
             runOnUiThread {
                 btnRollDice.performClick()
@@ -549,7 +549,7 @@ class GameBoardActivity : ComponentActivity() {
         // Würfel sichtbar machen
         enableDiceView()
 
-        isRolling = false
+        onRollFinished()
 
     }
 
