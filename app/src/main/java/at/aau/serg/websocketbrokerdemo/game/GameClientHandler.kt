@@ -86,9 +86,6 @@ class GameClientHandler(
     private fun handleGameState(payload: JsonObject) {
         Log.i(TAG, "Received GAME_STATE payload: $payload")
         GameController.updateFromGameState(payload)
-        activity.runOnUiThread {
-            activity.updateFieldOwnershipOverlays()
-        }
 
         val myId = LobbyClient.playerId
         val currentPlayerId = GameController.getCurrentPlayerId()
@@ -116,6 +113,10 @@ class GameClientHandler(
         activity.updateTurnView(currentPlayerId, currentPlayerName)
         activity.updateTile(tileName, fieldIndex)
         activity.updateCashDisplay(cash)
+
+        activity.runOnUiThread {
+            activity.updateOwnershipOverlays()
+        }
 
         if (myId == currentPlayerId) {
             activity.disableDiceButton()    // Würfel ausblenden

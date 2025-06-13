@@ -59,6 +59,7 @@ class GameBoardActivity : ComponentActivity() {
     private lateinit var overlay: TextView
 
     private lateinit var playerTokenManager: PlayerTokenManager
+    private lateinit var ownershipOverlayManager: OwnershipOverlayManager
 
     private lateinit var btnRollDice: Button
     private lateinit var btnBuy: Button
@@ -98,6 +99,7 @@ class GameBoardActivity : ComponentActivity() {
         }
 
         playerTokenManager = PlayerTokenManager(this)
+        ownershipOverlayManager = OwnershipOverlayManager(this)
 
         initViews()
         setupButtons()
@@ -113,6 +115,9 @@ class GameBoardActivity : ComponentActivity() {
             Log.d("TokenDebug", "setBoardSize was called")
 
             playerTokenManager.positionTokensOnStartTile()
+
+            ownershipOverlayManager.setBoardSize(boardWidth, boardHeight)
+            ownershipOverlayManager.updateOwnershipOverlays(tileOverlays)
         }
     }
 
@@ -351,6 +356,7 @@ class GameBoardActivity : ComponentActivity() {
                             payload
                         )
                     )
+                   ownershipOverlayManager.updateOwnershipOverlays(tileOverlays)
 
                 }
                 .setNegativeButton("Nein") { _, _ ->
@@ -449,6 +455,8 @@ class GameBoardActivity : ComponentActivity() {
                 val payload = GameController.buildPayload("playerId", myId, "tilePos", tilePos)
                 gameStomp.sendGameMessage(GameMessage(LobbyClient.lobbyId, GameMessageType.BUY_PROPERTY, payload))
                 btnBuy.visibility = View.GONE
+
+                updateOwnershipOverlays()
             }
 
             btnBuildHouse.setOnClickListener {
@@ -484,18 +492,8 @@ class GameBoardActivity : ComponentActivity() {
         }
     }
 
-    fun updateFieldOwnershipOverlays() {
-        for ((tileIndex, overlay) in tileOverlays) {
-            val ownerId = OwnershipClient.getOwnerId(tileIndex)
-            Log.d("Colors", "Owner ID for tile $tileIndex is $ownerId")
-            if (ownerId != null) {
-                val baseColor = ColorManager.playerColors[ownerId] ?: Color.TRANSPARENT
-                overlay.setBackgroundColor(baseColor)
-                overlay.visibility = View.VISIBLE
-            } else {
-                overlay.visibility = View.GONE
-            }
-        }
+    fun updateOwnershipOverlays() {
+        ownershipOverlayManager.updateOwnershipOverlays(tileOverlays)
     }
 
     fun enableDiceButton() {
