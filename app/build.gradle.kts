@@ -109,6 +109,7 @@ sonar {
             "**/MainActivity.kt," +
                     "**/LobbyActivity.kt," +
                     "**/UsernameActivity.kt," +
+                    "**/GameBoardActivity.kt," +
                     "**/CreateLobbyActivity.kt," +
                     "**/ListLobbyActivity.kt," +
                     "**/TileInfoDialog.kt," +
