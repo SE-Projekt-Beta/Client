@@ -237,28 +237,98 @@ class GameControllerTest {
         assertTrue(result)
     }
 
-    /*@Test
+    @Test
+    fun testGetTilePrice_null() {
+        every { ClientBoardMap.getTile(99) } returns null
+        val result = GameController.getTilePrice(99)
+        assertEquals(null, result)
+    }
+
+
+    @Test
+    fun testGetTilePrice_valid() {
+        val tile = ClientTile(99, "Straße", TileType.STREET, 10, null, null, 3, PointF(0f, 0f))
+        every { ClientBoardMap.getTile(99) } returns tile
+        val result = GameController.getTilePrice(99)
+        assertEquals(10, result)
+    }
+
+    @Test
     fun testEvaluateTileOptions() {
         val tileIndex = 4
         val playerId = 1
-        val dummyTile = ClientTile(
-            index = tileIndex,
-            name = "Teststraße",
-            price = 100,
-            rent = 10,
-            houseCost = 50,
-            hotelCost = 200,
-            type = TileType.STREET,
-            position = PointF(0f, 0f)
-        )
+        val tile = ClientTile(tileIndex, "Test", TileType.STREET,100, 10, 50, 200, PointF(0f, 0f))
 
-        every { ClientBoardMap.getTile(tileIndex) } returns dummyTile
+        every { ClientBoardMap.getTile(tileIndex) } returns tile
         every { OwnershipClient.getOwnerId(tileIndex) } returns playerId
 
         val result = GameController.evaluateTileOptions(playerId, tileIndex)
 
-        assertTrue(result.canBuy.not()) // tile is already owned
+        assertFalse(result.canBuy) // already owned
         assertTrue(result.canBuildHouse)
         assertTrue(result.canBuildHotel)
-    }*/
+    }
+    @Test
+    fun testGetBuildableHouseTiles_noneBuildable() {
+        every { OwnershipClient.streetOwners } returns mutableMapOf(1 to 2, 2 to 2)
+        every { ClientBoardMap.getTile(any()) } returns ClientTile(0, "", TileType.STREET,0, 0, null, null, PointF(0f, 0f))
+        every { OwnershipClient.getOwnerId(any()) } returns 2
+
+        val result = GameController.getBuildableHouseTiles(1)
+
+        assertTrue(result.isEmpty())
+    }
+
+    @Test
+    fun testGetHouseOverview() {
+        val player1 = PlayerClient(
+            id = 1,
+            nickname = "Tom",
+            cash = 1000,
+            position = 0,
+            alive = true,
+            suspended = false,
+            hasEscapeCard = false,
+            houseCounts = mutableMapOf(1 to 2)
+        )
+
+        val player2 = PlayerClient(
+            id = 2,
+            nickname = "Anna",
+            cash = 1500,
+            position = 0,
+            alive = true,
+            suspended = false,
+            hasEscapeCard = false
+        )
+
+        every { GameStateClient.players } returns mapOf(
+            1 to player1,
+            2 to player2
+        ) as MutableMap<Int, PlayerClient>
+
+        every { ClientBoardMap.getTile(1) } returns ClientTile(
+            index = 1,
+            name = "Hauptstraße",
+            price = 0,
+            rent = null,
+            houseCost = null,
+            hotelCost = null,
+            type = TileType.STREET,
+            position = PointF(0f, 0f)
+        )
+
+        val overview = GameController.getHouseOverview()
+
+        assertTrue(overview.contains("Tom (Cash: 1000)"))
+        assertTrue(overview.contains("Hauptstraße: 2"))
+        assertTrue(overview.contains("Anna (Cash: 1500)"))
+        assertTrue(overview.contains("Keine Häuser"))
+    }
+
+
+
+
+
+
 }
