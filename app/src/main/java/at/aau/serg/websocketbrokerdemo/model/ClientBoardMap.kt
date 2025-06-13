@@ -32,7 +32,7 @@ object ClientBoardMap {
         ClientTile(21, "Sondersteuer", TileType.TAX, position = PointF(8f, 8f)),
 
         ClientTile(22, "Museumstraße", TileType.STREET, 220, 80, 160, 320, position = PointF(300f, 8f)), //PASST JETZT - gegenüber von Joseph-Hayden-Gasse
-        ClientTile(23, RISIKO, TileType.RISK, position = PointF(200f, 8f)),
+        ClientTile(23, RISIKO, TileType.RISK, position = PointF(500f, 8f)),
         ClientTile(24, "Autobuslinie", TileType.STREET, 210, 72, 120, 240, position = PointF(650f, 8f)), //PASST JETZT - bissl weiter nach unten und rechts geschoben
         ClientTile(25, "Mirabellplatz", TileType.STREET, 250, 96, 150, 300, position = PointF(800f, 8f)), //PASST JETZT - weiter rechts rutschen
         ClientTile(26, "Westbahnstraße", TileType.STREET, 240, 88, 140, 280, position = PointF(1000f, 8f)), //PASST JETZT - muss nach rechts

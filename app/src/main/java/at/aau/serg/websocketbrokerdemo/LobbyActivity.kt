@@ -8,6 +8,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import at.aau.serg.websocketbrokerdemo.game.ColorManager.assignColorsToPlayers
 import at.aau.serg.websocketbrokerdemo.lobby.LobbyClient
 import at.aau.serg.websocketbrokerdemo.lobby.LobbyHandler
 import at.aau.serg.websocketbrokerdemo.network.LobbyStomp
@@ -71,6 +72,10 @@ class LobbyActivity : AppCompatActivity() {
     }
 
     fun startGame(order: List<PlayerDTO>) {
+        val playerIds = order.map { it.id }
+        assignColorsToPlayers(playerIds)
+        (Log.d("Colors", "Colors were assigned to players"))
+
         val intent = Intent(this, GameBoardActivity::class.java).apply {
             putExtra("USERNAME", LobbyClient.username)
             putExtra("players_json", Gson().toJson(order)) // ✅ fixed key name

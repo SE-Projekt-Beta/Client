@@ -78,16 +78,6 @@ class GameBoardActivity : ComponentActivity() {
     private var isRolling = false
     private var hasBuiltHouseThisTurn = false
 
-    private val playerColors = mapOf(
-        0 to "#4D00a8f3".toColorInt(), // Hellblau
-        1 to "#4D5ae74b".toColorInt(), // Grün
-        2 to "#4Dec1c24".toColorInt(),  // Rot
-        3 to "#4Dff7f27".toColorInt(), // Orange
-        4 to "#4Db83dba".toColorInt(), // Lila
-        5 to "#4Dffaec8".toColorInt() // Rosa
-    )
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_game)
@@ -497,8 +487,9 @@ class GameBoardActivity : ComponentActivity() {
     fun updateFieldOwnershipOverlays() {
         for ((tileIndex, overlay) in tileOverlays) {
             val ownerId = OwnershipClient.getOwnerId(tileIndex)
+            Log.d("Colors", "Owner ID for tile $tileIndex is $ownerId")
             if (ownerId != null) {
-                val baseColor = playerColors[ownerId] ?: Color.WHITE
+                val baseColor = ColorManager.playerColors[ownerId] ?: Color.TRANSPARENT
                 overlay.setBackgroundColor(baseColor)
                 overlay.visibility = View.VISIBLE
             } else {
