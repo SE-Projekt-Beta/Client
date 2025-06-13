@@ -374,6 +374,39 @@ class GameClientHandlerTest {
         // Only logs, nothing to verify on UI
     }
 
+    @Test
+    fun testHandleUnknownMessageType() {
+        val unknownType = GameMessageType.valueOf("EXTRA_MESSAGE").ordinal + 100
+        val unknownMessage = GameMessage(0, GameMessageType.values().firstOrNull { it.ordinal == unknownType }
+            ?: GameMessageType.ERROR, JsonObject())
+        // Manipuliere zur Sicherheit den Typ direkt via Reflection
+        val message = spyk(unknownMessage)
+        every { message.type } returns GameMessageType.values().maxByOrNull { it.ordinal }!!.let {
+            GameMessageType.valueOf(it.name)
+        }
+
+        handler.handle(message)
+        // Keine Exception → Test besteht
+    }
+
+
+
+    @Test
+    fun testHandleExtraMessage_myId() {
+        val payload = JsonObject().apply {
+            addProperty("playerId", 1)
+            addProperty("title", "Hinweis")
+            addProperty("message", "Du bist dran!")
+        }
+
+        every { LobbyClient.playerId } returns 1
+
+        handler.handle(GameMessage(0, GameMessageType.EXTRA_MESSAGE, payload))
+
+        verify { mockActivity.showDialog("Hinweis", "Du bist dran!") }
+    }
+
+
 
 
 }

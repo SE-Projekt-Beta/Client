@@ -59,9 +59,7 @@ class GameBoardActivity : ComponentActivity() {
     private lateinit var playerTokenManager: PlayerTokenManager
 
     private lateinit var btnRollDice: Button
-    private lateinit var btnBuy: Button
     private lateinit var btnBuildHouse: Button
-    private lateinit var btnBuildHotel: Button
     private lateinit var btnShowOwnership: Button
     private lateinit var btnViewField: Button
     private lateinit var btnShowHouses: Button
@@ -130,9 +128,7 @@ class GameBoardActivity : ComponentActivity() {
         overlay = findViewById(R.id.textCurrentTurnBig)
 
         btnRollDice = findViewById(R.id.rollDiceBtn)
-        btnBuy = findViewById(R.id.buybtn)
         btnBuildHouse = findViewById(R.id.buildHouseBtn)
-        btnBuildHotel = findViewById(R.id.buildHotelBtn)
         btnShowOwnership = findViewById(R.id.btnShowOwnership)
         btnViewField = findViewById(R.id.btnViewField)
         btnShowHouses = findViewById(R.id.btnShowHouses)
@@ -403,16 +399,8 @@ class GameBoardActivity : ComponentActivity() {
 
     fun showBuyOptions(tilePos: Int, tileName: String, canBuy: Boolean, canBuildHouse: Boolean, canBuildHotel: Boolean) {
         runOnUiThread {
-            btnBuy.visibility = if (canBuy) View.VISIBLE else View.GONE
             // Nur anzeigen, wenn in dieser Runde noch kein Haus gebaut wurde:
             btnBuildHouse.visibility = if (!hasBuiltHouseThisTurn && canBuildHouse) View.VISIBLE else View.GONE
-            btnBuildHotel.visibility = if (canBuildHotel) View.VISIBLE else View.GONE
-
-            btnBuy.setOnClickListener {
-                val payload = GameController.buildPayload("playerId", myId, "tilePos", tilePos)
-                gameStomp.sendGameMessage(GameMessage(LobbyClient.lobbyId, GameMessageType.BUY_PROPERTY, payload))
-                btnBuy.visibility = View.GONE
-            }
 
             btnBuildHouse.setOnClickListener {
                 val buildableTiles = GameController.getBuildableHouseTiles(myId)
@@ -437,12 +425,6 @@ class GameBoardActivity : ComponentActivity() {
                     }
                     .setNegativeButton("Abbrechen", null)
                     .show()
-            }
-
-            btnBuildHotel.setOnClickListener {
-                val payload = GameController.buildPayload("playerId", myId, "tilePos", tilePos)
-                gameStomp.sendGameMessage(GameMessage(LobbyClient.lobbyId, GameMessageType.BUILD_HOTEL, payload))
-                btnBuildHotel.visibility = View.GONE
             }
         }
     }
@@ -589,9 +571,7 @@ class GameBoardActivity : ComponentActivity() {
 
     fun hideActionButtons() {
         runOnUiThread {
-            btnBuy.visibility = View.GONE
             btnBuildHouse.visibility = View.GONE
-            btnBuildHotel.visibility = View.GONE
         }
     }
 }

@@ -229,32 +229,10 @@
             app:layout_constraintStart_toStartOf="parent"/>
 
         <Button
-            android:id="@+id/buybtn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/kaufen"
-            android:layout_marginTop="12dp"
-            android:visibility="gone"
-            android:background="@drawable/button_yellow_with_border"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"/>
-
-        <Button
             android:id="@+id/buildHouseBtn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/haus_bauen"
-            android:layout_marginTop="12dp"
-            android:visibility="gone"
-            android:background="@drawable/button_yellow_with_border"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"/>
-
-        <Button
-            android:id="@+id/buildHotelBtn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/hotel_bauen"
             android:layout_marginTop="12dp"
             android:visibility="gone"
             android:background="@drawable/button_yellow_with_border"
