@@ -60,6 +60,15 @@
             android:visibility="gone" />
 
         <View
+            android:id="@+id/kraftZentrale"
+            android:layout_width="34dp"
+            android:layout_height="49dp"
+            android:layout_marginLeft="256dp"
+            android:layout_marginTop="354dp"
+            android:background="#88FF0000"
+            android:visibility="gone" />
+
+        <View
             android:id="@+id/murplatz"
             android:layout_width="34dp"
             android:layout_height="49dp"
@@ -87,6 +96,15 @@
             android:visibility="gone" />
 
         <View
+            android:id="@+id/eisenbahnWienGraz"
+            android:layout_width="34dp"
+            android:layout_height="49dp"
+            android:layout_marginLeft="121dp"
+            android:layout_marginTop="354dp"
+            android:background="#88FF0000"
+            android:visibility="gone" />
+
+        <View
             android:id="@+id/josHaydnGasse"
             android:layout_width="34dp"
             android:layout_height="49dp"
@@ -102,6 +120,24 @@
             android:layout_height="34dp"
             android:layout_marginLeft="8dp"
             android:layout_marginTop="324dp"
+            android:background="#88FF0000"
+            android:visibility="gone" />
+
+        <View
+            android:id="@+id/dampfSchifffahrt"
+            android:layout_width="49dp"
+            android:layout_height="34dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="290dp"
+            android:background="#88FF0000"
+            android:visibility="gone" />
+
+        <View
+            android:id="@+id/seilbahn"
+            android:layout_width="49dp"
+            android:layout_height="34dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="256dp"
             android:background="#88FF0000"
             android:visibility="gone" />
 
@@ -133,6 +169,15 @@
             android:visibility="gone" />
 
         <View
+            android:id="@+id/eisenbahn"
+            android:layout_width="49dp"
+            android:layout_height="34dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="120dp"
+            android:background="#88FF0000"
+            android:visibility="gone" />
+
+        <View
             android:id="@+id/landstrasse"
             android:layout_width="49dp"
             android:layout_height="34dp"
@@ -156,6 +201,15 @@
             android:layout_width="34dp"
             android:layout_height="49dp"
             android:layout_marginLeft="53dp"
+            android:layout_marginTop="8dp"
+            android:background="#88FF0000"
+            android:visibility="gone" />
+
+        <View
+            android:id="@+id/autobuslinie"
+            android:layout_width="34dp"
+            android:layout_height="49dp"
+            android:layout_marginLeft="121dp"
             android:layout_marginTop="8dp"
             android:background="#88FF0000"
             android:visibility="gone" />
@@ -212,6 +266,15 @@
             android:layout_height="34dp"
             android:layout_marginLeft="354dp"
             android:layout_marginTop="52dp"
+            android:background="#88FF0000"
+            android:visibility="gone" />
+
+        <View
+            android:id="@+id/flughafenWienVenedig"
+            android:layout_width="49dp"
+            android:layout_height="34dp"
+            android:layout_marginLeft="354dp"
+            android:layout_marginTop="120dp"
             android:background="#88FF0000"
             android:visibility="gone" />
 
