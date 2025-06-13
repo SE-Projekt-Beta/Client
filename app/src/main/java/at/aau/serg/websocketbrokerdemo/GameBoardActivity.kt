@@ -70,6 +70,8 @@ class GameBoardActivity : ComponentActivity() {
 
     private lateinit var btnUpdateState: Button
 
+    private lateinit var tileOverlays: Map<Int, View>
+
     private var myId = -1
     private lateinit var myNickname: String
     private var lastShownTurnPlayerId: Int = -1
@@ -151,8 +153,7 @@ class GameBoardActivity : ComponentActivity() {
 
         btnUpdateState = findViewById(R.id.btnUpdateState)
 
-        val tileOverlays: Map<Int, View> by lazy {
-            mapOf(
+        tileOverlays = mapOf(
                 2 to findViewById(R.id.amtsplatz),
                 4 to findViewById(R.id.kraftZentrale),
                 5 to findViewById(R.id.murplatz),
@@ -184,8 +185,6 @@ class GameBoardActivity : ComponentActivity() {
                 39 to findViewById(R.id.arlbergstrasse),
                 40 to findViewById(R.id.rathausstrasse)
             )
-        }
-
 
         hideActionButtons()
         overlay.visibility = View.GONE
@@ -495,6 +494,18 @@ class GameBoardActivity : ComponentActivity() {
         }
     }
 
+    fun updateFieldOwnershipOverlays() {
+        for ((tileIndex, overlay) in tileOverlays) {
+            val ownerId = OwnershipClient.getOwnerId(tileIndex)
+            if (ownerId != null) {
+                val baseColor = playerColors[ownerId] ?: Color.WHITE
+                overlay.setBackgroundColor(baseColor)
+                overlay.visibility = View.VISIBLE
+            } else {
+                overlay.visibility = View.GONE
+            }
+        }
+    }
 
     fun enableDiceButton() {
         runOnUiThread {

@@ -86,6 +86,9 @@ class GameClientHandler(
     private fun handleGameState(payload: JsonObject) {
         Log.i(TAG, "Received GAME_STATE payload: $payload")
         GameController.updateFromGameState(payload)
+        activity.runOnUiThread {
+            activity.updateFieldOwnershipOverlays()
+        }
 
         val myId = LobbyClient.playerId
         val currentPlayerId = GameController.getCurrentPlayerId()
