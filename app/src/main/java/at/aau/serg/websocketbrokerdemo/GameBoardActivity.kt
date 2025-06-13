@@ -3,6 +3,7 @@ package at.aau.serg.websocketbrokerdemo
 import android.Manifest
 import android.app.AlertDialog
 import android.content.Context
+import android.graphics.Color
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
@@ -33,6 +34,7 @@ import at.aau.serg.websocketbrokerdemo.network.dto.GameMessageType
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlin.math.sqrt
+import androidx.core.graphics.toColorInt
 
 class GameBoardActivity : ComponentActivity() {
 
@@ -73,6 +75,16 @@ class GameBoardActivity : ComponentActivity() {
     private var lastShownTurnPlayerId: Int = -1
     private var isRolling = false
     private var hasBuiltHouseThisTurn = false
+
+    private val playerColors = mapOf(
+        0 to "#4D00a8f3".toColorInt(), // Hellblau
+        1 to "#4D5ae74b".toColorInt(), // Grün
+        2 to "#4Dec1c24".toColorInt(),  // Rot
+        3 to "#4Dff7f27".toColorInt(), // Orange
+        4 to "#4Db83dba".toColorInt(), // Lila
+        5 to "#4Dffaec8".toColorInt() // Rosa
+    )
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -138,6 +150,42 @@ class GameBoardActivity : ComponentActivity() {
         btnShowHouses = findViewById(R.id.btnShowHouses)
 
         btnUpdateState = findViewById(R.id.btnUpdateState)
+
+        val tileOverlays: Map<Int, View> by lazy {
+            mapOf(
+                2 to findViewById(R.id.amtsplatz),
+                4 to findViewById(R.id.kraftZentrale),
+                5 to findViewById(R.id.murplatz),
+                6 to findViewById(R.id.annenstrasse),
+                7 to findViewById(R.id.joaneumring),
+                8 to findViewById(R.id.eisenbahnWienGraz),
+                10 to findViewById(R.id.josHaydnGasse),
+                12 to findViewById(R.id.schlossgrund),
+                13 to findViewById(R.id.dampfSchifffahrt),
+                14 to findViewById(R.id.seilbahn),
+                15 to findViewById(R.id.kaerntnerstrasse),
+                16 to findViewById(R.id.mariahilferstrasse),
+                17 to findViewById(R.id.kobenzlstrasse),
+                18 to findViewById(R.id.eisenbahn),
+                19 to findViewById(R.id.landstrasse),
+                20 to findViewById(R.id.stifterstrasse),
+                22 to findViewById(R.id.museumsstrasse),
+                24 to findViewById(R.id.autobuslinie),
+                25 to findViewById(R.id.mirabellplatz),
+                26 to findViewById(R.id.westbahnstrasse),
+                27 to findViewById(R.id.universitaetsplatz),
+                29 to findViewById(R.id.burggasse),
+                30 to findViewById(R.id.villacherStrasse),
+                32 to findViewById(R.id.alterPlatz),
+                34 to findViewById(R.id.flughafenWienVenedig),
+                35 to findViewById(R.id.mariaTheresienStrasse),
+                36 to findViewById(R.id.andreasHoferStrasse),
+                37 to findViewById(R.id.boznerplatz),
+                39 to findViewById(R.id.arlbergstrasse),
+                40 to findViewById(R.id.rathausstrasse)
+            )
+        }
+
 
         hideActionButtons()
         overlay.visibility = View.GONE
