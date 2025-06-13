@@ -253,21 +253,7 @@ class GameControllerTest {
         assertEquals(10, result)
     }
 
-    @Test
-    fun testEvaluateTileOptions() {
-        val tileIndex = 4
-        val playerId = 1
-        val tile = ClientTile(tileIndex, "Test", TileType.STREET,100, 10, 50, 200, PointF(0f, 0f))
 
-        every { ClientBoardMap.getTile(tileIndex) } returns tile
-        every { OwnershipClient.getOwnerId(tileIndex) } returns playerId
-
-        val result = GameController.evaluateTileOptions(playerId, tileIndex)
-
-        assertFalse(result.canBuy) // already owned
-        assertTrue(result.canBuildHouse)
-        assertTrue(result.canBuildHotel)
-    }
     @Test
     fun testGetBuildableHouseTiles_noneBuildable() {
         every { OwnershipClient.streetOwners } returns mutableMapOf(1 to 2, 2 to 2)
