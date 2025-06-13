@@ -39,6 +39,7 @@
         app:layout_constraintHeight_percent="0.65"
         app:layout_constraintDimensionRatio="1:1">
 
+        <!-- Spielbrett -->
         <ImageView
             android:id="@+id/boardImage"
             android:layout_width="match_parent"
@@ -47,6 +48,219 @@
             android:scaleType="fitCenter"
             android:src="@drawable/dktmap" />
 
+        <!-- Besitzanzeige -->
+        <!-- untere Seite -->
+        <View
+            android:id="@+id/amtsplatz"
+            android:layout_width="34dp"
+            android:layout_height="49dp"
+            android:layout_marginLeft="324dp"
+            android:layout_marginTop="354dp"
+            android:background="#88FF0000"
+            android:visibility="gone" />
+
+        <View
+            android:id="@+id/murplatz"
+            android:layout_width="34dp"
+            android:layout_height="49dp"
+            android:layout_marginLeft="223dp"
+            android:layout_marginTop="354dp"
+            android:background="#88FF0000"
+            android:visibility="gone" />
+
+        <View
+            android:id="@+id/annenstrasse"
+            android:layout_width="34dp"
+            android:layout_height="49dp"
+            android:layout_marginLeft="189dp"
+            android:layout_marginTop="354dp"
+            android:background="#88FF0000"
+            android:visibility="gone" />
+
+        <View
+            android:id="@+id/joaneumring"
+            android:layout_width="34dp"
+            android:layout_height="49dp"
+            android:layout_marginLeft="155dp"
+            android:layout_marginTop="354dp"
+            android:background="#88FF0000"
+            android:visibility="gone" />
+
+        <View
+            android:id="@+id/josHaydnGasse"
+            android:layout_width="34dp"
+            android:layout_height="49dp"
+            android:layout_marginLeft="53dp"
+            android:layout_marginTop="354dp"
+            android:background="#88FF0000"
+            android:visibility="gone" />
+
+        <!-- linke Seite -->
+        <View
+            android:id="@+id/schlossgrund"
+            android:layout_width="49dp"
+            android:layout_height="34dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="324dp"
+            android:background="#88FF0000"
+            android:visibility="gone" />
+
+        <View
+            android:id="@+id/kaerntnerstrasse"
+            android:layout_width="49dp"
+            android:layout_height="34dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="222dp"
+            android:background="#88FF0000"
+            android:visibility="gone" />
+
+        <View
+            android:id="@+id/mariahilferstrasse"
+            android:layout_width="49dp"
+            android:layout_height="34dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="188dp"
+            android:background="#88FF0000"
+            android:visibility="gone" />
+
+        <View
+            android:id="@+id/kobenzlstrasse"
+            android:layout_width="49dp"
+            android:layout_height="34dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="154dp"
+            android:background="#88FF0000"
+            android:visibility="gone" />
+
+        <View
+            android:id="@+id/landstrasse"
+            android:layout_width="49dp"
+            android:layout_height="34dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="86dp"
+            android:background="#88FF0000"
+            android:visibility="gone" />
+
+        <View
+            android:id="@+id/stifterstrasse"
+            android:layout_width="49dp"
+            android:layout_height="34dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="52dp"
+            android:background="#88FF0000"
+            android:visibility="gone" />
+
+        <!-- obere Seite -->
+        <View
+            android:id="@+id/museumsstrasse"
+            android:layout_width="34dp"
+            android:layout_height="49dp"
+            android:layout_marginLeft="53dp"
+            android:layout_marginTop="8dp"
+            android:background="#88FF0000"
+            android:visibility="gone" />
+
+        <View
+            android:id="@+id/mirabellplatz"
+            android:layout_width="34dp"
+            android:layout_height="49dp"
+            android:layout_marginLeft="155dp"
+            android:layout_marginTop="8dp"
+            android:background="#88FF0000"
+            android:visibility="gone" />
+
+        <View
+            android:id="@+id/westbahnstrasse"
+            android:layout_width="34dp"
+            android:layout_height="49dp"
+            android:layout_marginLeft="189dp"
+            android:layout_marginTop="8dp"
+            android:background="#88FF0000"
+            android:visibility="gone" />
+
+        <View
+            android:id="@+id/universitaetsplatz"
+            android:layout_width="34dp"
+            android:layout_height="49dp"
+            android:layout_marginLeft="223dp"
+            android:layout_marginTop="8dp"
+            android:background="#88FF0000"
+            android:visibility="gone" />
+
+        <View
+            android:id="@+id/burggasse"
+            android:layout_width="34dp"
+            android:layout_height="49dp"
+            android:layout_marginLeft="290dp"
+            android:layout_marginTop="8dp"
+            android:background="#88FF0000"
+            android:visibility="gone" />
+
+        <View
+            android:id="@+id/villacherStrasse"
+            android:layout_width="34dp"
+            android:layout_height="49dp"
+            android:layout_marginLeft="324dp"
+            android:layout_marginTop="8dp"
+            android:background="#88FF0000"
+            android:visibility="gone" />
+
+        <!-- rechte Seite -->
+        <View
+            android:id="@+id/alterPlatz"
+            android:layout_width="49dp"
+            android:layout_height="34dp"
+            android:layout_marginLeft="354dp"
+            android:layout_marginTop="52dp"
+            android:background="#88FF0000"
+            android:visibility="gone" />
+
+        <View
+            android:id="@+id/mariaTheresienStrasse"
+            android:layout_width="49dp"
+            android:layout_height="34dp"
+            android:layout_marginLeft="354dp"
+            android:layout_marginTop="154dp"
+            android:background="#88FF0000"
+            android:visibility="gone" />
+
+        <View
+            android:id="@+id/andreasHoferStrasse"
+            android:layout_width="49dp"
+            android:layout_height="34dp"
+            android:layout_marginLeft="354dp"
+            android:layout_marginTop="188dp"
+            android:background="#88FF0000"
+            android:visibility="gone" />
+
+        <View
+            android:id="@+id/boznerplatz"
+            android:layout_width="49dp"
+            android:layout_height="34dp"
+            android:layout_marginLeft="354dp"
+            android:layout_marginTop="222dp"
+            android:background="#88FF0000"
+            android:visibility="gone" />
+
+        <View
+            android:id="@+id/arlbergstrasse"
+            android:layout_width="49dp"
+            android:layout_height="34dp"
+            android:layout_marginLeft="354dp"
+            android:layout_marginTop="290dp"
+            android:background="#88FF0000"
+            android:visibility="gone" />
+
+        <View
+            android:id="@+id/rathausstrasse"
+            android:layout_width="49dp"
+            android:layout_height="34dp"
+            android:layout_marginLeft="354dp"
+            android:layout_marginTop="324dp"
+            android:background="#88FF0000"
+            android:visibility="gone" />
+
+        <!-- player tokens -->
         <ImageView
             android:id="@+id/player_token1"
             android:layout_width="20dp"
