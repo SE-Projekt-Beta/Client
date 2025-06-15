@@ -8,7 +8,7 @@ object ClientBoardMap {
     private const val BANK = "Bank"
 
     val tiles: List<ClientTile> = listOf(
-        ClientTile(1, "Start", TileType.START, position = PointF(1790f, 1790f)), // pAST
+        ClientTile(1, "Start", TileType.START, position = PointF(1785f, 1790f)), // pAST
         ClientTile(2, "Amtsplatz", TileType.STREET, 220, 80, 160, 320, position = PointF(1650f, 1780f)),
         ClientTile(3, "Risiko", TileType.RISK, position = PointF(1500f, 1780f)), // PASST
         ClientTile(4, "Kraft- Zentrale", TileType.STREET, 400, 100, 300, 500, position = PointF(1300f, 1780f)), // PASST
@@ -32,25 +32,25 @@ object ClientBoardMap {
         ClientTile(21, "Sondersteuer", TileType.TAX, position = PointF(50f, 70f)),
 
         ClientTile(22, "Museumstraße", TileType.STREET, 220, 80, 160, 320, position = PointF(300f, 165f)), // PASST
-        ClientTile(23, RISIKO, TileType.RISK, position = PointF(400f, 165f)),
+        ClientTile(23, RISIKO, TileType.RISK, position = PointF(430f, 165f)),
         ClientTile(24, "Autobuslinie", TileType.STREET, 210, 72, 120, 240, position = PointF(650f, 165f)),
         ClientTile(25, "Mirabellplatz", TileType.STREET, 250, 96, 150, 300, position = PointF(800f, 165f)), // PASST
         ClientTile(26, "Westbahnstraße", TileType.STREET, 240, 88, 140, 280, position = PointF(1000f, 165f)),
         ClientTile(27, "Universitätsplatz", TileType.STREET, 250, 96, 150, 300, position = PointF(1150f, 165f)),
-        ClientTile(28, BANK, TileType.BANK, position = PointF(1300f, 165f)),
-        ClientTile(29, "Burggasse", TileType.STREET, 140, 40, 100, 200, position = PointF(1500f, 165f)),
+        ClientTile(28, BANK, TileType.BANK, position = PointF(1300f, 165f)), //PASST
+        ClientTile(29, "Burggasse", TileType.STREET, 140, 40, 100, 200, position = PointF(1495f, 165f)),
         ClientTile(30, "Villacherstraße", TileType.STREET, 200, 64, 110, 220, position = PointF(1650f, 165f)), // passt
         ClientTile(31, "Gefängnis", TileType.PRISON, position = PointF(1844f, 70f)),
 
-        ClientTile(32, "Alter Platz", TileType.STREET, 210, 72, 120, 240, position = PointF(1790f, 300f)),
-        ClientTile(33, "Vermögensabgabe", TileType.TAX, position = PointF(1790f, 450f)),
-        ClientTile(34, "Flughafen Wien- Venedig", TileType.STREET, 300, 120, 200, 400, position = PointF(1790f, 600f)),
-        ClientTile(35, "Maria-Theresien-Straße", TileType.STREET, 300, 120, 200, 400, position = PointF(1790f, 800f)),
-        ClientTile(36, "Andreas-Hofer-Straße", TileType.STREET, 250, 96, 150, 300, position = PointF(1790f, 1000f)),
-        ClientTile(37, "Boznerplatz", TileType.STREET, 300, 120, 200, 400, position = PointF(1790f, 1150f)),
-        ClientTile(38, RISIKO, TileType.RISK, position = PointF(1790f, 1300f)),
-        ClientTile(39, "Arlbergstraße", TileType.STREET, 120, 32, 50, 100, position = PointF(1790f, 1500f)),
-        ClientTile(40, "Rathausstraße", TileType.STREET, 180, 56, 100, 200, position = PointF(1790f, 1650f))
+        ClientTile(32, "Alter Platz", TileType.STREET, 210, 72, 120, 240, position = PointF(1785f, 300f)),
+        ClientTile(33, "Vermögensabgabe", TileType.TAX, position = PointF(1785f, 450f)), //PASST
+        ClientTile(34, "Flughafen Wien- Venedig", TileType.STREET, 300, 120, 200, 400, position = PointF(1785f, 620f)),
+        ClientTile(35, "Maria-Theresien-Straße", TileType.STREET, 300, 120, 200, 400, position = PointF(1785f, 800f)),
+        ClientTile(36, "Andreas-Hofer-Straße", TileType.STREET, 250, 96, 150, 300, position = PointF(1785f, 1000f)),
+        ClientTile(37, "Boznerplatz", TileType.STREET, 300, 120, 200, 400, position = PointF(1785f, 1150f)),
+        ClientTile(38, RISIKO, TileType.RISK, position = PointF(1785f, 1300f)),
+        ClientTile(39, "Arlbergstraße", TileType.STREET, 120, 32, 50, 100, position = PointF(1785f, 1500f)),
+        ClientTile(40, "Rathausstraße", TileType.STREET, 180, 56, 100, 200, position = PointF(1785f, 1650f))
     )
 
     fun getTile(pos: Int): ClientTile? {

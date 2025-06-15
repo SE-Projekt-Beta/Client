@@ -112,7 +112,7 @@ class GameBoardActivity : ComponentActivity() {
 
             playerTokenManager.positionTokensOnStartTile()
 
-            ownershipOverlayManager.setBoardSize(boardWidth, boardHeight)
+//            ownershipOverlayManager.setBoardSize(boardWidth, boardHeight)
             ownershipOverlayManager.updateOwnershipOverlays(tileOverlays)
         }
 
@@ -147,22 +147,22 @@ class GameBoardActivity : ComponentActivity() {
 
 
         tileOverlays = mapOf(
-//                2 to findViewById(R.id.amtsplatz),
-//                4 to findViewById(R.id.kraftZentrale),
-//                5 to findViewById(R.id.murplatz),
-//                6 to findViewById(R.id.annenstrasse),
-//                7 to findViewById(R.id.joaneumring),
-//                8 to findViewById(R.id.eisenbahnWienGraz),
-//                10 to findViewById(R.id.josHaydnGasse),
-//                12 to findViewById(R.id.schlossgrund),
-//                13 to findViewById(R.id.dampfSchifffahrt),
-//                14 to findViewById(R.id.seilbahn),
-//                15 to findViewById(R.id.kaerntnerstrasse),
-//                16 to findViewById(R.id.mariahilferstrasse),
-//                17 to findViewById(R.id.kobenzlstrasse),
-//                18 to findViewById(R.id.eisenbahn),
-//                19 to findViewById(R.id.landstrasse),
-//                20 to findViewById(R.id.stifterstrasse),
+                2 to findViewById(R.id.amtsplatz),
+                4 to findViewById(R.id.kraftZentrale),
+                5 to findViewById(R.id.murplatz),
+                6 to findViewById(R.id.annenstrasse),
+                7 to findViewById(R.id.joaneumring),
+                8 to findViewById(R.id.eisenbahnWienGraz),
+                10 to findViewById(R.id.josHaydnGasse),
+                12 to findViewById(R.id.schlossgrund),
+                13 to findViewById(R.id.dampfSchifffahrt),
+                14 to findViewById(R.id.seilbahn),
+                15 to findViewById(R.id.kaerntnerstrasse),
+                16 to findViewById(R.id.mariahilferstrasse),
+                17 to findViewById(R.id.kobenzlstrasse),
+                18 to findViewById(R.id.eisenbahn),
+                19 to findViewById(R.id.landstrasse),
+                20 to findViewById(R.id.stifterstrasse),
 //                22 to findViewById(R.id.museumsstrasse),
 //                24 to findViewById(R.id.autobuslinie),
 //                25 to findViewById(R.id.mirabellplatz),

@@ -5,12 +5,12 @@ import androidx.core.graphics.toColorInt
 
 object ColorManager {
     private val predefinedColors = listOf(
-        "#4D00a8f3", //blue
-        "#4D5ae74b", //green
-        "#4Dec1c24", //red
-        "#4Dff7f27", //orange
-        "#4Db83dba", //purple
-        "#4Dffaec8"  //pink
+        "#6600a8f3", //blue
+        "#665ae74b", //green
+        "#66ec1c24", //red
+        "#66ff7f27", //orange
+        "#66b83dba", //purple
+        "#66ffaec8"  //pink
     ).map { it.toColorInt() }
 
     // Zuweisung Spieler-ID -> Farbe

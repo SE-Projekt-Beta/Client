@@ -20,7 +20,7 @@
             </Target>
             <Target type="DEFAULT_BOOT">
               <handle>
-                <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\Benji\.android\avd\NewFast2.avd" />
+                <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\Benji\.android\avd\NewFast.avd" />
               </handle>
             </Target>
           </targets>

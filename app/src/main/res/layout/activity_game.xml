@@ -266,54 +266,81 @@
             android:background="#88FF0000"
             app:layout_constraintEnd_toEndOf="@id/guideline_vertical_left"
             app:layout_constraintTop_toTopOf="@id/guideline_horizontal_center"
-            android:layout_marginTop="-153"
+            android:layout_marginTop="-153dp"
             android:visibility="visible" />
 
         <ImageView
             android:id="@+id/player_token1"
             android:layout_width="20dp"
             android:layout_height="20dp"
+            android:layout_marginStart="-60dp"
+            android:layout_marginTop="-30dp"
             android:contentDescription="@string/player_token"
-            android:src="@drawable/circle_blue_border" />
+            android:src="@drawable/circle_blue_border"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="@id/guideline_vertical_center"
+            app:layout_constraintTop_toTopOf="@id/guideline_horizontal_bottom" />
 
         <ImageView
             android:id="@+id/player_token2"
             android:layout_width="20dp"
             android:layout_height="20dp"
+            android:layout_marginStart="50dp"
+            android:layout_marginTop="10dp"
             android:contentDescription="@string/player_token"
-            android:src="@drawable/circle_green_border" />
+            android:src="@drawable/circle_green_border"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="@id/guideline_vertical_center"
+            app:layout_constraintTop_toTopOf="@id/guideline_horizontal_bottom" />
 
-        <!-- red -->
         <ImageView
             android:id="@+id/player_token3"
             android:layout_width="20dp"
             android:layout_height="20dp"
+            android:layout_marginTop="-70dp"
+            android:layout_marginEnd="10dp"
             android:contentDescription="@string/player_token"
-            android:src="@drawable/circle_red_border" />
+            android:src="@drawable/circle_red_border"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="@id/guideline_vertical_left"
+            app:layout_constraintTop_toTopOf="@id/guideline_horizontal_center" />
 
-        <!-- orange -->
         <ImageView
             android:id="@+id/player_token4"
             android:layout_width="20dp"
             android:layout_height="20dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="5dp"
             android:contentDescription="@string/player_token"
-            android:src="@drawable/circle_orange_border" />
+            android:src="@drawable/circle_orange_border"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="@id/guideline_vertical_right"
+            app:layout_constraintTop_toTopOf="@id/guideline_horizontal_top" />
 
-        <!-- purple -->
         <ImageView
             android:id="@+id/player_token5"
             android:layout_width="20dp"
             android:layout_height="20dp"
+            android:layout_marginStart="35dp"
+            android:layout_marginTop="55dp"
             android:contentDescription="@string/player_token"
-            android:src="@drawable/circle_purple_border" />
+            android:src="@drawable/circle_purple_border"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="@id/guideline_vertical_left"
+            app:layout_constraintTop_toTopOf="@id/guideline_horizontal_center" />
 
-        <!-- pink -->
         <ImageView
             android:id="@+id/player_token6"
             android:layout_width="20dp"
             android:layout_height="20dp"
+            android:layout_marginStart="-35dp"
+            android:layout_marginTop="20dp"
             android:contentDescription="@string/player_token"
-            android:src="@drawable/circle_pink_border" />
+            android:src="@drawable/circle_pink_border"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="@id/guideline_vertical_center"
+            app:layout_constraintTop_toTopOf="@id/guideline_horizontal_top" />
+
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
