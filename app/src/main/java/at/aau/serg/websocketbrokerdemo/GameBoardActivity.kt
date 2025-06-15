@@ -51,7 +51,7 @@ class GameBoardActivity : ComponentActivity() {
     private lateinit var textYouArePlayer: TextView
     private lateinit var textCurrentTurn: TextView
     private lateinit var textDice: TextView
-    private lateinit var textCash: TextView
+    private lateinit var textPlayersCash: LinearLayout
     private lateinit var textTile: TextView
     private lateinit var overlay: TextView
 
@@ -91,6 +91,7 @@ class GameBoardActivity : ComponentActivity() {
         playerTokenManager = PlayerTokenManager(this)
 
         initViews()
+        updatePlayersCashDisplay()
         setupButtons()
         setupNetwork()
 
@@ -117,7 +118,7 @@ class GameBoardActivity : ComponentActivity() {
 
         textCurrentTurn = findViewById(R.id.response_view)
         textDice = findViewById(R.id.textDice)
-        textCash = findViewById(R.id.textCash)
+        textPlayersCash = findViewById(R.id.textPlayersCash)
         textTile = findViewById(R.id.textTile)
 
         overlay = findViewById(R.id.textCurrentTurnBig)
@@ -222,6 +223,19 @@ class GameBoardActivity : ComponentActivity() {
         }
     }
 
+    fun updatePlayersCashDisplay() {
+        runOnUiThread {
+            textPlayersCash.removeAllViews()
+            for ((id, player) in GameStateClient.players) {
+                val tv = TextView(this)
+                val color = playerTokenManager.getPlayerColor(id)
+                tv.setTextColor(color)
+                tv.text = "${player.nickname}: ${player.cash}$"
+                textPlayersCash.addView(tv)
+            }
+        }
+    }
+
     fun updateDice(dice1: Int, dice2: Int) {
         runOnUiThread {
             textDice.text = getString(R.string.rolled_values, dice1, dice2)
@@ -250,9 +264,10 @@ class GameBoardActivity : ComponentActivity() {
     }
 
     fun updateCashDisplay(cash: Int) {
-        runOnUiThread {
-            textCash.text = getString(R.string.geld_text, cash)
-        }
+        updatePlayersCashDisplay()
+//        runOnUiThread {
+//            textCash.text = getString(R.string.geld_text, cash)
+//        }
     }
 
 

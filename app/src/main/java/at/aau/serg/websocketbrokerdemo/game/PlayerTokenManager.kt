@@ -29,12 +29,12 @@ class PlayerTokenManager(private val gameBoardActivity: GameBoardActivity) {
     // Define a color for each player token (example colors, adjust as needed)
     // blue, green, red, orange, purple, pink
     private val playerColors: List<Int> = listOf(
-        0xFF0000FF.toInt(), // Blue
-        0xFF00FF00.toInt(), // Green
-        0xFFFF0000.toInt(), // Red
-        0xFFFFA500.toInt(), // Orange
-        0xFF800080.toInt(), // Purple
-        0xFFFFC0CB.toInt()  // Pink
+        0xFF00A8F3.toInt(), // Blue
+        0xFF5AE74B.toInt(), // Green
+        0xFFEC1B23.toInt(), // Red
+        0xFFFF7F26.toInt(), // Orange
+        0xFFB83CBA.toInt(), // Purple
+        0xFFFFAEC8.toInt()  // Pink
     )
 
     fun setBoardSize(width: Float, height: Float) {

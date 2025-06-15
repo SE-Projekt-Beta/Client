@@ -125,11 +125,11 @@
             android:text="@string/gewuerfelt_default"
             android:layout_marginTop="8dp" />
 
-        <TextView
-            android:id="@+id/textCash"
+        <LinearLayout
+            android:id="@+id/textPlayersCash"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/geld_default"
+            android:orientation="vertical"
             android:layout_marginTop="4dp" />
 
         <Button
