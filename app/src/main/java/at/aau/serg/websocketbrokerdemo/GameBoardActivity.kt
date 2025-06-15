@@ -52,7 +52,6 @@ class GameBoardActivity : ComponentActivity() {
     private lateinit var textCurrentTurn: TextView
     private lateinit var textDice: TextView
     private lateinit var textPlayersCash: LinearLayout
-    private lateinit var textTile: TextView
     private lateinit var overlay: TextView
 
     private lateinit var playerTokenManager: PlayerTokenManager
@@ -119,7 +118,6 @@ class GameBoardActivity : ComponentActivity() {
         textCurrentTurn = findViewById(R.id.response_view)
         textDice = findViewById(R.id.textDice)
         textPlayersCash = findViewById(R.id.textPlayersCash)
-        textTile = findViewById(R.id.textTile)
 
         overlay = findViewById(R.id.textCurrentTurnBig)
 
@@ -246,12 +244,6 @@ class GameBoardActivity : ComponentActivity() {
 
     fun onRollFinished() {
         isRolling = false;
-    }
-
-    fun updateTile(tileName: String, tileIndex: Int) {
-        runOnUiThread {
-            textTile.text = getString(R.string.landed_on, tileName, tileIndex)
-        }
     }
 
     fun setPlayerTokenPosition(playerId: Int, position: Int) {

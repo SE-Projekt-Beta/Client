@@ -4,16 +4,23 @@
     <selectionStates>
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DIALOG" />
+        <DropdownSelection timestamp="2025-05-26T18:38:50.587778200Z">
+          <Target type="DEFAULT_BOOT">
+            <handle>
+              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\Damaris\.android\avd\Medium_Phone_4.avd" />
+            </handle>
+          </Target>
+        </DropdownSelection>
         <DialogSelection>
           <targets>
             <Target type="DEFAULT_BOOT">
               <handle>
-                <DeviceId pluginId="PhysicalDevice" identifier="serial=45021JEKB03416" />
+                <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\Benji\.android\avd\NewFast.avd" />
               </handle>
             </Target>
             <Target type="DEFAULT_BOOT">
               <handle>
-                <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\Benji\.android\avd\NewFast.avd" />
+                <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\Benji\.android\avd\NewFast2.avd" />
               </handle>
             </Target>
           </targets>

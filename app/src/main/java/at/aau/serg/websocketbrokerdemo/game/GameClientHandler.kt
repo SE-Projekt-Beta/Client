@@ -110,7 +110,6 @@ class GameClientHandler(
         }
 
         activity.updateTurnView(currentPlayerId, currentPlayerName)
-        activity.updateTile(tileName, fieldIndex)
         activity.updateCashDisplay(cash)
 
         if (myId == currentPlayerId) {
