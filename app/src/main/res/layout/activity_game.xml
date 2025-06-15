@@ -178,6 +178,97 @@
             app:layout_constraintTop_toTopOf="@id/guideline_horizontal_bottom" />
 
 
+        <!--    LEFT SIDE    -->
+        <View
+            android:id="@+id/schlossgrund"
+            android:layout_width="24dp"
+            android:layout_height="34dp"
+            android:background="#88FF0000"
+            app:layout_constraintEnd_toEndOf="@id/guideline_vertical_left"
+            app:layout_constraintTop_toTopOf="@id/guideline_horizontal_center"
+            android:layout_marginTop="119dp"
+            android:visibility="visible" />
+
+        <View
+            android:id="@+id/dampfSchifffahrt"
+            android:layout_width="49dp"
+            android:layout_height="34dp"
+            android:background="#88FF0000"
+            app:layout_constraintEnd_toEndOf="@id/guideline_vertical_left"
+            app:layout_constraintTop_toTopOf="@id/guideline_horizontal_center"
+            android:layout_marginTop="84dp"
+            android:visibility="visible" />
+
+        <View
+            android:id="@+id/seilbahn"
+            android:layout_width="49dp"
+            android:layout_height="34dp"
+            android:background="#88FF0000"
+            app:layout_constraintEnd_toEndOf="@id/guideline_vertical_left"
+            app:layout_constraintTop_toTopOf="@id/guideline_horizontal_center"
+            android:layout_marginTop="51dp"
+            android:visibility="visible" />
+
+        <View
+            android:id="@+id/kaerntnerstrasse"
+            android:layout_width="24dp"
+            android:layout_height="34dp"
+            android:background="#88FF0000"
+            app:layout_constraintEnd_toEndOf="@id/guideline_vertical_left"
+            app:layout_constraintTop_toTopOf="@id/guideline_horizontal_center"
+            android:layout_marginTop="17dp"
+            android:visibility="visible" />
+
+        <View
+            android:id="@+id/mariahilferstrasse"
+            android:layout_width="24dp"
+            android:layout_height="34dp"
+            android:background="#88FF0000"
+            app:layout_constraintEnd_toEndOf="@id/guideline_vertical_left"
+            app:layout_constraintTop_toTopOf="@id/guideline_horizontal_center"
+            android:layout_marginTop="-18dp"
+            android:visibility="visible" />
+
+        <View
+            android:id="@+id/kobenzlstrasse"
+            android:layout_width="24dp"
+            android:layout_height="34dp"
+            android:background="#88FF0000"
+            app:layout_constraintEnd_toEndOf="@id/guideline_vertical_left"
+            app:layout_constraintTop_toTopOf="@id/guideline_horizontal_center"
+            android:layout_marginTop="-51dp"
+            android:visibility="visible" />
+
+        <View
+            android:id="@+id/eisenbahn"
+            android:layout_width="49dp"
+            android:layout_height="34dp"
+            android:background="#88FF0000"
+            app:layout_constraintEnd_toEndOf="@id/guideline_vertical_left"
+            app:layout_constraintTop_toTopOf="@id/guideline_horizontal_center"
+            android:layout_marginTop="-85dp"
+            android:visibility="visible" />
+
+        <View
+            android:id="@+id/landstrasse"
+            android:layout_width="24dp"
+            android:layout_height="34dp"
+            android:background="#88FF0000"
+            app:layout_constraintEnd_toEndOf="@id/guideline_vertical_left"
+            app:layout_constraintTop_toTopOf="@id/guideline_horizontal_center"
+            android:layout_marginTop="-119.5dp"
+            android:visibility="visible" />
+
+        <View
+            android:id="@+id/stifterstrasse"
+            android:layout_width="24dp"
+            android:layout_height="34dp"
+            android:background="#88FF0000"
+            app:layout_constraintEnd_toEndOf="@id/guideline_vertical_left"
+            app:layout_constraintTop_toTopOf="@id/guideline_horizontal_center"
+            android:layout_marginTop="-153"
+            android:visibility="visible" />
+
         <ImageView
             android:id="@+id/player_token1"
             android:layout_width="20dp"
