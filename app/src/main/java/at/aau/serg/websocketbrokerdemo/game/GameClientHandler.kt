@@ -113,7 +113,6 @@ class GameClientHandler(
         activity.updateCashDisplay(cash)
 
         if (myId == currentPlayerId) {
-//            activity.disableDiceButton()    // Würfel ausblenden
             activity.enableDiceButton()
             val options = GameController.evaluateTileOptions(currentPlayerId, fieldIndex)
             activity.showBuyOptions(fieldIndex, tileName, options.canBuy, options.canBuildHouse, options.canBuildHotel)
@@ -226,7 +225,6 @@ class GameClientHandler(
 
         if (rollingPlayerId == myId) {
             activity.updateDice(steps1, steps2)     // Einzelne Würfel setzen
-//            activity.disableDiceButton()        // Würfel-Button ausblenden
             activity.enableDiceView()       // Würfelbilder einbeldnen
         } else {
             // Andere sehen keine Würfel
