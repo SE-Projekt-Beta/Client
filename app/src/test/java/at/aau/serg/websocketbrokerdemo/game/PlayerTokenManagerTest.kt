@@ -83,4 +83,83 @@ class PlayerTokenManagerTest {
         // Verify player position updated
         assertEquals(newPosition, GameStateClient.players[playerId]?.position)
     }
+
+    @Test
+    fun testSetBoardSize() {
+        playerTokenManager.setBoardSize(1000f, 1000f)
+        // kein assert nötig – keine Exception ist ausreichend
+    }
+
+    @Test
+    fun testPositionTokensOnStartTile_noTile() {
+        mockkObject(ClientBoardMap)
+        every { ClientBoardMap.getTile(1) } returns null
+
+        playerTokenManager.positionTokensOnStartTile()
+
+        // sollte einfach returnen – kein Crash = OK
+    }
+
+    @Test
+    fun testMovePlayerToken_playerNotFound() {
+        playerTokenManager.movePlayerToken(999, 5)
+        // kein assert nötig – kein Absturz ist ausreichend
+    }
+
+
+    @Test
+    fun testMovePlayerToken_noTokenIndex() {
+        val playerId = 0
+        val steps = 1
+
+        // Token-Zuordnung NICHT initialisiert → playerIdToTokenIndex leer
+        playerTokenManager.movePlayerToken(playerId, steps)
+    }
+
+
+    @Test
+    fun testMovePlayerToken_tokenViewNull() {
+        val playerId = 0
+        val steps = 1
+        val tokenIndex = 0
+        val newPosition = (GameStateClient.players[playerId]!!.position + steps) % 40
+        val tileIndex = if (newPosition == 0) 40 else newPosition
+        val newTile = ClientBoardMap.getTile(tileIndex)!!
+
+        // Nur leeres Mapping, aber Token-Liste leer
+        val emptyTokenList = listOf<ImageView?>(null, null, null, null, null, null)
+
+        // Mapping initialisieren
+        val tokenField = PlayerTokenManager::class.java.getDeclaredField("playerIdToTokenIndex")
+        tokenField.isAccessible = true
+        val map = tokenField.get(playerTokenManager) as MutableMap<Int, Int>
+        map[playerId] = tokenIndex
+
+        // ImageView-Liste manipulieren (nur falls intern testbar)
+
+        playerTokenManager.movePlayerToken(playerId, steps)
+    }
+
+    @Test
+    fun testSetPlayerTokenPosition_missingTokenIndex() {
+        val playerId = 0
+        playerTokenManager.setPlayerTokenPosition(playerId, 5)
+        // kein assert nötig – kein Absturz ist ausreichend
+    }
+
+    @Test
+    fun testSetPlayerTokenPosition_tokenNull() {
+        val playerId = 0
+
+        // Mapping setzen
+        val tokenIndex = 0
+        val tokenField = PlayerTokenManager::class.java.getDeclaredField("playerIdToTokenIndex")
+        tokenField.isAccessible = true
+        val map = tokenField.get(playerTokenManager) as MutableMap<Int, Int>
+        map[playerId] = tokenIndex + 10 // absichtlich außerhalb des Bereichs
+
+        playerTokenManager.setPlayerTokenPosition(playerId, 5)
+    }
+
+
 }

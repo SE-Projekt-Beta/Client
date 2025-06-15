@@ -1,4 +1,3 @@
-// ✅ LobbyActivity.kt
 package at.aau.serg.websocketbrokerdemo
 
 import android.content.Intent
@@ -40,18 +39,6 @@ class LobbyActivity : AppCompatActivity() {
         lobbyStomp = LobbyStomp(lobbyHandler)
         lobbyStomp.connect()
 
-        val gson = Gson()
-        val json = intent.getStringExtra("players_json")
-
-        if (json != null) {
-            val type = object : TypeToken<List<PlayerDTO>>() {}.type
-            val players: List<PlayerDTO> = gson.fromJson(json, type)
-            LobbyClient.setPlayers(players)
-            updateLobby(players.map { it.nickname })
-        } else {
-            val existingPlayers = LobbyClient.allPlayers()
-            updateLobby(existingPlayers.map { it.nickname })
-        }
 
         startButton.setOnClickListener {
             lobbyStomp.sendStartGame()

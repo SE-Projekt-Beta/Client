@@ -329,14 +329,14 @@
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:contentDescription="@string/player_token"
-            android:src="@drawable/circle_blue" />
+            android:src="@drawable/circle_blue_border" />
 
         <ImageView
             android:id="@+id/player_token2"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:contentDescription="@string/player_token"
-            android:src="@drawable/circle_green"
+            android:src="@drawable/circle_green_border"
             android:visibility="gone"/>
 
         <ImageView
@@ -344,7 +344,7 @@
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:contentDescription="@string/player_token"
-            android:src="@drawable/circle_red"
+            android:src="@drawable/circle_red_border"
             android:visibility="gone"/>
 
         <ImageView
@@ -352,7 +352,7 @@
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:contentDescription="@string/player_token"
-            android:src="@drawable/circle_orange"
+            android:src="@drawable/circle_orange_border"
             android:visibility="gone"/>
 
         <ImageView
@@ -360,7 +360,7 @@
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:contentDescription="@string/player_token"
-            android:src="@drawable/circle_purple"
+            android:src="@drawable/circle_purple_border"
             android:visibility="gone"/>
 
         <ImageView
@@ -368,7 +368,7 @@
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:contentDescription="@string/player_token"
-            android:src="@drawable/circle_pink"
+            android:src="@drawable/circle_pink_border"
             android:visibility="gone"/>
 
     </FrameLayout>
@@ -402,11 +402,11 @@
             android:text="@string/gewuerfelt_default"
             android:layout_marginTop="8dp" />
 
-        <TextView
-            android:id="@+id/textCash"
+        <LinearLayout
+            android:id="@+id/textPlayersCash"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/geld_default"
+            android:orientation="vertical"
             android:layout_marginTop="4dp" />
 
         <Button
@@ -419,36 +419,11 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"/>
 
-        <TextView
-            android:id="@+id/textTile"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/gelandet_auf_default"
-            android:layout_marginTop="12dp"/>
-
         <Button
             android:id="@+id/btnViewField"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/feld"
-            android:layout_marginTop="4dp"
-            android:background="@drawable/button_yellow_with_border"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"/>
-
-        <TextView
-            android:id="@+id/textYouArePlayer"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/youArePlayer"
-            android:textStyle="bold"
-            android:textSize="16sp" />
-
-        <Button
-            android:id="@+id/btnUpdateState"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Update State"
             android:layout_marginTop="4dp"
             android:background="@drawable/button_yellow_with_border"
             app:layout_constraintEnd_toEndOf="parent"
@@ -506,32 +481,10 @@
             app:layout_constraintStart_toStartOf="parent"/>
 
         <Button
-            android:id="@+id/buybtn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/kaufen"
-            android:layout_marginTop="12dp"
-            android:visibility="gone"
-            android:background="@drawable/button_yellow_with_border"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"/>
-
-        <Button
             android:id="@+id/buildHouseBtn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/haus_bauen"
-            android:layout_marginTop="12dp"
-            android:visibility="gone"
-            android:background="@drawable/button_yellow_with_border"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"/>
-
-        <Button
-            android:id="@+id/buildHotelBtn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/hotel_bauen"
             android:layout_marginTop="12dp"
             android:visibility="gone"
             android:background="@drawable/button_yellow_with_border"
@@ -561,12 +514,6 @@
             android:paddingBottom="8dp"
             />
 
-        <TextView
-            android:id="@+id/textTesting"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/gelandet_auf_default"
-            android:layout_marginTop="12dp" />
 
 
 
