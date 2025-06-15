@@ -26,7 +26,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Spielfeldbereich -->
     <!-- Spielfeldbereich als ConstraintLayout für Prozent-Overlays -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/boardOverlayContainer"
@@ -84,7 +83,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.135" />
+            app:layout_constraintGuide_percent="0.14" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline_horizontal_center"
@@ -100,11 +99,6 @@
             android:orientation="horizontal"
             app:layout_constraintGuide_percent="0.863" />
 
-        <!-- Beispiel für eine Overlay-View, die am Schnittpunkt von Guideline 50%/80% liegt -->
-
-        <!-- Ein weiteres Beispiel für Token auf 20% / 10% -->
-
-        <!-- Place this inside your ConstraintLayout with the guidelines defined above -->
 
         <View
             android:id="@+id/amtsplatz"
@@ -268,6 +262,149 @@
             app:layout_constraintTop_toTopOf="@id/guideline_horizontal_center"
             android:layout_marginTop="-153dp"
             android:visibility="visible" />
+
+
+        <View
+            android:id="@+id/museumsstrasse"
+            android:layout_width="34dp"
+            android:layout_height="25dp"
+            android:background="#88FF0000"
+            app:layout_constraintBottom_toBottomOf="@id/guideline_horizontal_top"
+            app:layout_constraintStart_toStartOf="@id/guideline_vertical_center"
+            android:layout_marginStart="-153dp"
+            android:visibility="visible" />
+
+        <View
+            android:id="@+id/autobuslinie"
+            android:layout_width="34dp"
+            android:layout_height="49dp"
+            android:background="#88FF0000"
+            app:layout_constraintBottom_toBottomOf="@id/guideline_horizontal_top"
+            app:layout_constraintStart_toStartOf="@id/guideline_vertical_center"
+            android:layout_marginStart="-85dp"
+            android:visibility="visible" />
+
+        <View
+            android:id="@+id/mirabellplatz"
+            android:layout_width="34dp"
+            android:layout_height="25dp"
+            android:background="#88FF0000"
+            app:layout_constraintBottom_toBottomOf="@id/guideline_horizontal_top"
+            app:layout_constraintStart_toStartOf="@id/guideline_vertical_center"
+            android:layout_marginStart="-51dp"
+            android:visibility="visible" />
+
+        <View
+            android:id="@+id/westbahnstrasse"
+            android:layout_width="34dp"
+            android:layout_height="25dp"
+            android:background="#88FF0000"
+            app:layout_constraintBottom_toBottomOf="@id/guideline_horizontal_top"
+            app:layout_constraintStart_toStartOf="@id/guideline_vertical_center"
+            android:layout_marginStart="-17dp"
+            android:visibility="visible" />
+
+        <View
+            android:id="@+id/universitaetsplatz"
+            android:layout_width="34dp"
+            android:layout_height="25dp"
+            android:background="#88FF0000"
+            app:layout_constraintBottom_toBottomOf="@id/guideline_horizontal_top"
+            app:layout_constraintStart_toStartOf="@id/guideline_vertical_center"
+            android:layout_marginStart="16dp"
+            android:visibility="visible" />
+
+        <View
+            android:id="@+id/burggasse"
+            android:layout_width="34dp"
+            android:layout_height="25dp"
+            android:background="#88FF0000"
+            app:layout_constraintBottom_toBottomOf="@id/guideline_horizontal_top"
+            app:layout_constraintStart_toStartOf="@id/guideline_vertical_center"
+            android:layout_marginStart="85dp"
+            android:visibility="visible" />
+
+        <View
+            android:id="@+id/villacherStrasse"
+            android:layout_width="34dp"
+            android:layout_height="25dp"
+            android:background="#88FF0000"
+            app:layout_constraintBottom_toBottomOf="@id/guideline_horizontal_top"
+            app:layout_constraintStart_toStartOf="@id/guideline_vertical_center"
+            android:layout_marginStart="119dp"
+            android:visibility="visible" />
+
+        <View
+            android:id="@+id/alterPlatz"
+            android:layout_width="25dp"
+            android:layout_height="34dp"
+            android:background="#88FF0000"
+            app:layout_constraintStart_toStartOf="@id/guideline_vertical_right"
+            app:layout_constraintTop_toTopOf="@id/guideline_horizontal_center"
+            android:layout_marginTop="-153dp"
+            android:visibility="visible" />
+
+        <View
+            android:id="@+id/flughafenWienVenedig"
+            android:layout_width="49dp"
+            android:layout_height="34dp"
+            android:background="#88FF0000"
+            app:layout_constraintStart_toStartOf="@id/guideline_vertical_right"
+            app:layout_constraintTop_toTopOf="@id/guideline_horizontal_center"
+            android:layout_marginTop="-85dp"
+            android:visibility="visible" />
+
+        <View
+            android:id="@+id/mariaTheresienStrasse"
+            android:layout_width="25dp"
+            android:layout_height="34dp"
+            android:background="#88FF0000"
+            app:layout_constraintStart_toStartOf="@id/guideline_vertical_right"
+            app:layout_constraintTop_toTopOf="@id/guideline_horizontal_center"
+            android:layout_marginTop="-51dp"
+            android:visibility="visible" />
+
+        <View
+            android:id="@+id/andreasHoferStrasse"
+            android:layout_width="25dp"
+            android:layout_height="34dp"
+            android:background="#88FF0000"
+            app:layout_constraintStart_toStartOf="@id/guideline_vertical_right"
+            app:layout_constraintTop_toTopOf="@id/guideline_horizontal_center"
+            android:layout_marginTop="-17dp"
+            android:visibility="visible" />
+
+        <View
+            android:id="@+id/boznerplatz"
+            android:layout_width="25dp"
+            android:layout_height="34dp"
+            android:background="#88FF0000"
+            app:layout_constraintStart_toStartOf="@id/guideline_vertical_right"
+            app:layout_constraintTop_toTopOf="@id/guideline_horizontal_center"
+            android:layout_marginTop="17dp"
+            android:visibility="visible" />
+
+        <View
+            android:id="@+id/arlbergstrasse"
+            android:layout_width="25dp"
+            android:layout_height="34dp"
+            android:background="#88FF0000"
+            app:layout_constraintStart_toStartOf="@id/guideline_vertical_right"
+            app:layout_constraintTop_toTopOf="@id/guideline_horizontal_center"
+            android:layout_marginTop="85dp"
+            android:visibility="visible" />
+
+        <View
+            android:id="@+id/rathausstrasse"
+            android:layout_width="25dp"
+            android:layout_height="34dp"
+            android:background="#88FF0000"
+            app:layout_constraintStart_toStartOf="@id/guideline_vertical_right"
+            app:layout_constraintTop_toTopOf="@id/guideline_horizontal_center"
+            android:layout_marginTop="118dp"
+            android:visibility="visible" />
+
+
 
         <ImageView
             android:id="@+id/player_token1"
@@ -485,9 +622,6 @@
             android:paddingTop="8dp"
             android:paddingBottom="8dp"
             />
-
-
-
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
