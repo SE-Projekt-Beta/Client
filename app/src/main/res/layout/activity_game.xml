@@ -59,193 +59,170 @@
             app:layout_constraintVertical_bias="0.0" />
 
         <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline_horizontal_10"
+            android:id="@+id/guideline_vertical_left"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintGuide_percent="0.10"
-            android:orientation="vertical" />
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.135" />
+
         <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline_horizontal_20"
+            android:id="@+id/guideline_vertical_center"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintGuide_percent="0.20"
-            android:orientation="vertical" />
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline_horizontal_50"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintGuide_percent="0.50"
-            android:orientation="vertical" />
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline_horizontal_80"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintGuide_percent="0.80"
+            app:layout_constraintGuide_percent="0.5"
             android:orientation="vertical" />
 
         <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline_vertical_10"
+            android:id="@+id/guideline_vertical_right"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.09975669" />
+            app:layout_constraintGuide_percent="0.86"
+            android:orientation="vertical" />
 
         <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline_vertical_50"
+            android:id="@+id/guideline_horizontal_top"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.50364965" />
+            app:layout_constraintGuide_percent="0.135" />
 
         <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline_vertical_bottom"
+            android:id="@+id/guideline_horizontal_center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintGuide_percent="0.5"
+            android:orientation="horizontal" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_horizontal_bottom"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.86" />
+            app:layout_constraintGuide_percent="0.863" />
 
         <!-- Beispiel für eine Overlay-View, die am Schnittpunkt von Guideline 50%/80% liegt -->
 
         <!-- Ein weiteres Beispiel für Token auf 20% / 10% -->
 
+        <!-- Place this inside your ConstraintLayout with the guidelines defined above -->
+
         <View
             android:id="@+id/amtsplatz"
             android:layout_width="34dp"
-            android:layout_height="25dp"
-            android:layout_marginStart="118dp"
+            android:layout_height="24dp"
             android:background="#88FF0000"
-            android:visibility="visible"
-            app:layout_constraintStart_toStartOf="@id/guideline_horizontal_50"
-            app:layout_constraintTop_toTopOf="@+id/guideline_vertical_bottom" />
+            app:layout_constraintTop_toTopOf="@id/guideline_horizontal_bottom"
+            app:layout_constraintStart_toStartOf="@id/guideline_vertical_center"
+            android:layout_marginStart="119dp"
+            android:visibility="visible"/>
+
 
         <View
             android:id="@+id/kraftZentrale"
             android:layout_width="34dp"
-            android:layout_height="50dp"
+            android:layout_height="49dp"
             android:layout_marginStart="50dp"
-            android:layout_marginTop="0dp"
             android:background="#88FF0000"
             android:visibility="visible"
-            app:layout_constraintStart_toStartOf="@id/guideline_horizontal_50"
-            app:layout_constraintTop_toTopOf="@id/guideline_vertical_bottom"/>
-
+            app:layout_constraintStart_toStartOf="@id/guideline_vertical_center"
+            app:layout_constraintTop_toTopOf="@id/guideline_horizontal_bottom" />
 
         <View
             android:id="@+id/murplatz"
             android:layout_width="34dp"
-            android:layout_height="25dp"
-            android:layout_marginStart="17dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="16dp"
             android:background="#88FF0000"
             android:visibility="visible"
-            app:layout_constraintStart_toStartOf="@id/guideline_horizontal_50"
-            app:layout_constraintTop_toTopOf="@+id/guideline_vertical_bottom" />
+            app:layout_constraintStart_toStartOf="@id/guideline_vertical_center"
+            app:layout_constraintTop_toTopOf="@id/guideline_horizontal_bottom" />
 
         <View
             android:id="@+id/annenstrasse"
             android:layout_width="34dp"
-            android:layout_height="25dp"
+            android:layout_height="24dp"
             android:layout_marginStart="-18dp"
             android:background="#88FF0000"
             android:visibility="visible"
-            app:layout_constraintStart_toStartOf="@id/guideline_horizontal_50"
-            app:layout_constraintTop_toTopOf="@+id/guideline_vertical_bottom" />
+            app:layout_constraintStart_toStartOf="@id/guideline_vertical_center"
+            app:layout_constraintTop_toTopOf="@id/guideline_horizontal_bottom" />
 
         <View
             android:id="@+id/joaneumring"
             android:layout_width="34dp"
-            android:layout_height="25dp"
+            android:layout_height="24dp"
             android:layout_marginStart="-51dp"
-            android:layout_marginTop="0dp"
             android:background="#88FF0000"
             android:visibility="visible"
-            app:layout_constraintStart_toStartOf="@id/guideline_horizontal_50"
-            app:layout_constraintTop_toTopOf="@id/guideline_vertical_bottom" />
+            app:layout_constraintStart_toStartOf="@id/guideline_vertical_center"
+            app:layout_constraintTop_toTopOf="@id/guideline_horizontal_bottom" />
 
         <View
             android:id="@+id/eisenbahnWienGraz"
             android:layout_width="34dp"
-            android:layout_height="50dp"
+            android:layout_height="49dp"
             android:layout_marginStart="-85dp"
-            android:layout_marginTop="0dp"
             android:background="#88FF0000"
             android:visibility="visible"
-            app:layout_constraintStart_toStartOf="@id/guideline_horizontal_50"
-            app:layout_constraintTop_toTopOf="@id/guideline_vertical_bottom"/>
+            app:layout_constraintStart_toStartOf="@id/guideline_vertical_center"
+            app:layout_constraintTop_toTopOf="@id/guideline_horizontal_bottom" />
 
         <View
             android:id="@+id/josHaydnGasse"
             android:layout_width="34dp"
-            android:layout_height="25dp"
+            android:layout_height="24dp"
             android:layout_marginStart="-153dp"
-            android:layout_marginTop="0dp"
             android:background="#88FF0000"
             android:visibility="visible"
-            app:layout_constraintStart_toStartOf="@id/guideline_horizontal_50"
-            app:layout_constraintTop_toTopOf="@id/guideline_vertical_bottom" />
+            app:layout_constraintStart_toStartOf="@id/guideline_vertical_center"
+            app:layout_constraintTop_toTopOf="@id/guideline_horizontal_bottom" />
+
 
         <ImageView
             android:id="@+id/player_token1"
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:src="@drawable/circle_blue_border"
-            app:layout_constraintStart_toStartOf="@id/guideline_horizontal_20"
-            app:layout_constraintTop_toTopOf="@id/guideline_vertical_10"
             android:contentDescription="@string/player_token"
-            android:visibility="visible" />
+            android:src="@drawable/circle_blue_border" />
 
         <ImageView
             android:id="@+id/player_token2"
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:src="@drawable/circle_green_border"
-            app:layout_constraintStart_toStartOf="@id/guideline_horizontal_20"
-            app:layout_constraintTop_toTopOf="@id/guideline_vertical_50"
             android:contentDescription="@string/player_token"
-            android:visibility="visible" />
+            android:src="@drawable/circle_green_border" />
 
         <!-- red -->
         <ImageView
             android:id="@+id/player_token3"
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:src="@drawable/circle_red_border"
-            app:layout_constraintStart_toStartOf="@id/guideline_horizontal_50"
-            app:layout_constraintTop_toTopOf="@id/guideline_vertical_10"
             android:contentDescription="@string/player_token"
-            android:visibility="visible" />
+            android:src="@drawable/circle_red_border" />
 
         <!-- orange -->
         <ImageView
             android:id="@+id/player_token4"
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:src="@drawable/circle_orange_border"
-            app:layout_constraintStart_toStartOf="@id/guideline_horizontal_50"
-            app:layout_constraintTop_toTopOf="@id/guideline_vertical_50"
             android:contentDescription="@string/player_token"
-            android:visibility="visible" />
+            android:src="@drawable/circle_orange_border" />
 
         <!-- purple -->
         <ImageView
             android:id="@+id/player_token5"
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:src="@drawable/circle_purple_border"
-            app:layout_constraintStart_toStartOf="@id/guideline_horizontal_80"
-            app:layout_constraintTop_toTopOf="@id/guideline_vertical_10"
             android:contentDescription="@string/player_token"
-            android:visibility="visible" />
+            android:src="@drawable/circle_purple_border" />
 
         <!-- pink -->
         <ImageView
             android:id="@+id/player_token6"
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:src="@drawable/circle_pink_border"
-            app:layout_constraintStart_toStartOf="@id/guideline_horizontal_80"
-            app:layout_constraintTop_toTopOf="@id/guideline_vertical_50"
             android:contentDescription="@string/player_token"
-            android:visibility="visible" />
+            android:src="@drawable/circle_pink_border" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
