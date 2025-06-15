@@ -2,8 +2,8 @@
     <string name="app_name">SE2 DKT</string>
 
 <!--    GameBoardActivity-->
-    <string name="youArePlayer">You are: %1$s, %2$d</string>
-    <string name="nickname_turn">%1$s ist an Zug</string>
+    <string name="nickname_turn">%1$s ist am Zug</string>
+    <string name="your_turn">Du bist am Zug</string>
     <string name="rolled_values">Gewürfelt: %1$d und %2$d</string>
     <string name="landed_on">Gelandet auf: %1$s - %2$d</string>
     <string name="geld_text">Kapital: %1$d</string>

@@ -48,7 +48,6 @@ class GameBoardActivity : ComponentActivity() {
     private lateinit var gameStomp: GameStomp
     private lateinit var gameClientHandler: GameClientHandler
 
-    private lateinit var textYouArePlayer: TextView
     private lateinit var textCurrentTurn: TextView
     private lateinit var textDice: TextView
     private lateinit var textPlayersCash: LinearLayout
@@ -108,9 +107,6 @@ class GameBoardActivity : ComponentActivity() {
     }
 
     private fun initViews() {
-        textYouArePlayer = findViewById(R.id.textYouArePlayer)
-        textYouArePlayer.text = getString(R.string.youArePlayer, myNickname, myId)
-
         diceContainer = findViewById(R.id.diceContainer)
         dice1Image = findViewById(R.id.diceImage1)
         dice2Image = findViewById(R.id.diceImage2)
@@ -172,12 +168,6 @@ class GameBoardActivity : ComponentActivity() {
         Log.i("GameBoardActivity", "Aktueller Spieler: $nickname (ID: $currentPlayerId)")
 
         runOnUiThread {
-            textYouArePlayer.text = getString(R.string.youArePlayer, myNickname, myId)
-            textCurrentTurn.text = getString(R.string.nickname_turn, nickname)
-
-            val color = playerTokenManager.getPlayerColor(currentPlayerId)
-            textCurrentTurn.setTextColor(color)
-
             // Overlay nur bei Spielerwechsel anzeigen
             if (currentPlayerId != lastShownTurnPlayerId) {
                 overlay.text = getString(R.string.nickname_turn, nickname)
@@ -194,6 +184,9 @@ class GameBoardActivity : ComponentActivity() {
             }
 
             if (currentPlayerId == myId) {
+
+                textCurrentTurn.text = getString(R.string.your_turn)
+
                 enableDiceButton()
 
                 // Nur anzeigen, wenn Hausbau erlaubt und noch nicht gebaut
@@ -206,10 +199,14 @@ class GameBoardActivity : ComponentActivity() {
                 }
 
             } else {
+                textCurrentTurn.text = getString(R.string.nickname_turn, nickname)
                 disableDiceButton()
                 hideActionButtons()
                 btnBuildHouse.visibility = View.GONE
             }
+
+            val color = playerTokenManager.getPlayerColor(currentPlayerId)
+            textCurrentTurn.setTextColor(color)
 
             // (optional) Kartenlogik vorbereiten
             val fieldIndex = GameController.getCurrentFieldIndex(currentPlayerId)
