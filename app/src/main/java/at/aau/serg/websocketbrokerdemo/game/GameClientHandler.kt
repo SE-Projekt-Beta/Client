@@ -56,7 +56,7 @@ class GameClientHandler(
             val options = GameController.evaluateTileOptions(playerId, fieldIndex)
             activity.showBuyOptions(fieldIndex, tileName, options.canBuy, options.canBuildHouse, options.canBuildHotel)
             activity.showBuyDialog(fieldIndex, tileName)
-            activity.disableDiceButton()
+//            activity.disableDiceButton()
         } else {
             Log.i(TAG, "Spieler $playerId möchte $tileName kaufen.")
         }
@@ -96,7 +96,6 @@ class GameClientHandler(
 
         val playersJson = payload["players"]?.toString() ?: "No players"
         Log.i(TAG, "Players JSON: $playersJson")
-        activity.updateTestView(playersJson)
 
         // Update all player tokens based on their current position in the game state
         try {
@@ -111,11 +110,9 @@ class GameClientHandler(
         }
 
         activity.updateTurnView(currentPlayerId, currentPlayerName)
-        activity.updateTile(tileName, fieldIndex)
         activity.updateCashDisplay(cash)
 
         if (myId == currentPlayerId) {
-            activity.disableDiceButton()    // Würfel ausblenden
             activity.enableDiceButton()
             val options = GameController.evaluateTileOptions(currentPlayerId, fieldIndex)
             activity.showBuyOptions(fieldIndex, tileName, options.canBuy, options.canBuildHouse, options.canBuildHotel)
@@ -228,7 +225,6 @@ class GameClientHandler(
 
         if (rollingPlayerId == myId) {
             activity.updateDice(steps1, steps2)     // Einzelne Würfel setzen
-            activity.disableDiceButton()        // Würfel-Button ausblenden
             activity.enableDiceView()       // Würfelbilder einbeldnen
         } else {
             // Andere sehen keine Würfel
@@ -236,9 +232,6 @@ class GameClientHandler(
             activity.disableDiceButton()
         }
 
-        // Bewegung der Spielfigur
-        activity.updateTokenPosition(steps1 + steps2)
-        Log.d("TokenDebug", "Calling updateTokenPosition after rolling dice")
 
         // Wurf ist vollständig angekommen, wir können schütteln wieder erlauben
         activity.onRollFinished()

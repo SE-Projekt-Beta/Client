@@ -1,6 +1,7 @@
 package at.aau.serg.websocketbrokerdemo
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
 import android.hardware.Sensor
@@ -48,12 +49,9 @@ class GameBoardActivity : ComponentActivity() {
     private lateinit var gameStomp: GameStomp
     private lateinit var gameClientHandler: GameClientHandler
 
-    private lateinit var textYouArePlayer: TextView
     private lateinit var textCurrentTurn: TextView
     private lateinit var textDice: TextView
-    private lateinit var textCash: TextView
-    private lateinit var textTile: TextView
-    private lateinit var textTesting: TextView
+    private lateinit var textPlayersCash: LinearLayout
     private lateinit var overlay: TextView
 
     private lateinit var playerTokenManager: PlayerTokenManager
@@ -64,14 +62,13 @@ class GameBoardActivity : ComponentActivity() {
     private lateinit var btnViewField: Button
     private lateinit var btnShowHouses: Button
 
-    private lateinit var btnUpdateState: Button
-
     private var myId = -1
     private lateinit var myNickname: String
     private var lastShownTurnPlayerId: Int = -1
     private var isRolling = false
     private var hasBuiltHouseThisTurn = false
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_game)
@@ -94,6 +91,7 @@ class GameBoardActivity : ComponentActivity() {
         playerTokenManager = PlayerTokenManager(this)
 
         initViews()
+        updatePlayersCashDisplay()
         setupButtons()
         setupNetwork()
 
@@ -108,22 +106,27 @@ class GameBoardActivity : ComponentActivity() {
 
             playerTokenManager.positionTokensOnStartTile()
         }
+
+        boardView.setOnTouchListener { v, event ->
+            if (event.action == android.view.MotionEvent.ACTION_DOWN) {
+                val x = event.x    // x relative to view
+                val y = event.y    // y relative to view
+                Log.d("BoardTouch", "Touched at: x=$x, y=$y")
+            }
+            false  // allow other listeners to process the event (or return true to consume it)
+        }
+
+
     }
 
     private fun initViews() {
-        textYouArePlayer = findViewById(R.id.textYouArePlayer)
-        textYouArePlayer.text = getString(R.string.youArePlayer, myNickname, myId)
-
         diceContainer = findViewById(R.id.diceContainer)
         dice1Image = findViewById(R.id.diceImage1)
         dice2Image = findViewById(R.id.diceImage2)
 
         textCurrentTurn = findViewById(R.id.response_view)
         textDice = findViewById(R.id.textDice)
-        textCash = findViewById(R.id.textCash)
-        textTile = findViewById(R.id.textTile)
-
-        textTesting = findViewById(R.id.textTesting)
+        textPlayersCash = findViewById(R.id.textPlayersCash)
 
         overlay = findViewById(R.id.textCurrentTurnBig)
 
@@ -133,7 +136,6 @@ class GameBoardActivity : ComponentActivity() {
         btnViewField = findViewById(R.id.btnViewField)
         btnShowHouses = findViewById(R.id.btnShowHouses)
 
-        btnUpdateState = findViewById(R.id.btnUpdateState)
 
         hideActionButtons()
         overlay.visibility = View.GONE
@@ -161,10 +163,6 @@ class GameBoardActivity : ComponentActivity() {
             }
         }
 
-        btnUpdateState.setOnClickListener {
-            val payload = GameController.buildPayload("playerId", myId)
-            gameStomp.sendGameMessage(GameMessage(LobbyClient.lobbyId, GameMessageType.REQUEST_GAME_STATE, payload))
-        }
         btnShowHouses.setOnClickListener {
             val overview = GameController.getHouseOverview()
             showDialog("Häuser aller Spieler", overview)
@@ -178,19 +176,11 @@ class GameBoardActivity : ComponentActivity() {
         gameStomp.connect()
     }
 
-    fun updateTestView(message: String) {
-        runOnUiThread {
-            textTesting.text = message
-        }
-    }
 
     fun updateTurnView(currentPlayerId: Int, nickname: String) {
         Log.i("GameBoardActivity", "Aktueller Spieler: $nickname (ID: $currentPlayerId)")
 
         runOnUiThread {
-            textYouArePlayer.text = getString(R.string.youArePlayer, myNickname, myId)
-            textCurrentTurn.text = getString(R.string.nickname_turn, nickname)
-
             // Overlay nur bei Spielerwechsel anzeigen
             if (currentPlayerId != lastShownTurnPlayerId) {
                 overlay.text = getString(R.string.nickname_turn, nickname)
@@ -207,6 +197,9 @@ class GameBoardActivity : ComponentActivity() {
             }
 
             if (currentPlayerId == myId) {
+
+                textCurrentTurn.text = getString(R.string.your_turn)
+
                 enableDiceButton()
 
                 // Nur anzeigen, wenn Hausbau erlaubt und noch nicht gebaut
@@ -219,10 +212,14 @@ class GameBoardActivity : ComponentActivity() {
                 }
 
             } else {
+                textCurrentTurn.text = getString(R.string.nickname_turn, nickname)
                 disableDiceButton()
                 hideActionButtons()
                 btnBuildHouse.visibility = View.GONE
             }
+
+            val color = playerTokenManager.getPlayerColor(currentPlayerId)
+            textCurrentTurn.setTextColor(color)
 
             // (optional) Kartenlogik vorbereiten
             val fieldIndex = GameController.getCurrentFieldIndex(currentPlayerId)
@@ -230,6 +227,19 @@ class GameBoardActivity : ComponentActivity() {
             if (currentPlayerId == myId) {
                 val payload = GameController.buildPayload("playerId", myId)
                 // ggf. weitere Logik
+            }
+        }
+    }
+
+    fun updatePlayersCashDisplay() {
+        runOnUiThread {
+            textPlayersCash.removeAllViews()
+            for ((id, player) in GameStateClient.players) {
+                val tv = TextView(this)
+                val color = playerTokenManager.getPlayerColor(id)
+                tv.setTextColor(color)
+                tv.text = "${player.nickname}: ${player.cash}$"
+                textPlayersCash.addView(tv)
             }
         }
     }
@@ -246,12 +256,6 @@ class GameBoardActivity : ComponentActivity() {
         isRolling = false;
     }
 
-    fun updateTile(tileName: String, tileIndex: Int) {
-        runOnUiThread {
-            textTile.text = getString(R.string.landed_on, tileName, tileIndex)
-        }
-    }
-
     fun setPlayerTokenPosition(playerId: Int, position: Int) {
         playerTokenManager.setPlayerTokenPosition(playerId, position)
     }
@@ -262,9 +266,10 @@ class GameBoardActivity : ComponentActivity() {
     }
 
     fun updateCashDisplay(cash: Int) {
-        runOnUiThread {
-            textCash.text = getString(R.string.geld_text, cash)
-        }
+        updatePlayersCashDisplay()
+//        runOnUiThread {
+//            textCash.text = getString(R.string.geld_text, cash)
+//        }
     }
 
 
@@ -541,7 +546,7 @@ class GameBoardActivity : ComponentActivity() {
         dice2Image.setImageResource(diceRes2)
 
         // Dice-Button ausblenden
-        disableDiceButton()
+//        disableDiceButton()
 
         // Würfel sichtbar machen
         enableDiceView()
