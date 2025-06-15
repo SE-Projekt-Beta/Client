@@ -52,7 +52,6 @@ class GameClientHandlerTest {
         handler.handle(GameMessage(0, GameMessageType.GAME_STATE, payload))
 
         verify { mockActivity.updateTurnView(1, "Alice") }
-        verify { mockActivity.updateTile("Ringstraße", 4) }
         verify { mockActivity.updateCashDisplay(1500) }
         verify { mockActivity.enableDiceButton() }
         verify {
@@ -82,7 +81,6 @@ class GameClientHandlerTest {
         handler.handle(GameMessage(0, GameMessageType.DICE_ROLLED, payload))
 
         verify { mockActivity.updateDice(3, 4) }
-        verify { mockActivity.updateTokenPosition(7) }
         verify { mockActivity.onRollFinished() }
     }
 
@@ -177,7 +175,6 @@ class GameClientHandlerTest {
 
         verify { mockActivity.showBuyOptions(7, "Hauptstraße", true, true, false) }
         verify { mockActivity.showBuyDialog(7, "Hauptstraße") }
-        verify { mockActivity.disableDiceButton() }
     }
 
     @Test

@@ -4,6 +4,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
+import android.graphics.Color
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
@@ -21,6 +22,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.annotation.RequiresPermission
+import androidx.constraintlayout.widget.ConstraintLayout
 import at.aau.serg.websocketbrokerdemo.game.*
 import at.aau.serg.websocketbrokerdemo.game.dialog.BankCardDialog
 import at.aau.serg.websocketbrokerdemo.game.dialog.RiskCardDialog
@@ -34,6 +36,7 @@ import at.aau.serg.websocketbrokerdemo.network.dto.GameMessageType
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlin.math.sqrt
+import androidx.core.graphics.toColorInt
 
 class GameBoardActivity : ComponentActivity() {
 
@@ -55,12 +58,13 @@ class GameBoardActivity : ComponentActivity() {
     private lateinit var overlay: TextView
 
     private lateinit var playerTokenManager: PlayerTokenManager
+    private lateinit var ownershipOverlayManager: OwnershipOverlayManager
 
     private lateinit var btnRollDice: Button
     private lateinit var btnBuildHouse: Button
-    private lateinit var btnShowOwnership: Button
-    private lateinit var btnViewField: Button
     private lateinit var btnShowHouses: Button
+
+    private lateinit var tileOverlays: Map<Int, View>
 
     private var myId = -1
     private lateinit var myNickname: String
@@ -72,6 +76,51 @@ class GameBoardActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_game)
+
+        tileOverlays = mapOf(
+            2 to findViewById(R.id.amtsplatz),
+            4 to findViewById(R.id.kraftZentrale),
+            5 to findViewById(R.id.murplatz),
+            6 to findViewById(R.id.annenstrasse),
+            7 to findViewById(R.id.joaneumring),
+            8 to findViewById(R.id.eisenbahnWienGraz),
+            10 to findViewById(R.id.josHaydnGasse),
+            12 to findViewById(R.id.schlossgrund),
+            13 to findViewById(R.id.dampfSchifffahrt),
+            14 to findViewById(R.id.seilbahn),
+            15 to findViewById(R.id.kaerntnerstrasse),
+            16 to findViewById(R.id.mariahilferstrasse),
+            17 to findViewById(R.id.kobenzlstrasse),
+            18 to findViewById(R.id.eisenbahn),
+            19 to findViewById(R.id.landstrasse),
+            20 to findViewById(R.id.stifterstrasse),
+            22 to findViewById(R.id.museumsstrasse),
+            24 to findViewById(R.id.autobuslinie),
+            25 to findViewById(R.id.mirabellplatz),
+            26 to findViewById(R.id.westbahnstrasse),
+            27 to findViewById(R.id.universitaetsplatz),
+            29 to findViewById(R.id.burggasse),
+            30 to findViewById(R.id.villacherStrasse),
+            32 to findViewById(R.id.alterPlatz),
+            34 to findViewById(R.id.flughafenWienVenedig),
+            35 to findViewById(R.id.mariaTheresienStrasse),
+            36 to findViewById(R.id.andreasHoferStrasse),
+            37 to findViewById(R.id.boznerplatz),
+            39 to findViewById(R.id.arlbergstrasse),
+            40 to findViewById(R.id.rathausstrasse)
+        )
+
+        tileOverlays.forEach { (index, view) ->
+            view.setOnClickListener {
+                val tile = ClientBoardMap.getTile(index)
+                if (tile != null) {
+                    TileInfoDialog(this, tile).show()
+                } else {
+                    showDialog("Feldinfo", "Feld nicht gefunden.")
+                }
+            }
+        }
+
 
         Log.i("GameBoardActivity", "onCreate called")
 
@@ -89,6 +138,7 @@ class GameBoardActivity : ComponentActivity() {
         }
 
         playerTokenManager = PlayerTokenManager(this)
+        ownershipOverlayManager = OwnershipOverlayManager(this)
 
         initViews()
         updatePlayersCashDisplay()
@@ -105,15 +155,9 @@ class GameBoardActivity : ComponentActivity() {
             Log.d("TokenDebug", "setBoardSize was called")
 
             playerTokenManager.positionTokensOnStartTile()
-        }
 
-        boardView.setOnTouchListener { v, event ->
-            if (event.action == android.view.MotionEvent.ACTION_DOWN) {
-                val x = event.x    // x relative to view
-                val y = event.y    // y relative to view
-                Log.d("BoardTouch", "Touched at: x=$x, y=$y")
-            }
-            false  // allow other listeners to process the event (or return true to consume it)
+//            ownershipOverlayManager.setBoardSize(boardWidth, boardHeight)
+            ownershipOverlayManager.updateOwnershipOverlays(tileOverlays)
         }
 
 
@@ -132,8 +176,6 @@ class GameBoardActivity : ComponentActivity() {
 
         btnRollDice = findViewById(R.id.rollDiceBtn)
         btnBuildHouse = findViewById(R.id.buildHouseBtn)
-        btnShowOwnership = findViewById(R.id.btnShowOwnership)
-        btnViewField = findViewById(R.id.btnViewField)
         btnShowHouses = findViewById(R.id.btnShowHouses)
 
 
@@ -146,21 +188,6 @@ class GameBoardActivity : ComponentActivity() {
             btnRollDice.isEnabled = false
             val payload = GameController.buildPayload("playerId", myId)
             gameStomp.sendGameMessage(GameMessage(LobbyClient.lobbyId, GameMessageType.ROLL_DICE, payload))
-        }
-
-        btnShowOwnership.setOnClickListener {
-            val props = GameController.getOwnedTileNames(myId)
-            showDialog("Besitz", props.joinToString("\n").ifBlank { "Keine" })
-        }
-
-        btnViewField.setOnClickListener {
-            val tileIndex = GameController.getCurrentFieldIndex(myId)
-            val tile = ClientBoardMap.getTile(tileIndex)
-            if (tile != null) {
-                TileInfoDialog(this, tile).show()
-            } else {
-                showDialog("Feldinfo", "Feld nicht gefunden.")
-            }
         }
 
         btnShowHouses.setOnClickListener {
@@ -315,6 +342,7 @@ class GameBoardActivity : ComponentActivity() {
                             payload
                         )
                     )
+                   ownershipOverlayManager.updateOwnershipOverlays(tileOverlays)
 
                 }
                 .setNegativeButton("Nein") { _, _ ->
@@ -434,6 +462,9 @@ class GameBoardActivity : ComponentActivity() {
         }
     }
 
+    fun updateOwnershipOverlays() {
+        ownershipOverlayManager.updateOwnershipOverlays(tileOverlays)
+    }
 
     fun enableDiceButton() {
         runOnUiThread {

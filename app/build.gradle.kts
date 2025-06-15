@@ -124,7 +124,9 @@ sonar {
                     "**/*Adapter.kt," +
                     "**/network/**," +
                     "**/game/dialog/**," +
-                    "**/dto/**"
+                    "**/dto/**" +
+                    "**/LobbyAdapter.kt," +
+                    "**/NoOpLobbyListener.kt,"
         )
     }
 }

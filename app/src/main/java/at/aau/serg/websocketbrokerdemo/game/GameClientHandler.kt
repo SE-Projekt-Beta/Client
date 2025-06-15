@@ -112,6 +112,10 @@ class GameClientHandler(
         activity.updateTurnView(currentPlayerId, currentPlayerName)
         activity.updateCashDisplay(cash)
 
+        activity.runOnUiThread {
+            activity.updateOwnershipOverlays()
+        }
+
         if (myId == currentPlayerId) {
             activity.enableDiceButton()
             val options = GameController.evaluateTileOptions(currentPlayerId, fieldIndex)
