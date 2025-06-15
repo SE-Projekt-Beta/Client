@@ -1,6 +1,7 @@
 package at.aau.serg.websocketbrokerdemo
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
 import android.hardware.Sensor
@@ -67,6 +68,7 @@ class GameBoardActivity : ComponentActivity() {
     private var isRolling = false
     private var hasBuiltHouseThisTurn = false
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_game)
@@ -104,6 +106,17 @@ class GameBoardActivity : ComponentActivity() {
 
             playerTokenManager.positionTokensOnStartTile()
         }
+
+        boardView.setOnTouchListener { v, event ->
+            if (event.action == android.view.MotionEvent.ACTION_DOWN) {
+                val x = event.x    // x relative to view
+                val y = event.y    // y relative to view
+                Log.d("BoardTouch", "Touched at: x=$x, y=$y")
+            }
+            false  // allow other listeners to process the event (or return true to consume it)
+        }
+
+
     }
 
     private fun initViews() {
