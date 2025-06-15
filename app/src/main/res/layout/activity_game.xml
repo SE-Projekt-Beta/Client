@@ -519,24 +519,16 @@
             android:layout_marginTop="4dp" />
 
         <Button
-            android:id="@+id/btnShowOwnership"
+            android:id="@+id/btnShowHouses"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/besitz_anzeigen_default"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="24dp"
             android:background="@drawable/button_yellow_with_border"
+            android:text="Häuser anzeigen"
+            android:visibility="visible"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"/>
+            app:layout_constraintStart_toStartOf="parent" />
 
-        <Button
-            android:id="@+id/btnViewField"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/feld"
-            android:layout_marginTop="4dp"
-            android:background="@drawable/button_yellow_with_border"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"/>
 
     </LinearLayout>
 
@@ -599,17 +591,6 @@
             android:background="@drawable/button_yellow_with_border"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"/>
-
-        <Button
-            android:id="@+id/btnShowHouses"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Häuser anzeigen"
-            android:layout_marginTop="24dp"
-            android:background="@drawable/button_yellow_with_border"
-            android:visibility="visible"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
             android:id="@+id/textHouseOverview"

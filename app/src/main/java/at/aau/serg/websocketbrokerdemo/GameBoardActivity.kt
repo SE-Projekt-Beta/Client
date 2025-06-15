@@ -62,8 +62,6 @@ class GameBoardActivity : ComponentActivity() {
 
     private lateinit var btnRollDice: Button
     private lateinit var btnBuildHouse: Button
-    private lateinit var btnShowOwnership: Button
-    private lateinit var btnViewField: Button
     private lateinit var btnShowHouses: Button
 
     private lateinit var tileOverlays: Map<Int, View>
@@ -178,8 +176,6 @@ class GameBoardActivity : ComponentActivity() {
 
         btnRollDice = findViewById(R.id.rollDiceBtn)
         btnBuildHouse = findViewById(R.id.buildHouseBtn)
-        btnShowOwnership = findViewById(R.id.btnShowOwnership)
-        btnViewField = findViewById(R.id.btnViewField)
         btnShowHouses = findViewById(R.id.btnShowHouses)
 
 
@@ -192,21 +188,6 @@ class GameBoardActivity : ComponentActivity() {
             btnRollDice.isEnabled = false
             val payload = GameController.buildPayload("playerId", myId)
             gameStomp.sendGameMessage(GameMessage(LobbyClient.lobbyId, GameMessageType.ROLL_DICE, payload))
-        }
-
-        btnShowOwnership.setOnClickListener {
-            val props = GameController.getOwnedTileNames(myId)
-            showDialog("Besitz", props.joinToString("\n").ifBlank { "Keine" })
-        }
-
-        btnViewField.setOnClickListener {
-            val tileIndex = GameController.getCurrentFieldIndex(myId)
-            val tile = ClientBoardMap.getTile(tileIndex)
-            if (tile != null) {
-                TileInfoDialog(this, tile).show()
-            } else {
-                showDialog("Feldinfo", "Feld nicht gefunden.")
-            }
         }
 
         btnShowHouses.setOnClickListener {
