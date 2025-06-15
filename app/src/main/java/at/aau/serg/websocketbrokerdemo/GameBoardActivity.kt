@@ -22,6 +22,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.annotation.RequiresPermission
+import androidx.constraintlayout.widget.ConstraintLayout
 import at.aau.serg.websocketbrokerdemo.game.*
 import at.aau.serg.websocketbrokerdemo.game.dialog.BankCardDialog
 import at.aau.serg.websocketbrokerdemo.game.dialog.RiskCardDialog
@@ -78,6 +79,51 @@ class GameBoardActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_game)
 
+        tileOverlays = mapOf(
+            2 to findViewById(R.id.amtsplatz),
+            4 to findViewById(R.id.kraftZentrale),
+            5 to findViewById(R.id.murplatz),
+            6 to findViewById(R.id.annenstrasse),
+            7 to findViewById(R.id.joaneumring),
+            8 to findViewById(R.id.eisenbahnWienGraz),
+            10 to findViewById(R.id.josHaydnGasse),
+            12 to findViewById(R.id.schlossgrund),
+            13 to findViewById(R.id.dampfSchifffahrt),
+            14 to findViewById(R.id.seilbahn),
+            15 to findViewById(R.id.kaerntnerstrasse),
+            16 to findViewById(R.id.mariahilferstrasse),
+            17 to findViewById(R.id.kobenzlstrasse),
+            18 to findViewById(R.id.eisenbahn),
+            19 to findViewById(R.id.landstrasse),
+            20 to findViewById(R.id.stifterstrasse),
+            22 to findViewById(R.id.museumsstrasse),
+            24 to findViewById(R.id.autobuslinie),
+            25 to findViewById(R.id.mirabellplatz),
+            26 to findViewById(R.id.westbahnstrasse),
+            27 to findViewById(R.id.universitaetsplatz),
+            29 to findViewById(R.id.burggasse),
+            30 to findViewById(R.id.villacherStrasse),
+            32 to findViewById(R.id.alterPlatz),
+            34 to findViewById(R.id.flughafenWienVenedig),
+            35 to findViewById(R.id.mariaTheresienStrasse),
+            36 to findViewById(R.id.andreasHoferStrasse),
+            37 to findViewById(R.id.boznerplatz),
+            39 to findViewById(R.id.arlbergstrasse),
+            40 to findViewById(R.id.rathausstrasse)
+        )
+
+        tileOverlays.forEach { (index, view) ->
+            view.setOnClickListener {
+                val tile = ClientBoardMap.getTile(index)
+                if (tile != null) {
+                    TileInfoDialog(this, tile).show()
+                } else {
+                    showDialog("Feldinfo", "Feld nicht gefunden.")
+                }
+            }
+        }
+
+
         Log.i("GameBoardActivity", "onCreate called")
 
         sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
@@ -116,15 +162,6 @@ class GameBoardActivity : ComponentActivity() {
             ownershipOverlayManager.updateOwnershipOverlays(tileOverlays)
         }
 
-        boardView.setOnTouchListener { v, event ->
-            if (event.action == android.view.MotionEvent.ACTION_DOWN) {
-                val x = event.x    // x relative to view
-                val y = event.y    // y relative to view
-                Log.d("BoardTouch", "Touched at: x=$x, y=$y")
-            }
-            false  // allow other listeners to process the event (or return true to consume it)
-        }
-
 
     }
 
@@ -145,39 +182,6 @@ class GameBoardActivity : ComponentActivity() {
         btnViewField = findViewById(R.id.btnViewField)
         btnShowHouses = findViewById(R.id.btnShowHouses)
 
-
-        tileOverlays = mapOf(
-                2 to findViewById(R.id.amtsplatz),
-                4 to findViewById(R.id.kraftZentrale),
-                5 to findViewById(R.id.murplatz),
-                6 to findViewById(R.id.annenstrasse),
-                7 to findViewById(R.id.joaneumring),
-                8 to findViewById(R.id.eisenbahnWienGraz),
-                10 to findViewById(R.id.josHaydnGasse),
-                12 to findViewById(R.id.schlossgrund),
-                13 to findViewById(R.id.dampfSchifffahrt),
-                14 to findViewById(R.id.seilbahn),
-                15 to findViewById(R.id.kaerntnerstrasse),
-                16 to findViewById(R.id.mariahilferstrasse),
-                17 to findViewById(R.id.kobenzlstrasse),
-                18 to findViewById(R.id.eisenbahn),
-                19 to findViewById(R.id.landstrasse),
-                20 to findViewById(R.id.stifterstrasse),
-                22 to findViewById(R.id.museumsstrasse),
-                24 to findViewById(R.id.autobuslinie),
-                25 to findViewById(R.id.mirabellplatz),
-                26 to findViewById(R.id.westbahnstrasse),
-                27 to findViewById(R.id.universitaetsplatz),
-                29 to findViewById(R.id.burggasse),
-                30 to findViewById(R.id.villacherStrasse),
-                32 to findViewById(R.id.alterPlatz),
-                34 to findViewById(R.id.flughafenWienVenedig),
-                35 to findViewById(R.id.mariaTheresienStrasse),
-                36 to findViewById(R.id.andreasHoferStrasse),
-                37 to findViewById(R.id.boznerplatz),
-                39 to findViewById(R.id.arlbergstrasse),
-                40 to findViewById(R.id.rathausstrasse)
-            )
 
         hideActionButtons()
         overlay.visibility = View.GONE

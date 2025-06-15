@@ -14,9 +14,8 @@ class OwnershipOverlayManager(private val gameBoardActivity: GameBoardActivity) 
             gameBoardActivity.runOnUiThread {
                 if (ownerId != null) {
                     overlayView.setBackgroundColor(color)
-                    overlayView.visibility = View.VISIBLE
                 } else {
-                    overlayView.visibility = View.GONE
+                    overlayView.setBackgroundColor(Color.TRANSPARENT)
                 }
             }
         }
