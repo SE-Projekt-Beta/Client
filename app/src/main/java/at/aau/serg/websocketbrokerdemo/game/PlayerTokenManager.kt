@@ -26,6 +26,17 @@ class PlayerTokenManager(private val gameBoardActivity: GameBoardActivity) {
     private val originalBoardWidth = 2048f
     private val originalBoardHeight = 2048f
 
+    // Define a color for each player token (example colors, adjust as needed)
+    // blue, green, red, orange, purple, pink
+    private val playerColors: List<Int> = listOf(
+        0xFF0000FF.toInt(), // Blue
+        0xFF00FF00.toInt(), // Green
+        0xFFFF0000.toInt(), // Red
+        0xFFFFA500.toInt(), // Orange
+        0xFF800080.toInt(), // Purple
+        0xFFFFC0CB.toInt()  // Pink
+    )
+
     fun setBoardSize(width: Float, height: Float) {
         this.boardWidth = width
         this.boardHeight = height
@@ -107,5 +118,14 @@ class PlayerTokenManager(private val gameBoardActivity: GameBoardActivity) {
             token.y = scaledPos.y
             Log.d("TokenDebug", "Set token for playerId=$playerId at scaled x=${scaledPos.x}, y=${scaledPos.y}")
         }
+    }
+
+    /**
+     * Returns the color associated with the given playerId's token.
+     * If not found, returns a default color (black).
+     */
+    fun getPlayerColor(playerId: Int): Int {
+        val tokenIndex = playerIdToTokenIndex[playerId] ?: return 0xFF000000.toInt()
+        return playerColors.getOrElse(tokenIndex) { 0xFF000000.toInt() }
     }
 }

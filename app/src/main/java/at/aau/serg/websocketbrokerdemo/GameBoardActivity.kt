@@ -53,7 +53,6 @@ class GameBoardActivity : ComponentActivity() {
     private lateinit var textDice: TextView
     private lateinit var textCash: TextView
     private lateinit var textTile: TextView
-    private lateinit var textTesting: TextView
     private lateinit var overlay: TextView
 
     private lateinit var playerTokenManager: PlayerTokenManager
@@ -63,8 +62,6 @@ class GameBoardActivity : ComponentActivity() {
     private lateinit var btnShowOwnership: Button
     private lateinit var btnViewField: Button
     private lateinit var btnShowHouses: Button
-
-    private lateinit var btnUpdateState: Button
 
     private var myId = -1
     private lateinit var myNickname: String
@@ -123,8 +120,6 @@ class GameBoardActivity : ComponentActivity() {
         textCash = findViewById(R.id.textCash)
         textTile = findViewById(R.id.textTile)
 
-        textTesting = findViewById(R.id.textTesting)
-
         overlay = findViewById(R.id.textCurrentTurnBig)
 
         btnRollDice = findViewById(R.id.rollDiceBtn)
@@ -133,7 +128,6 @@ class GameBoardActivity : ComponentActivity() {
         btnViewField = findViewById(R.id.btnViewField)
         btnShowHouses = findViewById(R.id.btnShowHouses)
 
-        btnUpdateState = findViewById(R.id.btnUpdateState)
 
         hideActionButtons()
         overlay.visibility = View.GONE
@@ -161,10 +155,6 @@ class GameBoardActivity : ComponentActivity() {
             }
         }
 
-        btnUpdateState.setOnClickListener {
-            val payload = GameController.buildPayload("playerId", myId)
-            gameStomp.sendGameMessage(GameMessage(LobbyClient.lobbyId, GameMessageType.REQUEST_GAME_STATE, payload))
-        }
         btnShowHouses.setOnClickListener {
             val overview = GameController.getHouseOverview()
             showDialog("Häuser aller Spieler", overview)
@@ -178,11 +168,6 @@ class GameBoardActivity : ComponentActivity() {
         gameStomp.connect()
     }
 
-    fun updateTestView(message: String) {
-        runOnUiThread {
-            textTesting.text = message
-        }
-    }
 
     fun updateTurnView(currentPlayerId: Int, nickname: String) {
         Log.i("GameBoardActivity", "Aktueller Spieler: $nickname (ID: $currentPlayerId)")
@@ -190,6 +175,9 @@ class GameBoardActivity : ComponentActivity() {
         runOnUiThread {
             textYouArePlayer.text = getString(R.string.youArePlayer, myNickname, myId)
             textCurrentTurn.text = getString(R.string.nickname_turn, nickname)
+
+            val color = playerTokenManager.getPlayerColor(currentPlayerId)
+            textCurrentTurn.setTextColor(color)
 
             // Overlay nur bei Spielerwechsel anzeigen
             if (currentPlayerId != lastShownTurnPlayerId) {
@@ -541,7 +529,7 @@ class GameBoardActivity : ComponentActivity() {
         dice2Image.setImageResource(diceRes2)
 
         // Dice-Button ausblenden
-        disableDiceButton()
+//        disableDiceButton()
 
         // Würfel sichtbar machen
         enableDiceView()

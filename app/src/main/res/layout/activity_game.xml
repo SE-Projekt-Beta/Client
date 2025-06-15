@@ -167,16 +167,6 @@
             android:textStyle="bold"
             android:textSize="16sp" />
 
-        <Button
-            android:id="@+id/btnUpdateState"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Update State"
-            android:layout_marginTop="4dp"
-            android:background="@drawable/button_yellow_with_border"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"/>
-
     </LinearLayout>
 
     <!-- Rechte Leiste: Aktionen -->
@@ -262,12 +252,6 @@
             android:paddingBottom="8dp"
             />
 
-        <TextView
-            android:id="@+id/textTesting"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/gelandet_auf_default"
-            android:layout_marginTop="12dp" />
 
 
 
