@@ -52,14 +52,14 @@
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:contentDescription="@string/player_token"
-            android:src="@drawable/circle_blue" />
+            android:src="@drawable/circle_blue_border" />
 
         <ImageView
             android:id="@+id/player_token2"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:contentDescription="@string/player_token"
-            android:src="@drawable/circle_green"
+            android:src="@drawable/circle_green_border"
             android:visibility="gone"/>
 
         <ImageView
@@ -67,7 +67,7 @@
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:contentDescription="@string/player_token"
-            android:src="@drawable/circle_red"
+            android:src="@drawable/circle_red_border"
             android:visibility="gone"/>
 
         <ImageView
@@ -75,7 +75,7 @@
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:contentDescription="@string/player_token"
-            android:src="@drawable/circle_orange"
+            android:src="@drawable/circle_orange_border"
             android:visibility="gone"/>
 
         <ImageView
@@ -83,7 +83,7 @@
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:contentDescription="@string/player_token"
-            android:src="@drawable/circle_purple"
+            android:src="@drawable/circle_purple_border"
             android:visibility="gone"/>
 
         <ImageView
@@ -91,7 +91,7 @@
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:contentDescription="@string/player_token"
-            android:src="@drawable/circle_pink"
+            android:src="@drawable/circle_pink_border"
             android:visibility="gone"/>
 
     </FrameLayout>
