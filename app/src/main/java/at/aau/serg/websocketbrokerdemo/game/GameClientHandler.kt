@@ -11,6 +11,7 @@ import at.aau.serg.websocketbrokerdemo.network.dto.GameMessage
 import at.aau.serg.websocketbrokerdemo.network.dto.GameMessageType
 import com.google.gson.JsonObject
 import at.aau.serg.websocketbrokerdemo.game.dialog.BankCardDialog
+import at.aau.serg.websocketbrokerdemo.game.dialog.PlayerResult
 import kotlin.text.get
 
 
@@ -32,6 +33,7 @@ class GameClientHandler(
             GameMessageType.DICE_ROLLED -> handleDiceRolled(message.payload.asJsonObject)
             GameMessageType.CASH_TASK -> handleCashTask(message.payload.asJsonObject)
             GameMessageType.PLAYER_LOST -> handlePlayerLost(message.payload.asJsonObject)
+            GameMessageType.GAME_ENDED -> handleGameEnded(message.payload.asJsonObject)
             GameMessageType.GAME_OVER -> handleGameOver(message.payload.asJsonObject)
             GameMessageType.EXTRA_MESSAGE -> handleExtraMessage(message.payload.asJsonObject)
             GameMessageType.ERROR -> Log.e(TAG, "Fehler: ${message.payload}")
@@ -278,13 +280,19 @@ class GameClientHandler(
         activity.showDialog(title, message)
     }
 
-    fun sendEndGameRequest() {
-        val message = GameMessage(
-            lobbyId = LobbyClient.lobbyId, // oder wie du die Lobby-ID speicherst
-            type = GameMessageType.END_GAME_REQUEST,
-            payload = JsonObject() // leer, weil kein Payload notwendig
-        )
-        activity.sendGameMessage(message)
+    private fun handleGameEnded(payload: JsonObject) {
+        val playerResults = payload.getAsJsonArray("playerResults")?.mapNotNull { element ->
+            val obj = element.asJsonObject
+            val id = obj.get("playerId")?.asInt
+            val nickname = obj.get("nickname")?.asString
+            val wealth = obj.get("wealth")?.asInt
+
+            if (id != null && nickname != null && wealth != null) {
+                PlayerResult(id, nickname, wealth)
+            } else null
+        } ?: emptyList()
+
+        activity.showRankingDialog(playerResults)
     }
 
     companion object {

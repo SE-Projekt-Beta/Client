@@ -32,5 +32,6 @@ enum class GameMessageType {
     DICE_ROLLED,
     PLAYER_OUT_OF_JAIL_CARD,
 
-    END_GAME_REQUEST
+    END_GAME,
+    GAME_ENDED
 }

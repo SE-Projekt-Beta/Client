@@ -529,14 +529,20 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
         <Button
             android:id="@+id/btnEndGame"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@drawable/button_yellow_with_border"
             android:text="Spiel beenden"
             android:visibility="visible"
-            android:layout_margin="16dp"
-            />
+            android:layout_margin="20dp"
+            android:layout_gravity="start" />
 
     </LinearLayout>
 

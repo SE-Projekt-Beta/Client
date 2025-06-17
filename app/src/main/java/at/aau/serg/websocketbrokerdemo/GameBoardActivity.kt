@@ -4,6 +4,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.hardware.Sensor
 import android.hardware.SensorEvent
@@ -37,6 +38,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlin.math.sqrt
 import androidx.core.graphics.toColorInt
+import at.aau.serg.websocketbrokerdemo.game.dialog.PlayerResult
 
 class GameBoardActivity : ComponentActivity() {
 
@@ -199,7 +201,8 @@ class GameBoardActivity : ComponentActivity() {
         }
 
         btnEndGame.setOnClickListener {
-            gameClientHandler.sendEndGameRequest()
+            val payload = GameController.buildPayload("playerId", myId)
+            gameStomp.sendGameMessage(GameMessage(LobbyClient.lobbyId, GameMessageType.END_GAME, payload))
         }
     }
 
@@ -612,14 +615,30 @@ class GameBoardActivity : ComponentActivity() {
         }
     }
 
+    fun showRankingDialog(results: List<PlayerResult>) {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Spiel beendet – Rangliste")
+
+        val message = results.sortedByDescending { it.wealth }
+            .joinToString("\n") { "${it.nickname}: ${it.wealth} $" }
+
+        builder.setMessage(message)
+        builder.setPositiveButton("Zur Lobby") { _, _ ->
+            goToLobby()
+        }
+        builder.show()
+    }
+
+    fun goToLobby() {
+        val intent = Intent(this, LobbyActivity::class.java)
+        startActivity(intent)
+        finish()
+    }
+
     fun hideActionButtons() {
         runOnUiThread {
             btnBuildHouse.visibility = View.GONE
         }
-    }
-
-    fun sendGameMessage(message: GameMessage) {
-        gameStomp.sendGameMessage(message)
     }
 
 }
