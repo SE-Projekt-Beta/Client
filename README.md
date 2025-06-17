@@ -1,3 +1,5 @@
+Dieses Repository stellt den Client für die Implementierung des Brettspiels "DKT" dar. Das Projekt wurde im Rahmen der LV "Software Engineering II" an der AAU Klagenfurt entwickelt.
+
 DKT, kurz für "Das Kaufmännische Talent", ist ein bekanntes österreichisches Brettspiel, das ähnlich funktioniert wie Monopoly. Spieler können Straßen kaufen, vermieten und darauf Häuser bauen. Sonderfelder wie "Risiko", "Bank" und "Gefängnis" machen das Spiel besonders spannend. Sieger ist, wer am Ende das größte Vermögen an Bargeld, Grundbesitz und Häusern besitzt. Dafür braucht es einiges an Risikofreude, Weitsicht und kaufmännisches Talent.
 
 Login
@@ -21,4 +23,5 @@ Sonderfelder
 Auf den Sonderfeldern "Risiko" und "Bank" muss der Spieler eine entsprechende Karte ziehen. Dabei kann er Glück haben und beispielsweise Geld erhalten oder, wenn er Pech hat, Geld bezahlen. Landet man auf dem Feld "Gesetzesverletzung", so wandert man direkt ins Gefängnis. Der Spieler muss nun für drei Runden aussetzen, er erhält aber in jeder Runde die Möglichkeit, sich frei zu kaufen oder zu würfeln. Landet ein Spieler auf dem Feld "Vermögensabgabe", so muss er einen Teil seines Geldes an die Bank bezahlen.
 
 Spielende
+
 Sieger des Spiels ist, wer am Ende das größte Vermögen an Bargeld, Grundbesitz und Häusern besitzt.
