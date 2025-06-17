@@ -2,6 +2,7 @@ package at.aau.serg.websocketbrokerdemo.game
 
 import android.util.Log
 import at.aau.serg.websocketbrokerdemo.GameBoardActivity
+import at.aau.serg.websocketbrokerdemo.game.GameStateClient.currentPlayerId
 import at.aau.serg.websocketbrokerdemo.game.dialog.RiskCardDialog
 import at.aau.serg.websocketbrokerdemo.game.dialog.StartBonusDialog
 import at.aau.serg.websocketbrokerdemo.game.dialog.TaxDialog
@@ -275,6 +276,15 @@ class GameClientHandler(
             return
         }
         activity.showDialog(title, message)
+    }
+
+    fun sendEndGameRequest() {
+        val message = GameMessage(
+            lobbyId = LobbyClient.lobbyId, // oder wie du die Lobby-ID speicherst
+            type = GameMessageType.END_GAME_REQUEST,
+            payload = JsonObject() // leer, weil kein Payload notwendig
+        )
+        activity.sendGameMessage(message)
     }
 
     companion object {

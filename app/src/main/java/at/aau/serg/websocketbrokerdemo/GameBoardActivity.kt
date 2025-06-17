@@ -72,6 +72,8 @@ class GameBoardActivity : ComponentActivity() {
     private var isRolling = false
     private var hasBuiltHouseThisTurn = false
 
+    private lateinit var btnEndGame: Button
+
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -178,6 +180,7 @@ class GameBoardActivity : ComponentActivity() {
         btnBuildHouse = findViewById(R.id.buildHouseBtn)
         btnShowHouses = findViewById(R.id.btnShowHouses)
 
+        btnEndGame = findViewById(R.id.btnEndGame)
 
         hideActionButtons()
         overlay.visibility = View.GONE
@@ -193,6 +196,10 @@ class GameBoardActivity : ComponentActivity() {
         btnShowHouses.setOnClickListener {
             val overview = GameController.getHouseOverview()
             showDialog("Häuser aller Spieler", overview)
+        }
+
+        btnEndGame.setOnClickListener {
+            gameClientHandler.sendEndGameRequest()
         }
     }
 
@@ -610,4 +617,9 @@ class GameBoardActivity : ComponentActivity() {
             btnBuildHouse.visibility = View.GONE
         }
     }
+
+    fun sendGameMessage(message: GameMessage) {
+        gameStomp.sendGameMessage(message)
+    }
+
 }
