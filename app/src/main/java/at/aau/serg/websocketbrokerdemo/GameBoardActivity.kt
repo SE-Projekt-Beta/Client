@@ -265,6 +265,13 @@ class GameBoardActivity : ComponentActivity() {
                 val tv = TextView(this)
                 val color = playerTokenManager.getPlayerColor(id)
                 tv.setTextColor(color)
+                // strikethrough für nicht alive Spieler
+                if (!player.alive) {
+                    tv.paint.isStrikeThruText = true
+                    tv.setTextColor(Color.GRAY)
+                } else {
+                    tv.paint.isStrikeThruText = false
+                }
                 tv.text = "${player.nickname}: ${player.cash}$"
                 textPlayersCash.addView(tv)
             }
