@@ -50,13 +50,11 @@ class GameClientHandler(
 
         val fieldIndex = payload["fieldIndex"]?.asInt ?: return
         val tileName = GameController.getTileName(fieldIndex)
-        val price = GameController.getTilePrice(fieldIndex)
 
         if (playerId == LobbyClient.playerId) {
             val options = GameController.evaluateTileOptions(playerId, fieldIndex)
             activity.showBuyOptions(fieldIndex, tileName, options.canBuy, options.canBuildHouse, options.canBuildHotel)
             activity.showBuyDialog(fieldIndex, tileName)
-//            activity.disableDiceButton()
         } else {
             Log.i(TAG, "Spieler $playerId möchte $tileName kaufen.")
         }
@@ -129,7 +127,6 @@ class GameClientHandler(
 
     private fun handleBankCardDrawn(payload: JsonObject) {
         val playerId = payload["playerId"]?.asInt ?: return
-        val amount = payload["amount"]?.asInt ?: return
         val newCash = payload["newCash"]?.asInt ?: return
         val description = payload["description"]?.asString ?: return
 
@@ -260,7 +257,6 @@ class GameClientHandler(
     }
 
     private fun handleGameOver(payload: JsonObject) {
-        val winnerId = payload["winnerId"]?.asInt ?: return
         val winnerName = payload["winnerName"]?.asString ?: return
         activity.showGameOverDialog(winnerName)
     }

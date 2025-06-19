@@ -1,7 +1,6 @@
 package at.aau.serg.websocketbrokerdemo.network
 
 import WEBSOCKET_URI
-import android.R.attr.delay
 import android.util.Log
 import at.aau.serg.websocketbrokerdemo.game.GameClientHandler
 import at.aau.serg.websocketbrokerdemo.lobby.LobbyClient
