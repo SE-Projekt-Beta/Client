@@ -9,7 +9,7 @@
         android:id="@+id/taxTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Steuer"
+        android:text="@string/tax"
         android:textSize="20sp"
         android:textStyle="bold"
         android:gravity="center"
@@ -19,7 +19,7 @@
         android:id="@+id/taxText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Text"
+        android:text="@string/text"
         android:textSize="16sp"
         android:gravity="center" />
 
@@ -27,7 +27,7 @@
         android:id="@+id/okTaxBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="OK"
+        android:text="@string/ok_"
         android:layout_marginTop="20dp" />
 </LinearLayout>
 

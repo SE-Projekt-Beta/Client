@@ -20,8 +20,10 @@
         android:id="@+id/lobbyNameInput"
         android:layout_width="match_parent"
         android:layout_height="50dp"
+        android:autofillHints=""
         android:hint="@string/enter_lobby_name"
-        android:layout_marginBottom="24dp"/>
+        android:layout_marginBottom="24dp"
+        android:inputType="textCapWords" />
 
     <Button
         android:id="@+id/createLobbyButton"

@@ -90,6 +90,12 @@
 
 <!--    LobbyList-->
     <string name="new_lobby">New Lobby</string>
+    <string name="h_user_anzeigen">Häuser anzeigen</string>
+    <string name="dice_symbol">Dice_Symbol</string>
+    <string name="dice_symbol_2">Dice_Symbol_2</string>
+    <string name="tax">Steuer</string>
+    <string name="text">Text</string>
+    <string name="ok_">OK</string>
 
 
 </resources>

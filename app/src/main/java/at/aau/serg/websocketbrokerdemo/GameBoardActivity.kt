@@ -4,7 +4,6 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
-import android.graphics.Color
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
@@ -22,21 +21,16 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.annotation.RequiresPermission
-import androidx.constraintlayout.widget.ConstraintLayout
 import at.aau.serg.websocketbrokerdemo.game.*
-import at.aau.serg.websocketbrokerdemo.game.dialog.BankCardDialog
-import at.aau.serg.websocketbrokerdemo.game.dialog.RiskCardDialog
 import at.aau.serg.websocketbrokerdemo.lobby.LobbyClient
 import at.aau.serg.websocketbrokerdemo.model.ClientBoardMap
 import at.aau.serg.websocketbrokerdemo.game.dialog.TileInfoDialog
-import at.aau.serg.websocketbrokerdemo.model.TileType
 import at.aau.serg.websocketbrokerdemo.network.GameStomp
 import at.aau.serg.websocketbrokerdemo.network.dto.GameMessage
 import at.aau.serg.websocketbrokerdemo.network.dto.GameMessageType
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlin.math.sqrt
-import androidx.core.graphics.toColorInt
 
 class GameBoardActivity : ComponentActivity() {
 
@@ -156,7 +150,6 @@ class GameBoardActivity : ComponentActivity() {
 
             playerTokenManager.positionTokensOnStartTile()
 
-//            ownershipOverlayManager.setBoardSize(boardWidth, boardHeight)
             ownershipOverlayManager.updateOwnershipOverlays(tileOverlays)
         }
 
@@ -247,14 +240,6 @@ class GameBoardActivity : ComponentActivity() {
 
             val color = playerTokenManager.getPlayerColor(currentPlayerId)
             textCurrentTurn.setTextColor(color)
-
-            // (optional) Kartenlogik vorbereiten
-            val fieldIndex = GameController.getCurrentFieldIndex(currentPlayerId)
-            val tileType = ClientBoardMap.getTile(fieldIndex)?.type
-            if (currentPlayerId == myId) {
-                val payload = GameController.buildPayload("playerId", myId)
-                // ggf. weitere Logik
-            }
         }
     }
 
@@ -294,9 +279,6 @@ class GameBoardActivity : ComponentActivity() {
 
     fun updateCashDisplay(cash: Int) {
         updatePlayersCashDisplay()
-//        runOnUiThread {
-//            textCash.text = getString(R.string.geld_text, cash)
-//        }
     }
 
 
