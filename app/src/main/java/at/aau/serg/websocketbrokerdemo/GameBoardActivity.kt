@@ -198,7 +198,8 @@ class GameBoardActivity : ComponentActivity() {
 
 
     fun updateTurnView(currentPlayerId: Int, nickname: String) {
-        Log.i("GameBoardActivity", "Aktueller Spieler: $nickname (ID: $currentPlayerId)")
+        Log.d("BuildButton", "updateTurnView: currentPlayerId=$currentPlayerId → btnBuildHouse ${if (currentPlayerId != myId) "versteckt" else "sichtbar"}")
+
 
         runOnUiThread {
             // Overlay nur bei Spielerwechsel anzeigen
@@ -210,6 +211,7 @@ class GameBoardActivity : ComponentActivity() {
                 }, 2000)
                 lastShownTurnPlayerId = currentPlayerId
 
+
                 // Beim ersten Zug für diesen Spieler: Bau-Status zurücksetzen
                 if (currentPlayerId == myId) {
                     hasBuiltHouseThisTurn = false
@@ -217,20 +219,11 @@ class GameBoardActivity : ComponentActivity() {
             }
 
             if (currentPlayerId == myId) {
-
                 textCurrentTurn.text = getString(R.string.your_turn)
-
                 enableDiceButton()
 
-                // Nur anzeigen, wenn Hausbau erlaubt und noch nicht gebaut
-                val buildableTiles = GameController.getBuildableHouseTiles(myId)
-                if (!hasBuiltHouseThisTurn && buildableTiles.isNotEmpty()) {
-                    btnBuildHouse.visibility = View.VISIBLE
-                    btnBuildHouse.isEnabled = true
-                } else {
-                    btnBuildHouse.visibility = View.GONE
-                }
-
+                //Jetzt robust und synchronisiert:
+                refreshBuildHouseButton()
             } else {
                 textCurrentTurn.text = getString(R.string.nickname_turn, nickname)
                 disableDiceButton()
@@ -242,6 +235,9 @@ class GameBoardActivity : ComponentActivity() {
             textCurrentTurn.setTextColor(color)
         }
     }
+
+
+
 
     fun updatePlayersCashDisplay() {
         runOnUiThread {
@@ -324,8 +320,8 @@ class GameBoardActivity : ComponentActivity() {
                             payload
                         )
                     )
-                   ownershipOverlayManager.updateOwnershipOverlays(tileOverlays)
-
+                    ownershipOverlayManager.updateOwnershipOverlays(tileOverlays)
+                    refreshBuildHouseButton()
                 }
                 .setNegativeButton("Nein") { _, _ ->
                     Log.i("GameBoardActivity", "Kauf abgebrochen.")
@@ -334,6 +330,7 @@ class GameBoardActivity : ComponentActivity() {
             dialog.setCanceledOnTouchOutside(false)
             dialog.setCancelable(false)
             dialog.show()
+
             dialog.getButton(android.app.AlertDialog.BUTTON_POSITIVE).setOnClickListener {
                 val payload = GameController.buildPayload("playerId", myId, "tilePos", tilePos)
                 gameStomp.sendGameMessage(
@@ -343,8 +340,11 @@ class GameBoardActivity : ComponentActivity() {
                         payload
                     )
                 )
+                ownershipOverlayManager.updateOwnershipOverlays(tileOverlays)
+                refreshBuildHouseButton() //
                 dialog.dismiss()
             }
+
             dialog.getButton(android.app.AlertDialog.BUTTON_NEGATIVE).setOnClickListener {
                 Log.i("GameBoardActivity", "Kauf abgebrochen.")
                 val payload = GameController.buildPayload("playerId", myId, "tilePos", -1)
@@ -359,6 +359,8 @@ class GameBoardActivity : ComponentActivity() {
             }
         }
     }
+
+
 
     fun showRollPrisonDialog(dice1: Int, dice2: Int) {
         runOnUiThread {
@@ -446,7 +448,9 @@ class GameBoardActivity : ComponentActivity() {
 
     fun updateOwnershipOverlays() {
         ownershipOverlayManager.updateOwnershipOverlays(tileOverlays)
+        refreshBuildHouseButton() //Nach Besitz-Update prüfen, ob bauen möglich ist
     }
+
 
     fun enableDiceButton() {
         runOnUiThread {
@@ -589,7 +593,10 @@ class GameBoardActivity : ComponentActivity() {
 
     fun hideActionButtons() {
         runOnUiThread {
+            Log.d("BuildButton", "hideActionButtons() aufgerufen → btnBuildHouse GONE")
             btnBuildHouse.visibility = View.GONE
         }
     }
+
+
 }
