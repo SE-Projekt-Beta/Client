@@ -598,5 +598,38 @@ class GameBoardActivity : ComponentActivity() {
         }
     }
 
+    fun refreshBuildHouseButton() {
+        runOnUiThread {
+            Log.d("BuildButton", "refreshing... myId=$myId, currentPlayerId=${GameStateClient.currentPlayerId}, built=$hasBuiltHouseThisTurn")
+
+            // Erste schnelle Prüfung – damit es nicht sofort verschwindet
+            if (GameStateClient.currentPlayerId == myId && !hasBuiltHouseThisTurn) {
+                val buildableTiles = GameController.getBuildableHouseTiles(myId)
+                Log.d("BuildButton", "initial buildableTiles=${buildableTiles.joinToString()}")
+
+                if (buildableTiles.isNotEmpty()) {
+                    btnBuildHouse.visibility = View.VISIBLE
+                    btnBuildHouse.isEnabled = true
+                } else {
+                    btnBuildHouse.visibility = View.GONE
+                }
+            } else {
+                btnBuildHouse.visibility = View.GONE
+            }
+
+            // Spätere zweite Prüfung mit kurzer Verzögerung
+            Handler(Looper.getMainLooper()).postDelayed({
+                if (GameStateClient.currentPlayerId == myId && !hasBuiltHouseThisTurn) {
+                    val delayedTiles = GameController.getBuildableHouseTiles(myId)
+                    Log.d("BuildButton", "delayed buildableTiles=${delayedTiles.joinToString()}")
+
+                    if (delayedTiles.isNotEmpty()) {
+                        btnBuildHouse.visibility = View.VISIBLE
+                        btnBuildHouse.isEnabled = true
+                    }
+                }
+            }, 300)
+        }
+    }
 
 }
