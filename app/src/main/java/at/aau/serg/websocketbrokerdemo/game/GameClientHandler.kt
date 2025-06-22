@@ -281,7 +281,8 @@ class GameClientHandler(
     }
 
     private fun handleGameEnded(payload: JsonObject) {
-        val playerResults = payload.getAsJsonArray("playerResults")?.mapNotNull { element ->
+        Log.d("GameEndPayload", payload.toString())
+        val playerResults = payload.getAsJsonArray("ranking")?.mapNotNull { element ->
             val obj = element.asJsonObject
             val id = obj.get("playerId")?.asInt
             val nickname = obj.get("nickname")?.asString
