@@ -161,5 +161,33 @@ class PlayerTokenManagerTest {
         playerTokenManager.setPlayerTokenPosition(playerId, 5)
     }
 
+    @Test
+    fun testSetPlayerTokenPosition_validInput_setsTokenPosition() {
+        playerTokenManager.positionTokensOnStartTile() // init mapping
+
+        playerTokenManager.setPlayerTokenPosition(0, 3)
+
+        val expectedPos = ClientBoardMap.getTile(3)!!.position!!
+        verify { mockImageViews[0].x = expectedPos.x }
+        verify { mockImageViews[0].y = expectedPos.y }
+    }
+
+    @Test
+    fun testGetPlayerColor_validPlayerId_returnsCorrectColor() {
+        playerTokenManager.positionTokensOnStartTile() // initialisiert Mapping
+
+        val color0 = playerTokenManager.getPlayerColor(0)
+        val color1 = playerTokenManager.getPlayerColor(1)
+
+        assertEquals(0xFF00A8F3.toInt(), color0) // blue
+        assertEquals(0xFF5AE74B.toInt(), color1) // green
+    }
+
+    @Test
+    fun testGetPlayerColor_unknownPlayerId_returnsBlack() {
+        val color = playerTokenManager.getPlayerColor(999)
+        assertEquals(0xFF000000.toInt(), color)
+    }
+
 
 }
