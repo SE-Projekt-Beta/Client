@@ -280,7 +280,7 @@ class GameBoardActivity : ComponentActivity() {
         playerTokenManager.movePlayerToken(currentPlayerId, steps)
     }
 
-    fun updateCashDisplay() {
+    fun updateCashDisplay(cash: Int) {
         updatePlayersCashDisplay()
     }
 
