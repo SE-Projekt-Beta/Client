@@ -72,6 +72,15 @@ class GameClientHandlerTest {
     }
 
     @Test
+    fun testHandleGameState_inactivePlayer_noCrash() {
+        every { LobbyClient.playerId } returns -1
+
+        val payload = JsonObject()
+        // Keine Verify – nur Sicherstellen, dass keine Exception fliegt
+        handler.handle(GameMessage(0, GameMessageType.GAME_STATE, payload))
+    }
+
+    @Test
     fun testHandleDiceRolled() {
         val payload = JsonObject().apply {
             addProperty("roll1", 3)
@@ -184,6 +193,21 @@ class GameClientHandlerTest {
             addProperty("playerId", 2)
             addProperty("fieldIndex", 7)
         }
+        handler.handle(GameMessage(0, GameMessageType.ASK_BUY_PROPERTY, payload))
+
+        verify(exactly = 0) { mockActivity.showBuyDialog(any(), any()) }
+        verify(exactly = 0) { mockActivity.showBuyOptions(any(), any(), any(), any(), any()) }
+    }
+
+    @Test
+    fun testHandleAskBuyProperty_missingFieldIndex() {
+        every { LobbyClient.playerId } returns 1
+
+        val payload = JsonObject().apply {
+            addProperty("playerId", 1)
+            // "fieldIndex" fehlt absichtlich
+        }
+
         handler.handle(GameMessage(0, GameMessageType.ASK_BUY_PROPERTY, payload))
 
         verify(exactly = 0) { mockActivity.showBuyDialog(any(), any()) }
@@ -352,6 +376,27 @@ class GameClientHandlerTest {
     }
 
     @Test
+    fun testHandleTax_missingAmount() {
+        every { LobbyClient.playerId } returns 1
+        mockkObject(GameStateClient)
+        every { GameStateClient.getNickname(1) } returns "Alice"
+
+        val payload = JsonObject().apply {
+            addProperty("playerId", 1)
+            addProperty("tileName", "Luxussteuer")
+            // "amount" fehlt
+            addProperty("newCash", 1200)
+        }
+
+        handler.handle(GameMessage(0, GameMessageType.PAY_TAX, payload))
+
+        // Falls defensiv programmiert: keine Anzeige bei unvollständigem Payload
+        verify(exactly = 0) { mockActivity.updateCashDisplay(any()) }
+
+        unmockkObject(GameStateClient)
+    }
+
+    @Test
     fun testHandleGoToJail_myId() {
         mockkObject(GameStateClient)
         every { LobbyClient.playerId } returns 5
@@ -402,8 +447,6 @@ class GameClientHandlerTest {
 
         verify { mockActivity.showDialog("Hinweis", "Du bist dran!") }
     }
-
-
 
 
 }
