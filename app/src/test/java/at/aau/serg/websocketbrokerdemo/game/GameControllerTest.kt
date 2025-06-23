@@ -312,8 +312,98 @@ class GameControllerTest {
         assertTrue(overview.contains("Keine Häuser"))
     }
 
+    @Test
+    fun testEvaluateTileOptions_CanBuyAndBuildHouseAndHotel() {
+        val tileIndex = 10
+        val playerId = 1
 
+        val tile = ClientTile(
+            index = tileIndex,
+            name = "Teststraße",
+            price = 200,
+            rent = 20,
+            houseCost = 50,
+            hotelCost = 100,
+            type = TileType.STREET,
+            position = PointF(0f, 0f)
+        )
 
+        every { ClientBoardMap.getTile(tileIndex) } returns tile
+        every { OwnershipClient.getOwnerId(tileIndex) } returns playerId
+
+        val result = GameController.evaluateTileOptions(playerId, tileIndex)
+
+        assertFalse(result.canBuy) // tile is already owned
+        assertTrue(result.canBuildHouse)
+        assertTrue(result.canBuildHotel)
+    }
+
+    @Test
+    fun testEvaluateTileOptions_CanOnlyBuy() {
+        val tileIndex = 11
+        val playerId = 1
+
+        val tile = ClientTile(
+            index = tileIndex,
+            name = "Kaufstraße",
+            price = 300,
+            rent = 30,
+            houseCost = null,
+            hotelCost = null,
+            type = TileType.STREET,
+            position = PointF(0f, 0f)
+        )
+
+        every { ClientBoardMap.getTile(tileIndex) } returns tile
+        every { OwnershipClient.getOwnerId(tileIndex) } returns null
+
+        val result = GameController.evaluateTileOptions(playerId, tileIndex)
+
+        assertTrue(result.canBuy)
+        assertFalse(result.canBuildHouse)
+        assertFalse(result.canBuildHotel)
+    }
+
+    @Test
+    fun testEvaluateTileOptions_InvalidTile() {
+        val tileIndex = 12
+        val playerId = 1
+
+        every { ClientBoardMap.getTile(tileIndex) } returns null
+        every { OwnershipClient.getOwnerId(tileIndex) } returns null
+
+        val result = GameController.evaluateTileOptions(playerId, tileIndex)
+
+        assertFalse(result.canBuy)
+        assertFalse(result.canBuildHouse)
+        assertFalse(result.canBuildHotel)
+    }
+
+    @Test
+    fun testEvaluateTileOptions_NotStreetTile() {
+        val tileIndex = 13
+        val playerId = 1
+
+        val tile = ClientTile(
+            index = tileIndex,
+            name = "Gefägnis",
+            price = 100,
+            rent = 20,
+            houseCost = null,
+            hotelCost = null,
+            type = TileType.PRISON,
+            position = PointF(0f, 0f)
+        )
+
+        every { ClientBoardMap.getTile(tileIndex) } returns tile
+        every { OwnershipClient.getOwnerId(tileIndex) } returns null
+
+        val result = GameController.evaluateTileOptions(playerId, tileIndex)
+
+        assertFalse(result.canBuy)
+        assertFalse(result.canBuildHouse)
+        assertFalse(result.canBuildHotel)
+    }
 
 
 
