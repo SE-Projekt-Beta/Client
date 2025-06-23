@@ -134,7 +134,7 @@ class GameClientHandler(
             activity.updateCashDisplay(newCash)
         }
 
-        val playerName = GameStateClient.getNickname(playerId) ?: "Ein Spieler"
+        val playerName = GameStateClient.getNickname(playerId) ?: Spieler
 
         activity.runOnUiThread {
             BankCardDialog(activity, "Bankkarte", description, playerName).show()
@@ -148,7 +148,7 @@ class GameClientHandler(
         val title = payload["title"]?.asString ?: "Risiko-Karte"
         val description = payload["description"]?.asString ?: return
 
-        val playerName = GameStateClient.getNickname(playerId) ?: "Ein Spieler"
+        val playerName = GameStateClient.getNickname(playerId) ?: Spieler
 
         activity.runOnUiThread {
             RiskCardDialog(activity, title, description, playerName).show()
@@ -165,7 +165,7 @@ class GameClientHandler(
         val landed = payload["landed"]?.asBoolean ?: false
 
         if (landed) {
-            val nickname = GameStateClient.getNickname(playerId) ?: "Ein Spieler"
+            val nickname = GameStateClient.getNickname(playerId) ?: Spieler
             activity.runOnUiThread {
                 StartBonusDialog(activity, nickname, amount).show()
             }
@@ -189,7 +189,7 @@ class GameClientHandler(
             activity.updateCashDisplay(newCash)
         }
 
-        val nickname = GameStateClient.getNickname(playerId) ?: "Ein Spieler"
+        val nickname = GameStateClient.getNickname(playerId) ?: Spieler
         val message = "$nickname muss $amount€ zahlen."
 
         activity.runOnUiThread {
@@ -200,7 +200,7 @@ class GameClientHandler(
 
     private fun handleGoToJail(payload: JsonObject) {
         val playerId = payload["playerId"]?.asInt ?: return
-        val playerName = GameStateClient.getNickname(playerId) ?: "Ein Spieler"
+        val playerName = GameStateClient.getNickname(playerId) ?: Spieler
 
         if (playerId != LobbyClient.playerId) {
             Log.i(TAG, "Spieler $playerId wird ins Gefängnis geschickt.")
@@ -275,5 +275,6 @@ class GameClientHandler(
 
     companion object {
         private const val TAG = "GameClientHandler"
+        private const val Spieler = "Ein Spieler"
     }
 }

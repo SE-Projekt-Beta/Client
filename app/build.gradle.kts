@@ -133,8 +133,10 @@ sonar {
 
 dependencies {
     implementation(libs.krossbow.websocket.okhttp)
-    implementation(libs.krossbow.stomp.core)
     implementation(libs.krossbow.websocket.builtin)
+    implementation(libs.krossbow.stomp.core)
+    implementation(libs.gson)
+    implementation(kotlin("test"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -144,38 +146,29 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.gridlayout)
     implementation(libs.json)
-    implementation(libs.gson)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.media3.common.ktx)
+
     testImplementation(libs.junit)
     testImplementation(libs.junit.jupiter.api)
-    testRuntimeOnly(libs.junit.jupiter.engine)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.ui.test.junit4)
-    debugImplementation(libs.androidx.ui.tooling)
-    debugImplementation(libs.androidx.ui.test.manifest)
-    implementation(libs.gson)
-    implementation(libs.gson)
-    implementation(kotlin("test"))
-    implementation(libs.androidx.gridlayout)
-
-// Testing dependencies
-    testImplementation(libs.junit)
     testImplementation(libs.junit.jupiter.api.v582)
-    testRuntimeOnly(libs.junit.jupiter.engine.v582)
-
-    // MockK for Kotlin-friendly mocking
     testImplementation(libs.mockk)
-
     testImplementation(libs.androidx.junit.v115)
     testImplementation(libs.androidx.core)
     testImplementation(libs.robolectric)
 
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.jupiter.engine.v582)
 
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(libs.androidx.ui.test.junit4)
 
+    debugImplementation(libs.androidx.ui.tooling)
+    debugImplementation(libs.androidx.ui.test.manifest)
 }

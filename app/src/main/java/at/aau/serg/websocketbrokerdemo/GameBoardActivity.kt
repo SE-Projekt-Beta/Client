@@ -3,7 +3,6 @@ package at.aau.serg.websocketbrokerdemo
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.AlertDialog
-import android.content.Context
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
@@ -31,6 +30,7 @@ import at.aau.serg.websocketbrokerdemo.network.dto.GameMessageType
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlin.math.sqrt
+import androidx.core.view.isVisible
 
 class GameBoardActivity : ComponentActivity() {
 
@@ -118,7 +118,7 @@ class GameBoardActivity : ComponentActivity() {
 
         Log.i("GameBoardActivity", "onCreate called")
 
-        sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        sensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
 
         myNickname = LobbyClient.username
@@ -268,7 +268,7 @@ class GameBoardActivity : ComponentActivity() {
     }
 
     fun onRollFinished() {
-        isRolling = false;
+        isRolling = false
     }
 
     fun setPlayerTokenPosition(playerId: Int, position: Int) {
@@ -280,7 +280,7 @@ class GameBoardActivity : ComponentActivity() {
         playerTokenManager.movePlayerToken(currentPlayerId, steps)
     }
 
-    fun updateCashDisplay(cash: Int) {
+    fun updateCashDisplay() {
         updatePlayersCashDisplay()
     }
 
@@ -529,7 +529,7 @@ class GameBoardActivity : ComponentActivity() {
 
         if (isRolling) return // Wenn schon gwürfelt wird, abbrechen
 
-        if (GameStateClient.currentPlayerId == myId && btnRollDice.visibility == View.VISIBLE && btnRollDice.isEnabled) {
+        if (GameStateClient.currentPlayerId == myId && btnRollDice.isVisible && btnRollDice.isEnabled) {
             isRolling = true // Wurf startet
             runOnUiThread {
                 btnRollDice.performClick()
