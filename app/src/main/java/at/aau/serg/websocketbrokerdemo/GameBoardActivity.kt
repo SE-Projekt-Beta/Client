@@ -156,6 +156,13 @@ class GameBoardActivity : ComponentActivity() {
 
     }
 
+    // on close or leave activity, disconnect from the game
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.i("GameBoardActivity", "onDestroy called")
+        gameStomp.disconnect()
+    }
+
     private fun initViews() {
         diceContainer = findViewById(R.id.diceContainer)
         dice1Image = findViewById(R.id.diceImage1)

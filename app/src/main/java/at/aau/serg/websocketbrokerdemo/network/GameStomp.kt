@@ -57,6 +57,14 @@ class GameStomp(
         }
     }
 
+    // disconnect
+    fun disconnect() {
+        scope.launch {
+            session.disconnect()
+            Log.i("GameStomp", "❌ STOMP disconnected for lobby $lobbyId")
+        }
+    }
+
     var gameStateReceived = false
 
     fun onGameStateReceived() {
