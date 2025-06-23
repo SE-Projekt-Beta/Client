@@ -1,7 +1,6 @@
 package at.aau.serg.websocketbrokerdemo.network
 
 import WEBSOCKET_URI
-import android.R.attr.delay
 import android.util.Log
 import at.aau.serg.websocketbrokerdemo.game.GameClientHandler
 import at.aau.serg.websocketbrokerdemo.lobby.LobbyClient
@@ -55,6 +54,14 @@ class GameStomp(
                     dktHandler.handle(gm)
                 }
             }
+        }
+    }
+
+    // disconnect
+    fun disconnect() {
+        scope.launch {
+            session.disconnect()
+            Log.i("GameStomp", "❌ STOMP disconnected for lobby $lobbyId")
         }
     }
 

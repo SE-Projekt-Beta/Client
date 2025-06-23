@@ -4,7 +4,6 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
-import android.graphics.Color
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
@@ -22,21 +21,16 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.annotation.RequiresPermission
-import androidx.constraintlayout.widget.ConstraintLayout
 import at.aau.serg.websocketbrokerdemo.game.*
-import at.aau.serg.websocketbrokerdemo.game.dialog.BankCardDialog
-import at.aau.serg.websocketbrokerdemo.game.dialog.RiskCardDialog
 import at.aau.serg.websocketbrokerdemo.lobby.LobbyClient
 import at.aau.serg.websocketbrokerdemo.model.ClientBoardMap
 import at.aau.serg.websocketbrokerdemo.game.dialog.TileInfoDialog
-import at.aau.serg.websocketbrokerdemo.model.TileType
 import at.aau.serg.websocketbrokerdemo.network.GameStomp
 import at.aau.serg.websocketbrokerdemo.network.dto.GameMessage
 import at.aau.serg.websocketbrokerdemo.network.dto.GameMessageType
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlin.math.sqrt
-import androidx.core.graphics.toColorInt
 
 class GameBoardActivity : ComponentActivity() {
 
@@ -156,11 +150,17 @@ class GameBoardActivity : ComponentActivity() {
 
             playerTokenManager.positionTokensOnStartTile()
 
-//            ownershipOverlayManager.setBoardSize(boardWidth, boardHeight)
             ownershipOverlayManager.updateOwnershipOverlays(tileOverlays)
         }
 
 
+    }
+
+    // on close or leave activity, disconnect from the game
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.i("GameBoardActivity", "onDestroy called")
+        gameStomp.disconnect()
     }
 
     private fun initViews() {
@@ -205,7 +205,8 @@ class GameBoardActivity : ComponentActivity() {
 
 
     fun updateTurnView(currentPlayerId: Int, nickname: String) {
-        Log.i("GameBoardActivity", "Aktueller Spieler: $nickname (ID: $currentPlayerId)")
+        Log.d("BuildButton", "updateTurnView: currentPlayerId=$currentPlayerId → btnBuildHouse ${if (currentPlayerId != myId) "versteckt" else "sichtbar"}")
+
 
         runOnUiThread {
             // Overlay nur bei Spielerwechsel anzeigen
@@ -217,6 +218,7 @@ class GameBoardActivity : ComponentActivity() {
                 }, 2000)
                 lastShownTurnPlayerId = currentPlayerId
 
+
                 // Beim ersten Zug für diesen Spieler: Bau-Status zurücksetzen
                 if (currentPlayerId == myId) {
                     hasBuiltHouseThisTurn = false
@@ -224,20 +226,11 @@ class GameBoardActivity : ComponentActivity() {
             }
 
             if (currentPlayerId == myId) {
-
                 textCurrentTurn.text = getString(R.string.your_turn)
-
                 enableDiceButton()
 
-                // Nur anzeigen, wenn Hausbau erlaubt und noch nicht gebaut
-                val buildableTiles = GameController.getBuildableHouseTiles(myId)
-                if (!hasBuiltHouseThisTurn && buildableTiles.isNotEmpty()) {
-                    btnBuildHouse.visibility = View.VISIBLE
-                    btnBuildHouse.isEnabled = true
-                } else {
-                    btnBuildHouse.visibility = View.GONE
-                }
-
+                //Jetzt robust und synchronisiert:
+                refreshBuildHouseButton()
             } else {
                 textCurrentTurn.text = getString(R.string.nickname_turn, nickname)
                 disableDiceButton()
@@ -247,16 +240,11 @@ class GameBoardActivity : ComponentActivity() {
 
             val color = playerTokenManager.getPlayerColor(currentPlayerId)
             textCurrentTurn.setTextColor(color)
-
-            // (optional) Kartenlogik vorbereiten
-            val fieldIndex = GameController.getCurrentFieldIndex(currentPlayerId)
-            val tileType = ClientBoardMap.getTile(fieldIndex)?.type
-            if (currentPlayerId == myId) {
-                val payload = GameController.buildPayload("playerId", myId)
-                // ggf. weitere Logik
-            }
         }
     }
+
+
+
 
     fun updatePlayersCashDisplay() {
         runOnUiThread {
@@ -294,9 +282,6 @@ class GameBoardActivity : ComponentActivity() {
 
     fun updateCashDisplay(cash: Int) {
         updatePlayersCashDisplay()
-//        runOnUiThread {
-//            textCash.text = getString(R.string.geld_text, cash)
-//        }
     }
 
 
@@ -342,8 +327,8 @@ class GameBoardActivity : ComponentActivity() {
                             payload
                         )
                     )
-                   ownershipOverlayManager.updateOwnershipOverlays(tileOverlays)
-
+                    ownershipOverlayManager.updateOwnershipOverlays(tileOverlays)
+                    refreshBuildHouseButton()
                 }
                 .setNegativeButton("Nein") { _, _ ->
                     Log.i("GameBoardActivity", "Kauf abgebrochen.")
@@ -352,6 +337,7 @@ class GameBoardActivity : ComponentActivity() {
             dialog.setCanceledOnTouchOutside(false)
             dialog.setCancelable(false)
             dialog.show()
+
             dialog.getButton(android.app.AlertDialog.BUTTON_POSITIVE).setOnClickListener {
                 val payload = GameController.buildPayload("playerId", myId, "tilePos", tilePos)
                 gameStomp.sendGameMessage(
@@ -361,8 +347,11 @@ class GameBoardActivity : ComponentActivity() {
                         payload
                     )
                 )
+                ownershipOverlayManager.updateOwnershipOverlays(tileOverlays)
+                refreshBuildHouseButton() //
                 dialog.dismiss()
             }
+
             dialog.getButton(android.app.AlertDialog.BUTTON_NEGATIVE).setOnClickListener {
                 Log.i("GameBoardActivity", "Kauf abgebrochen.")
                 val payload = GameController.buildPayload("playerId", myId, "tilePos", -1)
@@ -377,6 +366,8 @@ class GameBoardActivity : ComponentActivity() {
             }
         }
     }
+
+
 
     fun showRollPrisonDialog(dice1: Int, dice2: Int) {
         runOnUiThread {
@@ -464,7 +455,9 @@ class GameBoardActivity : ComponentActivity() {
 
     fun updateOwnershipOverlays() {
         ownershipOverlayManager.updateOwnershipOverlays(tileOverlays)
+        refreshBuildHouseButton() //Nach Besitz-Update prüfen, ob bauen möglich ist
     }
+
 
     fun enableDiceButton() {
         runOnUiThread {
@@ -607,7 +600,43 @@ class GameBoardActivity : ComponentActivity() {
 
     fun hideActionButtons() {
         runOnUiThread {
+            Log.d("BuildButton", "hideActionButtons() aufgerufen → btnBuildHouse GONE")
             btnBuildHouse.visibility = View.GONE
         }
     }
+
+    fun refreshBuildHouseButton() {
+        runOnUiThread {
+            Log.d("BuildButton", "refreshing... myId=$myId, currentPlayerId=${GameStateClient.currentPlayerId}, built=$hasBuiltHouseThisTurn")
+
+            // Erste schnelle Prüfung – damit es nicht sofort verschwindet
+            if (GameStateClient.currentPlayerId == myId && !hasBuiltHouseThisTurn) {
+                val buildableTiles = GameController.getBuildableHouseTiles(myId)
+                Log.d("BuildButton", "initial buildableTiles=${buildableTiles.joinToString()}")
+
+                if (buildableTiles.isNotEmpty()) {
+                    btnBuildHouse.visibility = View.VISIBLE
+                    btnBuildHouse.isEnabled = true
+                } else {
+                    btnBuildHouse.visibility = View.GONE
+                }
+            } else {
+                btnBuildHouse.visibility = View.GONE
+            }
+
+            // Spätere zweite Prüfung mit kurzer Verzögerung
+            Handler(Looper.getMainLooper()).postDelayed({
+                if (GameStateClient.currentPlayerId == myId && !hasBuiltHouseThisTurn) {
+                    val delayedTiles = GameController.getBuildableHouseTiles(myId)
+                    Log.d("BuildButton", "delayed buildableTiles=${delayedTiles.joinToString()}")
+
+                    if (delayedTiles.isNotEmpty()) {
+                        btnBuildHouse.visibility = View.VISIBLE
+                        btnBuildHouse.isEnabled = true
+                    }
+                }
+            }, 300)
+        }
+    }
+
 }
