@@ -31,6 +31,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlin.math.sqrt
 import androidx.core.view.isVisible
+import com.google.gson.JsonParser
 
 class GameBoardActivity : ComponentActivity() {
 
@@ -138,6 +139,7 @@ class GameBoardActivity : ComponentActivity() {
         updatePlayersCashDisplay()
         setupButtons()
         setupNetwork()
+        setupEmoteButtons()
 
         val boardView = findViewById<View>(R.id.boardImage)
         boardView.post {
@@ -203,6 +205,22 @@ class GameBoardActivity : ComponentActivity() {
         gameStomp.connect()
     }
 
+    private fun setupEmoteButtons() {
+        val emoteMap = mapOf(
+            R.id.btnEmoteMoney to "MONEY",
+            R.id.btnEmoteShock to "SHOCK",
+            R.id.btnEmoteSorry to "SORRY",
+            R.id.btnEmoteLaugh to "LAUGH",
+            R.id.btnEmoteThanks to "THANKS",
+            R.id.btnEmoteGnade to "GNADE"
+        )
+
+        for ((btnId, emote) in emoteMap) {
+            findViewById<Button>(btnId).setOnClickListener {
+                sendEmote(emote)
+            }
+        }
+    }
 
     fun updateTurnView(currentPlayerId: Int, nickname: String) {
         Log.d("BuildButton", "updateTurnView: currentPlayerId=$currentPlayerId → btnBuildHouse ${if (currentPlayerId != myId) "versteckt" else "sichtbar"}")
@@ -278,6 +296,41 @@ class GameBoardActivity : ComponentActivity() {
     fun updateTokenPosition(steps: Int) {
         val currentPlayerId = GameStateClient.currentPlayerId
         playerTokenManager.movePlayerToken(currentPlayerId, steps)
+    }
+
+    private fun sendEmote(emoteType: String) {
+        val payload = mapOf(
+            "sender" to myNickname,
+            "emote" to emoteType
+        )
+        val jsonObject = Gson().toJsonTree(payload).asJsonObject
+        gameStomp.sendGameMessage(GameMessage(LobbyClient.lobbyId, GameMessageType.EMOTE, jsonObject))
+    }
+
+    fun showEmote(sender: String, emoteType: String) {
+        val emoteMap = mapOf(
+            "MONEY" to "💰 Money time! 💰",
+            "SHOCK" to "😱 Oh nein! 😱",
+            "SORRY" to "🥺 Sorry! 🥺",
+            "LAUGH" to "😂 Hahaha 😂",
+            "THANKS" to "🥰 Danke! 🥰",
+            "GNADE" to "😓 Bitte habt Gnade 😓"
+        )
+
+        val message = "$sender: ${emoteMap[emoteType] ?: emoteType}"
+
+        val emoteView = TextView(this).apply {
+            text = message
+            textSize = 16f
+            setPadding(12, 12, 12, 12)
+        }
+
+        val container = findViewById<LinearLayout>(R.id.emoteContainer)
+        container.addView(emoteView)
+
+        Handler(Looper.getMainLooper()).postDelayed({
+            container.removeView(emoteView)
+        }, 5000)
     }
 
     fun updateCashDisplay(cash: Int) {

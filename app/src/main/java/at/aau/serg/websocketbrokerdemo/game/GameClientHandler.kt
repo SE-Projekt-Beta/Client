@@ -23,6 +23,7 @@ class GameClientHandler(
             GameMessageType.ASK_BUY_PROPERTY -> handleAskBuyProperty(message.payload.asJsonObject)
             GameMessageType.ASK_PAY_PRISON -> handleAskPayPrison(message.payload.asJsonObject)
             GameMessageType.ROLLED_PRISON -> handleRolledPrison(message.payload.asJsonObject)
+            GameMessageType.EMOTE -> handleEmote(message.payload.asJsonObject)
             GameMessageType.DRAW_RISK_CARD -> handleRiskCardDrawn(message.payload.asJsonObject)
             GameMessageType.DRAW_BANK_CARD -> handleBankCardDrawn(message.payload.asJsonObject)
             GameMessageType.PASS_START -> handlePassStart(message)
@@ -123,6 +124,12 @@ class GameClientHandler(
             activity.disableDiceButton()
             activity.hideActionButtons()
         }
+    }
+
+    private fun handleEmote(payload: JsonObject) {
+        val sender = payload["sender"]?.asString ?: return
+        val emote = payload["emote"]?.asString ?: return
+        activity.showEmote(sender, emote)
     }
 
     private fun handleBankCardDrawn(payload: JsonObject) {

@@ -606,16 +606,28 @@
             android:paddingBottom="8dp"
             />
 
-        <Button
-            android:id="@+id/btnSendEmotes"
+        <LinearLayout
+            android:id="@+id/emoteBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:background="@drawable/button_yellow_with_border"
-            android:text="Emotes senden"
-            android:visibility="visible"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:padding="8dp">
+
+            <Button android:id="@+id/btnEmoteMoney" android:text="💰" android:layout_height="wrap_content" android:layout_width="match_parent"/>
+            <Button android:id="@+id/btnEmoteShock" android:text="😱" android:layout_height="wrap_content" android:layout_width="match_parent"/>
+            <Button android:id="@+id/btnEmoteSorry" android:text="🥺" android:layout_height="wrap_content" android:layout_width="match_parent"/>
+            <Button android:id="@+id/btnEmoteLaugh" android:text="😂" android:layout_height="wrap_content" android:layout_width="match_parent"/>
+            <Button android:id="@+id/btnEmoteThanks" android:text="🥰" android:layout_height="wrap_content" android:layout_width="match_parent"/>
+            <Button android:id="@+id/btnEmoteGnade" android:text="😓" android:layout_height="wrap_content" android:layout_width="match_parent"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/emoteContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="8dp" />
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
