@@ -319,18 +319,13 @@ class GameBoardActivity : ComponentActivity() {
 
         val message = "$sender: ${emoteMap[emoteType] ?: emoteType}"
 
-        val emoteView = TextView(this).apply {
-            text = message
-            textSize = 16f
-            setPadding(12, 12, 12, 12)
+        runOnUiThread {
+            overlay.text = message
+            overlay.visibility = View.VISIBLE
+            Handler(Looper.getMainLooper()).postDelayed({
+                overlay.visibility = View.GONE
+            }, 5000)
         }
-
-        val container = findViewById<LinearLayout>(R.id.emoteContainer)
-        container.addView(emoteView)
-
-        Handler(Looper.getMainLooper()).postDelayed({
-            container.removeView(emoteView)
-        }, 5000)
     }
 
     fun updateCashDisplay(cash: Int) {

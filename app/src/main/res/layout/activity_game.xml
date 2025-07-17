@@ -622,7 +622,7 @@
 
             <Button
                 android:id="@+id/btnEmoteMoney"
-                android:text="💰"
+                android:text="@string/money"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
@@ -633,7 +633,7 @@
 
             <Button
                 android:id="@+id/btnEmoteShock"
-                android:text="😱"
+                android:text="@string/shock"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
@@ -644,7 +644,7 @@
 
             <Button
                 android:id="@+id/btnEmoteSorry"
-                android:text="🥺"
+                android:text="@string/sorry"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
@@ -655,7 +655,7 @@
 
             <Button
                 android:id="@+id/btnEmoteLaugh"
-                android:text="😂"
+                android:text="@string/laugh"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
@@ -666,7 +666,7 @@
 
             <Button
                 android:id="@+id/btnEmoteThanks"
-                android:text="🥰"
+                android:text="@string/thanks"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
@@ -677,7 +677,7 @@
 
             <Button
                 android:id="@+id/btnEmoteGnade"
-                android:text="😓"
+                android:text="@string/gnade"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
@@ -687,13 +687,15 @@
                 android:textColor="#000000" />
         </GridLayout>
 
-        <!--
         <LinearLayout
             android:id="@+id/emoteContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="8dp" /> -->
+            android:padding="8dp"
+            android:layout_gravity="top"
+            android:background="#88FFFFFF"
+            android:elevation="10dp" /> <!-- über anderen Elementen -->
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
