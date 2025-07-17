@@ -59,6 +59,13 @@ class GameBoardActivity : ComponentActivity() {
     private lateinit var btnBuildHouse: Button
     private lateinit var btnShowHouses: Button
 
+    private lateinit var btnEmoteMoney: Button
+    private lateinit var btnEmoteShock: Button
+    private lateinit var btnEmoteSorry: Button
+    private lateinit var btnEmoteLaugh: Button
+    private lateinit var btnEmoteThanks: Button
+    private lateinit var btnEmoteGnade: Button
+
     private lateinit var tileOverlays: Map<Int, View>
 
     private var myId = -1
@@ -180,6 +187,12 @@ class GameBoardActivity : ComponentActivity() {
         btnBuildHouse = findViewById(R.id.buildHouseBtn)
         btnShowHouses = findViewById(R.id.btnShowHouses)
 
+        btnEmoteMoney = findViewById(R.id.btnEmoteMoney)
+        btnEmoteShock = findViewById(R.id.btnEmoteShock)
+        btnEmoteSorry = findViewById(R.id.btnEmoteSorry)
+        btnEmoteLaugh = findViewById(R.id.btnEmoteLaugh)
+        btnEmoteThanks = findViewById(R.id.btnEmoteThanks)
+        btnEmoteGnade = findViewById(R.id.btnEmoteGnade)
 
         hideActionButtons()
         overlay.visibility = View.GONE
@@ -220,6 +233,32 @@ class GameBoardActivity : ComponentActivity() {
                 sendEmote(emote)
             }
         }
+    }
+
+    private fun disableEmoteButtons() {
+        btnEmoteMoney.isEnabled = false
+        btnEmoteShock.isEnabled = false
+        btnEmoteSorry.isEnabled = false
+        btnEmoteLaugh.isEnabled = false
+        btnEmoteThanks.isEnabled = false
+        btnEmoteGnade.isEnabled = false
+    }
+
+    private fun enableEmoteButtons() {
+        btnEmoteMoney.isEnabled = true
+        btnEmoteShock.isEnabled = true
+        btnEmoteSorry.isEnabled = true
+        btnEmoteLaugh.isEnabled = true
+        btnEmoteThanks.isEnabled = true
+        btnEmoteGnade.isEnabled = true
+    }
+
+    private fun showEmoteWarning() {
+        findViewById<TextView>(R.id.textEmoteWarning).visibility = View.VISIBLE
+    }
+
+    private fun hideEmoteWarning() {
+        findViewById<TextView>(R.id.textEmoteWarning).visibility = View.GONE
     }
 
     fun updateTurnView(currentPlayerId: Int, nickname: String) {

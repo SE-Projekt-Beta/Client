@@ -24,6 +24,7 @@ class GameClientHandler(
             GameMessageType.ASK_PAY_PRISON -> handleAskPayPrison(message.payload.asJsonObject)
             GameMessageType.ROLLED_PRISON -> handleRolledPrison(message.payload.asJsonObject)
             GameMessageType.EMOTE -> handleEmote(message.payload.asJsonObject)
+            GameMessageType.EMOTE_ERROR -> handleEmoteError(message.payload.asJsonObject)
             GameMessageType.DRAW_RISK_CARD -> handleRiskCardDrawn(message.payload.asJsonObject)
             GameMessageType.DRAW_BANK_CARD -> handleBankCardDrawn(message.payload.asJsonObject)
             GameMessageType.PASS_START -> handlePassStart(message)
@@ -134,6 +135,14 @@ class GameClientHandler(
             activity.showEmote(sender, emote)
         } catch (e: Exception) {
             Log.e("EMOTE", "Fehler beim Verarbeiten der Emote-Nachricht", e)
+        }
+    }
+
+    private fun handleEmoteError(payload: JsonObject) {
+        val reason = payload["reason"]?.asString ?: "Unbekannter Emote-Fehler"
+        Log.w(TAG, "Emote-Fehler: $reason")
+        activity.runOnUiThread {
+            activity.showDialog("Emote-Fehler", reason)
         }
     }
 

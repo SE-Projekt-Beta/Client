@@ -31,5 +31,6 @@ enum class GameMessageType {
     BUILD_HOTEL,
     DICE_ROLLED,
     PLAYER_OUT_OF_JAIL_CARD,
-    EMOTE
+    EMOTE,
+    EMOTE_ERROR
 }
