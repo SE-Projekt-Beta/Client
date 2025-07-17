@@ -143,6 +143,7 @@ class GameClientHandler(
         Log.w(TAG, "Emote-Fehler: $reason")
         activity.runOnUiThread {
             activity.showDialog("Emote-Fehler", reason)
+            activity.tempDisableEmoteButtons(60_000)
         }
     }
 

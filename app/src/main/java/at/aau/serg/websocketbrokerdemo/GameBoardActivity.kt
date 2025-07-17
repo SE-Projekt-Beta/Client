@@ -31,7 +31,6 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlin.math.sqrt
 import androidx.core.view.isVisible
-import com.google.gson.JsonParser
 
 class GameBoardActivity : ComponentActivity() {
 
@@ -235,30 +234,33 @@ class GameBoardActivity : ComponentActivity() {
         }
     }
 
+    fun tempDisableEmoteButtons(durationMillis: Long) {
+        disableEmoteButtons()
+        Handler(Looper.getMainLooper()).postDelayed({
+            enableEmoteButtons()
+        }, durationMillis)
+    }
+
     private fun disableEmoteButtons() {
-        btnEmoteMoney.isEnabled = false
-        btnEmoteShock.isEnabled = false
-        btnEmoteSorry.isEnabled = false
-        btnEmoteLaugh.isEnabled = false
-        btnEmoteThanks.isEnabled = false
-        btnEmoteGnade.isEnabled = false
+        val buttons = listOf(
+            btnEmoteMoney, btnEmoteShock, btnEmoteSorry,
+            btnEmoteLaugh, btnEmoteThanks, btnEmoteGnade
+        )
+        buttons.forEach {
+            it.isEnabled = false
+            it.alpha = 0.5f
+        }
     }
 
     private fun enableEmoteButtons() {
-        btnEmoteMoney.isEnabled = true
-        btnEmoteShock.isEnabled = true
-        btnEmoteSorry.isEnabled = true
-        btnEmoteLaugh.isEnabled = true
-        btnEmoteThanks.isEnabled = true
-        btnEmoteGnade.isEnabled = true
-    }
-
-    private fun showEmoteWarning() {
-        findViewById<TextView>(R.id.textEmoteWarning).visibility = View.VISIBLE
-    }
-
-    private fun hideEmoteWarning() {
-        findViewById<TextView>(R.id.textEmoteWarning).visibility = View.GONE
+        val buttons = listOf(
+            btnEmoteMoney, btnEmoteShock, btnEmoteSorry,
+            btnEmoteLaugh, btnEmoteThanks, btnEmoteGnade
+        )
+        buttons.forEach {
+            it.isEnabled = true
+            it.alpha = 1f
+        }
     }
 
     fun updateTurnView(currentPlayerId: Int, nickname: String) {

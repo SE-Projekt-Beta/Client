@@ -687,15 +687,5 @@
                 android:textColor="#000000" />
         </GridLayout>
 
-        <TextView
-            android:id="@+id/textEmoteWarning"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/emoteLimit"
-            android:textColor="#FF0000"
-            android:visibility="gone"
-            android:layout_marginTop="8dp"
-            android:layout_gravity="center"/>
-
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
