@@ -127,9 +127,14 @@ class GameClientHandler(
     }
 
     private fun handleEmote(payload: JsonObject) {
-        val sender = payload["sender"]?.asString ?: return
-        val emote = payload["emote"]?.asString ?: return
-        activity.showEmote(sender, emote)
+        try {
+            val sender = payload["sender"]?.asString ?: return
+            val emote = payload["emote"]?.asString ?: return
+            Log.i("EMOTE", "Empfangen: $sender sendet $emote")
+            activity.showEmote(sender, emote)
+        } catch (e: Exception) {
+            Log.e("EMOTE", "Fehler beim Verarbeiten der Emote-Nachricht", e)
+        }
     }
 
     private fun handleBankCardDrawn(payload: JsonObject) {

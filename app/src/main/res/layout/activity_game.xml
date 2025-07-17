@@ -603,31 +603,97 @@
             android:textColor="@android:color/black"
             android:textSize="14sp"
             android:paddingTop="8dp"
-            android:paddingBottom="8dp"
-            />
+            android:paddingBottom="8dp"/>
 
-        <LinearLayout
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+
+        <GridLayout
             android:id="@+id/emoteBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center"
-            android:padding="8dp">
+            android:columnCount="2"
+            android:alignmentMode="alignMargins"
+            android:layout_gravity="center_horizontal"
+            android:padding="8dp"
+            android:rowOrderPreserved="false">
 
-            <Button android:id="@+id/btnEmoteMoney" android:text="💰" android:layout_height="wrap_content" android:layout_width="match_parent"/>
-            <Button android:id="@+id/btnEmoteShock" android:text="😱" android:layout_height="wrap_content" android:layout_width="match_parent"/>
-            <Button android:id="@+id/btnEmoteSorry" android:text="🥺" android:layout_height="wrap_content" android:layout_width="match_parent"/>
-            <Button android:id="@+id/btnEmoteLaugh" android:text="😂" android:layout_height="wrap_content" android:layout_width="match_parent"/>
-            <Button android:id="@+id/btnEmoteThanks" android:text="🥰" android:layout_height="wrap_content" android:layout_width="match_parent"/>
-            <Button android:id="@+id/btnEmoteGnade" android:text="😓" android:layout_height="wrap_content" android:layout_width="match_parent"/>
-        </LinearLayout>
+            <Button
+                android:id="@+id/btnEmoteMoney"
+                android:text="💰"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:layout_margin="4dp"
+                android:background="@drawable/button_emotes_background"
+                android:textSize="24sp"
+                android:textColor="#000000" />
 
+            <Button
+                android:id="@+id/btnEmoteShock"
+                android:text="😱"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:layout_margin="4dp"
+                android:background="@drawable/button_emotes_background"
+                android:textSize="24sp"
+                android:textColor="#000000" />
+
+            <Button
+                android:id="@+id/btnEmoteSorry"
+                android:text="🥺"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:layout_margin="4dp"
+                android:background="@drawable/button_emotes_background"
+                android:textSize="24sp"
+                android:textColor="#000000" />
+
+            <Button
+                android:id="@+id/btnEmoteLaugh"
+                android:text="😂"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:layout_margin="4dp"
+                android:background="@drawable/button_emotes_background"
+                android:textSize="24sp"
+                android:textColor="#000000"/>
+
+            <Button
+                android:id="@+id/btnEmoteThanks"
+                android:text="🥰"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:layout_margin="4dp"
+                android:background="@drawable/button_emotes_background"
+                android:textSize="24sp"
+                android:textColor="#000000" />
+
+            <Button
+                android:id="@+id/btnEmoteGnade"
+                android:text="😓"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:layout_margin="4dp"
+                android:background="@drawable/button_emotes_background"
+                android:textSize="24sp"
+                android:textColor="#000000" />
+        </GridLayout>
+
+        <!--
         <LinearLayout
             android:id="@+id/emoteContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="8dp" />
+            android:padding="8dp" /> -->
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
