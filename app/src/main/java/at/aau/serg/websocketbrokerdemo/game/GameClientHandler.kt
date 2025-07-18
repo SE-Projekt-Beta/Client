@@ -10,7 +10,6 @@ import at.aau.serg.websocketbrokerdemo.network.dto.GameMessage
 import at.aau.serg.websocketbrokerdemo.network.dto.GameMessageType
 import com.google.gson.JsonObject
 import at.aau.serg.websocketbrokerdemo.game.dialog.BankCardDialog
-import kotlin.text.get
 
 
 class GameClientHandler(
@@ -141,10 +140,16 @@ class GameClientHandler(
     private fun handleEmoteError(payload: JsonObject) {
         val reason = payload["reason"]?.asString ?: "Unbekannter Emote-Fehler"
         Log.w(TAG, "Emote-Fehler: $reason")
-        activity.runOnUiThread {
-            activity.showDialog("Emote-Fehler", reason)
-            activity.tempDisableEmoteButtons(60_000)
+        val playerId = payload["playerId"]?.asInt ?: return
+        if (playerId == LobbyClient.playerId) {
+            activity.runOnUiThread {
+                activity.showEmoteError("Emote-Fehler", reason)
+                activity.tempDisableEmoteButtons(60_000)
+            }
+        } else {
+            Log.i(TAG, "Spieler $playerId darf für 1 Minute keine Reaktionen mehr senden.")
         }
+
     }
 
     private fun handleBankCardDrawn(payload: JsonObject) {

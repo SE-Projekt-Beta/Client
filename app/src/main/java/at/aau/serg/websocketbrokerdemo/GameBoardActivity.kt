@@ -369,6 +369,20 @@ class GameBoardActivity : ComponentActivity() {
         }
     }
 
+    fun showEmoteError(title: String, message: String) {
+        runOnUiThread {
+            val dialog = android.app.AlertDialog.Builder(this)
+                .setTitle(title)
+                .setMessage(message)
+                .setPositiveButton("OK", null)
+                .create()
+
+            dialog.setCanceledOnTouchOutside(false)
+            dialog.setCancelable(false)
+            dialog.show()
+        }
+    }
+
     fun updateCashDisplay(cash: Int) {
         updatePlayersCashDisplay()
     }
