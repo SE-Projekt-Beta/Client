@@ -256,6 +256,58 @@ class GameClientHandlerTest {
     }
 
     @Test
+    fun testHandleEmoteValid() {
+        val payload = JsonObject().apply {
+            addProperty("sender", "Lena")
+            addProperty("emote", "THANKS")
+        }
+
+        handler.handle(GameMessage(0, GameMessageType.EMOTE, payload))
+
+        verify { mockActivity.showEmote("Lena", "THANKS") }
+    }
+
+    @Test
+    fun testHandleEmoteInvalid() {
+        val payload = JsonObject()
+
+        handler.handle(GameMessage(0, GameMessageType.EMOTE, payload))
+
+        verify(exactly = 0) {
+            mockActivity.showEmote(any(), any())
+        }
+    }
+
+    @Test
+    fun testHandleEmoteErrorMyId() {
+        val payload = JsonObject().apply {
+            addProperty("playerId", 1)
+            addProperty("reason", "Limit erreicht")
+        }
+
+        every { LobbyClient.playerId } returns 1
+
+        handler.handle(GameMessage(0, GameMessageType.EMOTE_ERROR, payload))
+
+        verify { mockActivity.runOnUiThread(any()) }
+    }
+
+    @Test
+    fun testHandleEmoteErrorOtherPlayer() {
+        val payload = JsonObject().apply {
+            addProperty("playerId", 3)
+            addProperty("reason", "Limit erreicht")
+        }
+
+        every { LobbyClient.playerId } returns 1
+
+        handler.handle(GameMessage(0, GameMessageType.EMOTE_ERROR, payload))
+
+        verify(exactly = 0) {mockActivity.showEmoteError(any(), any())}
+        verify(exactly = 0) {mockActivity.tempDisableEmoteButtons(any())}
+    }
+
+    @Test
     fun testHandleBankCardDrawn_myId() {
         // Mock GameStateClient for nickname resolution
         mockkObject(GameStateClient)

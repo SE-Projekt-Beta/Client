@@ -371,7 +371,7 @@ class GameBoardActivity : ComponentActivity() {
 
     fun showEmoteError(title: String, message: String) {
         runOnUiThread {
-            val dialog = android.app.AlertDialog.Builder(this)
+            val dialog = AlertDialog.Builder(this)
                 .setTitle(title)
                 .setMessage(message)
                 .setPositiveButton("OK", null)
