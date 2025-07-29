@@ -93,7 +93,7 @@ tasks.register<JacocoReport>("jacocoTestReport") {
         include("outputs/unit_test_code_coverage/debugUnitTest/testDebugUnitTest.exec")
     })
 }
-
+//TODO: exclude files
 sonar {
     properties {
         property("sonar.projectKey", "SE-Projekt-Beta_Client")
