@@ -308,6 +308,48 @@ class GameClientHandlerTest {
     }
 
     @Test
+    fun testHandleEmoteError_otherPlayer_noUI() {
+        val payload = JsonObject().apply {
+            addProperty("playerId", 10)
+            addProperty("reason", "Zu viele Emotes")
+        }
+
+        every { LobbyClient.playerId } returns 1
+
+        handler.handle(GameMessage(0, GameMessageType.EMOTE_ERROR, payload))
+
+        verify(exactly = 0) { mockActivity.runOnUiThread(any()) }
+        verify(exactly = 0) { mockActivity.showEmoteError(any(), any()) }
+        verify(exactly = 0) { mockActivity.tempDisableEmoteButtons(any()) }
+    }
+
+    @Test
+    fun testHandleGameState_malformedPlayersJson() {
+        val payload = JsonObject().apply {
+            add("players", JsonObject()) // absichtlich kein Array
+        }
+
+        handler.handle(GameMessage(0, GameMessageType.GAME_STATE, payload))
+
+        // Sicherstellen, dass kein Crash passiert
+        // und der Fehler geloggt wird
+        verify { Log.e(match { it == "GameClientHandler" }, match { it.contains("Failed to update player tokens") }, any()) }
+    }
+
+    @Test
+    fun testHandleBankCardDrawn_missingDescription() {
+        val payload = JsonObject().apply {
+            addProperty("playerId", 1)
+            addProperty("newCash", 1800)
+            // description fehlt
+        }
+
+        handler.handle(GameMessage(0, GameMessageType.DRAW_BANK_CARD, payload))
+
+        verify(exactly = 0) { mockActivity.updateCashDisplay(any()) }
+    }
+
+    @Test
     fun testHandleBankCardDrawn_myId() {
         // Mock GameStateClient for nickname resolution
         mockkObject(GameStateClient)
