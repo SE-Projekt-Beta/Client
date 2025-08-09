@@ -10,7 +10,6 @@ import at.aau.serg.websocketbrokerdemo.network.dto.GameMessage
 import at.aau.serg.websocketbrokerdemo.network.dto.GameMessageType
 import com.google.gson.JsonObject
 import at.aau.serg.websocketbrokerdemo.game.dialog.BankCardDialog
-import kotlin.text.get
 
 
 class GameClientHandler(
@@ -23,6 +22,8 @@ class GameClientHandler(
             GameMessageType.ASK_BUY_PROPERTY -> handleAskBuyProperty(message.payload.asJsonObject)
             GameMessageType.ASK_PAY_PRISON -> handleAskPayPrison(message.payload.asJsonObject)
             GameMessageType.ROLLED_PRISON -> handleRolledPrison(message.payload.asJsonObject)
+            GameMessageType.EMOTE -> handleEmote(message.payload.asJsonObject)
+            GameMessageType.EMOTE_ERROR -> handleEmoteError(message.payload.asJsonObject)
             GameMessageType.DRAW_RISK_CARD -> handleRiskCardDrawn(message.payload.asJsonObject)
             GameMessageType.DRAW_BANK_CARD -> handleBankCardDrawn(message.payload.asJsonObject)
             GameMessageType.PASS_START -> handlePassStart(message)
@@ -123,6 +124,32 @@ class GameClientHandler(
             activity.disableDiceButton()
             activity.hideActionButtons()
         }
+    }
+
+    private fun handleEmote(payload: JsonObject) {
+        try {
+            val sender = payload["sender"]?.asString ?: return
+            val emote = payload["emote"]?.asString ?: return
+            Log.i("EMOTE", "Empfangen: $sender sendet $emote")
+            activity.showEmote(sender, emote)
+        } catch (e: Exception) {
+            Log.e("EMOTE", "Fehler beim Verarbeiten der Emote-Nachricht", e)
+        }
+    }
+
+    private fun handleEmoteError(payload: JsonObject) {
+        val reason = payload["reason"]?.asString ?: "Unbekannter Emote-Fehler"
+        Log.w(TAG, "Emote-Fehler: $reason")
+        val playerId = payload["playerId"]?.asInt ?: return
+        if (playerId == LobbyClient.playerId) {
+            activity.runOnUiThread {
+                activity.showEmoteError("Emote-Fehler", reason)
+                activity.tempDisableEmoteButtons(60_000)
+            }
+        } else {
+            Log.i(TAG, "Spieler $playerId darf für 1 Minute keine Reaktionen mehr senden.")
+        }
+
     }
 
     private fun handleBankCardDrawn(payload: JsonObject) {

@@ -58,6 +58,13 @@ class GameBoardActivity : ComponentActivity() {
     private lateinit var btnBuildHouse: Button
     private lateinit var btnShowHouses: Button
 
+    private lateinit var btnEmoteMoney: Button
+    private lateinit var btnEmoteShock: Button
+    private lateinit var btnEmoteSorry: Button
+    private lateinit var btnEmoteLaugh: Button
+    private lateinit var btnEmoteThanks: Button
+    private lateinit var btnEmoteGnade: Button
+
     private lateinit var tileOverlays: Map<Int, View>
 
     private var myId = -1
@@ -138,6 +145,7 @@ class GameBoardActivity : ComponentActivity() {
         updatePlayersCashDisplay()
         setupButtons()
         setupNetwork()
+        setupEmoteButtons()
 
         val boardView = findViewById<View>(R.id.boardImage)
         boardView.post {
@@ -178,6 +186,12 @@ class GameBoardActivity : ComponentActivity() {
         btnBuildHouse = findViewById(R.id.buildHouseBtn)
         btnShowHouses = findViewById(R.id.btnShowHouses)
 
+        btnEmoteMoney = findViewById(R.id.btnEmoteMoney)
+        btnEmoteShock = findViewById(R.id.btnEmoteShock)
+        btnEmoteSorry = findViewById(R.id.btnEmoteSorry)
+        btnEmoteLaugh = findViewById(R.id.btnEmoteLaugh)
+        btnEmoteThanks = findViewById(R.id.btnEmoteThanks)
+        btnEmoteGnade = findViewById(R.id.btnEmoteGnade)
 
         hideActionButtons()
         overlay.visibility = View.GONE
@@ -203,6 +217,51 @@ class GameBoardActivity : ComponentActivity() {
         gameStomp.connect()
     }
 
+    private fun setupEmoteButtons() {
+        val emoteMap = mapOf(
+            R.id.btnEmoteMoney to "MONEY",
+            R.id.btnEmoteShock to "SHOCK",
+            R.id.btnEmoteSorry to "SORRY",
+            R.id.btnEmoteLaugh to "LAUGH",
+            R.id.btnEmoteThanks to "THANKS",
+            R.id.btnEmoteGnade to "GNADE"
+        )
+
+        for ((btnId, emote) in emoteMap) {
+            findViewById<Button>(btnId).setOnClickListener {
+                sendEmote(emote)
+            }
+        }
+    }
+
+    fun tempDisableEmoteButtons(durationMillis: Long) {
+        disableEmoteButtons()
+        Handler(Looper.getMainLooper()).postDelayed({
+            enableEmoteButtons()
+        }, durationMillis)
+    }
+
+    private fun disableEmoteButtons() {
+        val buttons = listOf(
+            btnEmoteMoney, btnEmoteShock, btnEmoteSorry,
+            btnEmoteLaugh, btnEmoteThanks, btnEmoteGnade
+        )
+        buttons.forEach {
+            it.isEnabled = false
+            it.alpha = 0.5f
+        }
+    }
+
+    private fun enableEmoteButtons() {
+        val buttons = listOf(
+            btnEmoteMoney, btnEmoteShock, btnEmoteSorry,
+            btnEmoteLaugh, btnEmoteThanks, btnEmoteGnade
+        )
+        buttons.forEach {
+            it.isEnabled = true
+            it.alpha = 1f
+        }
+    }
 
     fun updateTurnView(currentPlayerId: Int, nickname: String) {
         Log.d("BuildButton", "updateTurnView: currentPlayerId=$currentPlayerId → btnBuildHouse ${if (currentPlayerId != myId) "versteckt" else "sichtbar"}")
@@ -278,6 +337,50 @@ class GameBoardActivity : ComponentActivity() {
     fun updateTokenPosition(steps: Int) {
         val currentPlayerId = GameStateClient.currentPlayerId
         playerTokenManager.movePlayerToken(currentPlayerId, steps)
+    }
+
+    private fun sendEmote(emoteType: String) {
+        val payload = mapOf(
+            "sender" to myNickname,
+            "emote" to emoteType
+        )
+        val jsonObject = Gson().toJsonTree(payload).asJsonObject
+        gameStomp.sendGameMessage(GameMessage(LobbyClient.lobbyId, GameMessageType.EMOTE, jsonObject))
+    }
+
+    fun showEmote(sender: String, emoteType: String) {
+        val emoteMap = mapOf(
+            "MONEY" to "💰 Money time! 💰",
+            "SHOCK" to "😱 Oh nein! 😱",
+            "SORRY" to "🥺 Sorry! 🥺",
+            "LAUGH" to "😂 Hahaha 😂",
+            "THANKS" to "🥰 Danke! 🥰",
+            "GNADE" to "😓 Bitte habt Gnade 😓"
+        )
+
+        val message = "$sender: ${emoteMap[emoteType] ?: emoteType}"
+
+        runOnUiThread {
+            overlay.text = message
+            overlay.visibility = View.VISIBLE
+            Handler(Looper.getMainLooper()).postDelayed({
+                overlay.visibility = View.GONE
+            }, 5000)
+        }
+    }
+
+    fun showEmoteError(title: String, message: String) {
+        runOnUiThread {
+            val dialog = AlertDialog.Builder(this)
+                .setTitle(title)
+                .setMessage(message)
+                .setPositiveButton("OK", null)
+                .create()
+
+            dialog.setCanceledOnTouchOutside(false)
+            dialog.setCancelable(false)
+            dialog.show()
+        }
     }
 
     fun updateCashDisplay(cash: Int) {
