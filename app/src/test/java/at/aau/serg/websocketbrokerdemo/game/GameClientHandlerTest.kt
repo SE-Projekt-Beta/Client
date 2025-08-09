@@ -27,6 +27,7 @@ class GameClientHandlerTest {
         every { Log.i(any(), any<String>()) } returns 0
         every { Log.w(any(), any<String>()) } returns 0
         every { Log.e(any(), any<String>()) } returns 0
+        every { Log.e(any<String>(), any<String>(), any<Throwable>()) } returns 0
 
         mockkObject(GameController)
         mockkObject(LobbyClient)
@@ -347,6 +348,177 @@ class GameClientHandlerTest {
         handler.handle(GameMessage(0, GameMessageType.DRAW_BANK_CARD, payload))
 
         verify(exactly = 0) { mockActivity.updateCashDisplay(any()) }
+    }
+
+    @Test
+    fun testHandleEmoteError_myId_runsUiThreadBlock() {
+        val payload = JsonObject().apply {
+            addProperty("playerId", 1)
+            addProperty("reason", "Test-Reason")
+        }
+        every { LobbyClient.playerId } returns 1
+
+        val slot = slot<Runnable>()
+        every { mockActivity.runOnUiThread(capture(slot)) } answers {
+            // direkt ausführen, um UI-Logik zu prüfen
+            slot.captured.run()
+        }
+
+        handler.handle(GameMessage(0, GameMessageType.EMOTE_ERROR, payload))
+
+        verify { mockActivity.showEmoteError("Emote-Fehler", "Test-Reason") }
+        verify { mockActivity.tempDisableEmoteButtons(60_000) }
+    }
+
+    @Test
+    fun testHandleExtraMessage_otherPlayer_logsButNoDialog() {
+        val payload = JsonObject().apply {
+            addProperty("playerId", 99)
+            addProperty("title", "ShouldNotSee")
+            addProperty("message", "HiddenMessage")
+        }
+        every { LobbyClient.playerId } returns 1
+
+        handler.handle(GameMessage(0, GameMessageType.EXTRA_MESSAGE, payload))
+
+        verify { Log.i(match { it == "GameClientHandler" }, match { it.contains("Extra message") }) }
+        verify(exactly = 0) { mockActivity.showDialog(any<String>(), any<String>()) }
+    }
+
+    @Test
+    fun testHandlePassStart_landed_true_runsDialogBlock() {
+        mockkObject(GameStateClient)
+        every { GameStateClient.getNickname(1) } returns "Alice"
+        every { LobbyClient.playerId } returns 1
+
+        val payload = JsonObject().apply {
+            addProperty("playerId", 1)
+            addProperty("amount", 200)
+            addProperty("landed", true)
+        }
+
+        val slot = slot<Runnable>()
+        every { mockActivity.runOnUiThread(capture(slot)) } answers {
+            slot.captured.run() // direkt ausführen
+        }
+
+        handler.handle(GameMessage(0, GameMessageType.PASS_START, payload))
+
+        // hier könntest du mit einem Spy oder Mock für StartBonusDialog prüfen,
+        // ob show() aufgerufen wird
+        unmockkObject(GameStateClient)
+    }
+
+    @Test
+    fun testHandleUnknownMessageType_logsWarning() {
+        val payload = JsonObject()
+
+        // GameMessage mocken, so dass type ein "falscher" Enum ist
+        val fakeMessage = mockk<GameMessage>()
+        every { fakeMessage.type } returns mockk(relaxed = true) // nicht im when behandelt
+        every { fakeMessage.payload } returns payload
+
+        handler.handle(fakeMessage)
+
+        verify {
+            Log.w(
+                match<String> { it == "GameClientHandler" },
+                match<String> { it.contains("Unbekannter Nachrichtentyp") }
+            )
+        }
+    }
+
+    @Test
+    fun testHandleExtraMessage_otherPlayer_logsOnly() {
+        every { LobbyClient.playerId } returns 1
+        val payload = JsonObject().apply {
+            addProperty("playerId", 5)
+            addProperty("title", "Geheime Info")
+            addProperty("message", "Nicht für dich")
+        }
+
+        handler.handle(GameMessage(0, GameMessageType.EXTRA_MESSAGE, payload))
+
+        verify { Log.i(match { it == "GameClientHandler" }, match { it.contains("Extra message") }) }
+        verify(exactly = 0) { mockActivity.showDialog(any<String>(), any<String>()) }
+    }
+
+    @Test
+    fun testHandlePassStart_landedFalse_otherPlayer_logsOnly() {
+        every { LobbyClient.playerId } returns 1
+        val payload = JsonObject().apply {
+            addProperty("playerId", 99)
+            addProperty("amount", 200)
+            addProperty("landed", false)
+        }
+
+        handler.handle(GameMessage(0, GameMessageType.PASS_START, payload))
+
+        verify { Log.i(match { it == "GameClientHandler" }, match { it.contains("Start überquert") }) }
+        verify(exactly = 0) { mockActivity.updateCashDisplay(any()) }
+    }
+    @Test
+    fun testHandleTax_missingNewCash_noUpdate() {
+        every { LobbyClient.playerId } returns 1
+        mockkObject(GameStateClient)
+        every { GameStateClient.getNickname(1) } returns "Alice"
+
+        val payload = JsonObject().apply {
+            addProperty("playerId", 1)
+            addProperty("tileName", "Luxussteuer")
+            addProperty("amount", 150)
+            // newCash fehlt
+        }
+
+        handler.handle(GameMessage(0, GameMessageType.PAY_TAX, payload))
+
+        verify(exactly = 0) { mockActivity.updateCashDisplay(any()) }
+        unmockkObject(GameStateClient)
+    }
+
+    @Test
+    fun testHandleBankCardDrawn_missingNewCash_noUpdate() {
+        every { LobbyClient.playerId } returns 1
+        val payload = JsonObject().apply {
+            addProperty("playerId", 1)
+            addProperty("description", "Bank zahlt")
+            // newCash fehlt
+        }
+
+        handler.handle(GameMessage(0, GameMessageType.DRAW_BANK_CARD, payload))
+
+        verify(exactly = 0) { mockActivity.updateCashDisplay(any()) }
+    }
+
+    @Test
+    fun testHandleGoToJail_otherPlayer_logsOnly() {
+        every { LobbyClient.playerId } returns 1
+        val payload = JsonObject().apply { addProperty("playerId", 42) }
+
+        handler.handle(GameMessage(0, GameMessageType.GO_TO_JAIL, payload))
+
+        verify { Log.i(match { it == "GameClientHandler" }, match { it.contains("wird ins Gefängnis geschickt") }) }
+    }
+
+    @Test
+    fun testHandleEmote_exception_logsError() {
+        val payload = JsonObject().apply {
+            addProperty("sender", "Lena")
+            addProperty("emote", "THANKS")
+        }
+
+        // showEmote wirft eine Exception, damit der catch-Block ausgeführt wird
+        every { mockActivity.showEmote(any<String>(), any<String>()) } throws RuntimeException("boom")
+
+        handler.handle(GameMessage(0, GameMessageType.EMOTE, payload))
+
+        verify {
+            Log.e(
+                match<String> { it == "EMOTE" },
+                match<String> { it.contains("Fehler beim Verarbeiten") },
+                any<Throwable>()
+            )
+        }
     }
 
     @Test
